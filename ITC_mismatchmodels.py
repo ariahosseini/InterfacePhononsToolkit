@@ -9,6 +9,7 @@ import math
 import cmath
 import os
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=1e4):
@@ -177,8 +178,23 @@ matrix = dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summe
                           "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
                           '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
                           'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
-print(np.shape(matrix[1]))
-plt.plot(matrix[1])
+AW = np.expand_dims(matrix[0], axis=0)
+AZ = np.reshape(AW, (24, 1000, 24))
+AZ2 = np.reshape(AW, (1000, 24, 24))
+# print(np.shape(matrix[1]))
+# plt.plot(matrix[1])
+# plt.show()
+
+
+print(np.shape(AZ))
+
+print(np.shape(AZ2))
+
+
+ax = sns.heatmap(AZ[0].real, linewidth=0.5)
+plt.show()
+
+ax = sns.heatmap(AZ2[0].real, linewidth=0.5)
 plt.show()
 # plt.polar(A[0], A[1])
 # plt.show()
