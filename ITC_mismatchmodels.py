@@ -4,7 +4,9 @@ Department of mechanical engineering
 University of California, Riverside
 """
 import numpy as np
+import numpy.matlib
 import math
+import cmath
 import os
 import matplotlib.pyplot as plt
 
@@ -45,17 +47,23 @@ def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=1e4):
     return hessian_matrix, frq, density_state
 
 
-def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unitcell, base_lattice_point, skip_lines=16):
-
+def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines=16):
     with open(os.path.expanduser(path_to_atoms_positions)) as atomsPositionsFile:
         position_tmp_1 = atomsPositionsFile.readlines()
     position_tmp_2 = [line.split() for line in position_tmp_1]
     [position_tmp_2.pop(0) for _ in range(skip_lines)]
     position_tmp_3 = np.array([[float(_) for _ in __] for __ in position_tmp_2[0:num_atoms]])
-    position_of_atoms = position_tmp_3[position_tmp_3[:, 0].argsort()]
-    lattice_points = np.array([_[2:5] for _ in position_of_atoms[::num_atoms_unitcell]])
-    lattice_points_vectors = lattice_points - np.matlib.repmat(lattice_points[base_lattice_point], len(lattice_points), 1)
+    position_of_atoms = position_tmp_3[np.argsort(position_tmp_3[:, 0])]
+    lattice_points = np.array([_[2:5] for _ in position_of_atoms[::num_atoms_unit_cell]])
+    lattice_points_vectors = lattice_points - numpy.matlib.repmat(lattice_points[central_unit_cell],
+                                                                  len(lattice_points), 1)
     return position_of_atoms, lattice_points, lattice_points_vectors
+
+
+def qpoints(num_qpoints, lattice_parameter):
+    points = np.array([np.zeros(num_qpoints), np.zeros(num_qpoints),
+                       np.linspace(-math.pi / lattice_parameter, math.pi / lattice_parameter, num=num_qpoints)])
+    return points
 
 
 class ITC:
@@ -123,40 +131,51 @@ class ITC:
         tij = np.array([cdos_j / (cdos_i + cdos_j)])
         return tij
 
-    def dynamical_matrix(self, path_to_mass_weighted_hessian, path2atomsPositions, skipLines, numAtoms, baseLatticePoint, numAtomsInUnitCell, qpoints):
+    def dynamical_matrix(self, path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
+                         central_unit_cell, lattice_parameter, skip_lines=16, num_qpoints=1000):
         hessian_matrix = vibrational_density_state(path_to_mass_weighted_hessian)[0]
-        #
-        dynamicalMatrix = np.zeros((numAtomsInUnitCell * 3, numAtomsInUnitCell * 3))
-        for _ in range(self.numQpoints):
-            dynamMatPerQpoint = np.zeros((numAtomsInUnitCell * 3, numAtomsInUnitCell * 3))
-            for __ in range(len(latticePointsVectors)):
-                sumMatrix = hessianMatrix[__ * numAtomsInUnitCell * 3: (__ + 1) * numAtomsInUnitCell * 3, baseLatticePoint * numAtomsInUnitCell * 3: (baseLatticePoint + 1) * numAtomsInUnitCell * 3] * cmath.exp(-1j * np.dot(latticePointsVectors[__], qpoints[:, _]))
-                dynamMatPerQpoint = dynamMatPerQpoint + sumMatrix
-            dynamicalMatrix = np.append(dynamicalMatrix, dynamMatPerQpoint, axis=0)
-        dynamicalMatrix = dynamicalMatrix[numAtomsInUnitCell * 3:]
-        eigVal = np.array([])
-        eigVec = np.zeros((numAtomsInUnitCell * 3, numAtomsInUnitCell * 3))
-        for _ in range(self.numQpoints):
-            dynmat = dynamicalMatrix[_ * numAtomsInUnitCell * 3:(_ + 1) * numAtomsInUnitCell * 3]
+        crystal_points = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
+                                        central_unit_cell, skip_lines)
+        d_matrix = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+        points = qpoints(num_qpoints, lattice_parameter)
+        for _ in range(num_qpoints):
+            dynam_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+            for __ in range(len(crystal_points[2])):
+                sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
+                                            central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
+                                            num_atoms_unit_cell * 3] * cmath.exp(
+                                                                 -1j * np.dot(crystal_points[2][__], points[:, _]))
+                dynam_matrix_per_qpoint = dynam_matrix_per_qpoint + sum_matrix
+            d_matrix = np.append(d_matrix, dynam_matrix_per_qpoint, axis=0)
+        d_matrix = d_matrix[num_atoms_unit_cell * 3:]
+        eig_value = np.array([])
+        eig_vector = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+        for _ in range(num_qpoints):
+            dynmat = d_matrix[_ * num_atoms_unit_cell * 3:(_ + 1) * num_atoms_unit_cell * 3]
             eigvals, eigvecs, = np.linalg.eigh(dynmat)
-            eigVal = np.append(eigVal, eigvals).reshape(-1, numAtomsInUnitCell * 3)
-            eigVec = np.append(eigVec, eigvecs, axis=0)
-        eigVec = eigVec[numAtomsInUnitCell * 3:]
-        frequencies = np.sqrt(np.abs(eigVal.real)) * np.sign(eigVal.real)
-        # conversion_factor_to_THz = 15.633302
-        # frequencies = frequencies * conversion_factor_to_THz
-        return eigVec
+            eig_value = np.append(eig_value, eigvals).reshape(-1, num_atoms_unit_cell * 3)
+            eig_vector = np.append(eig_vector, eigvecs, axis=0)
+        eig_vector = eig_vector[num_atoms_unit_cell * 3:]
+        frequency = np.sqrt(np.abs(eig_value.real)) * np.sign(eig_value.real)
+        conversion_factor_to_THz = 15.633302
+        frequency = frequency * conversion_factor_to_THz
+        return eig_vector, frequency
 
 
-# A = ITC(rho=[1.2, 1.2], c=[2, 1])
-B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-                   'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, skip_lines=15)
+A = ITC(rho=[1.2, 1.2], c=[2, 1])
+# B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+#                    'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, skip_lines=16)
+# print(B[2])
 # C = A.diffuse_mismatch(["~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
 #                         "Run-01-Si-28"
 #                         "-Si-72/Si-hessian-mass-weighted-hessian.d",
 #                         "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
 #                         "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d"],
 #                        eps=[3e12, 3e12], nq=[1e4, 1e4])
+matrix = A.dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+                            "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
+                            '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+                            'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
 # plt.polar(A[0], A[1])
 # plt.show()
 # plt.plot(A[0], A[1])
