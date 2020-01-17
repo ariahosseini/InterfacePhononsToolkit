@@ -66,6 +66,37 @@ def qpoints(num_qpoints, lattice_parameter):
     return points
 
 
+def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
+                     central_unit_cell, lattice_parameter, skip_lines=16, num_qpoints=1000):
+    hessian_matrix = vibrational_density_state(path_to_mass_weighted_hessian)[0]
+    crystal_points = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
+                                    central_unit_cell, skip_lines)
+    d_matrix = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+    points = qpoints(num_qpoints, lattice_parameter)
+    for _ in range(num_qpoints):
+        dynam_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+        for __ in range(len(crystal_points[2])):
+            sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
+                                        central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
+                                        num_atoms_unit_cell * 3] * cmath.exp(
+                                                             -1j * np.dot(crystal_points[2][__], points[:, _]))
+            dynam_matrix_per_qpoint = dynam_matrix_per_qpoint + sum_matrix
+        d_matrix = np.append(d_matrix, dynam_matrix_per_qpoint, axis=0)
+    d_matrix = d_matrix[num_atoms_unit_cell * 3:]
+    eig_value = np.array([])
+    eig_vector = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+    for _ in range(num_qpoints):
+        dynmat = d_matrix[_ * num_atoms_unit_cell * 3:(_ + 1) * num_atoms_unit_cell * 3]
+        eigvals, eigvecs, = np.linalg.eigh(dynmat)
+        eig_value = np.append(eig_value, eigvals).reshape(-1, num_atoms_unit_cell * 3)
+        eig_vector = np.append(eig_vector, eigvecs, axis=0)
+    eig_vector = eig_vector[num_atoms_unit_cell * 3:]
+    frequency = np.sqrt(np.abs(-1*eig_value.real))
+    conversion_factor_to_THz = 15.633302
+    frequency = frequency * conversion_factor_to_THz
+    return eig_vector, frequency
+
+
 class ITC:
     """
     ITC is a class written in python to calculate interfacial thermal conductance of two solids in contact.
@@ -131,36 +162,6 @@ class ITC:
         tij = np.array([cdos_j / (cdos_i + cdos_j)])
         return tij
 
-    def dynamical_matrix(self, path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                         central_unit_cell, lattice_parameter, skip_lines=16, num_qpoints=1000):
-        hessian_matrix = vibrational_density_state(path_to_mass_weighted_hessian)[0]
-        crystal_points = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                                        central_unit_cell, skip_lines)
-        d_matrix = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
-        points = qpoints(num_qpoints, lattice_parameter)
-        for _ in range(num_qpoints):
-            dynam_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
-            for __ in range(len(crystal_points[2])):
-                sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
-                                            central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
-                                            num_atoms_unit_cell * 3] * cmath.exp(
-                                                                 -1j * np.dot(crystal_points[2][__], points[:, _]))
-                dynam_matrix_per_qpoint = dynam_matrix_per_qpoint + sum_matrix
-            d_matrix = np.append(d_matrix, dynam_matrix_per_qpoint, axis=0)
-        d_matrix = d_matrix[num_atoms_unit_cell * 3:]
-        eig_value = np.array([])
-        eig_vector = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
-        for _ in range(num_qpoints):
-            dynmat = d_matrix[_ * num_atoms_unit_cell * 3:(_ + 1) * num_atoms_unit_cell * 3]
-            eigvals, eigvecs, = np.linalg.eigh(dynmat)
-            eig_value = np.append(eig_value, eigvals).reshape(-1, num_atoms_unit_cell * 3)
-            eig_vector = np.append(eig_vector, eigvecs, axis=0)
-        eig_vector = eig_vector[num_atoms_unit_cell * 3:]
-        frequency = np.sqrt(np.abs(eig_value.real)) * np.sign(eig_value.real)
-        conversion_factor_to_THz = 15.633302
-        frequency = frequency * conversion_factor_to_THz
-        return eig_vector, frequency
-
 
 A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
@@ -172,10 +173,13 @@ A = ITC(rho=[1.2, 1.2], c=[2, 1])
 #                         "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
 #                         "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d"],
 #                        eps=[3e12, 3e12], nq=[1e4, 1e4])
-matrix = A.dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-                            "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
-                            '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-                            'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
+matrix = dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
+                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
+print(np.shape(matrix[1]))
+plt.plot(matrix[1])
+plt.show()
 # plt.polar(A[0], A[1])
 # plt.show()
 # plt.plot(A[0], A[1])
