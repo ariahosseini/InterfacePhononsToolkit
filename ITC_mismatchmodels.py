@@ -185,17 +185,17 @@ AZ2 = np.reshape(AW, (1000, 24, 24))
 # plt.plot(matrix[1])
 # plt.show()
 
+print(np.shape(matrix[0][:24, :]), np.shape(matrix), np.shape(np.reshape(matrix[0][:, 0].real, (1000, 24))))
 
-print(np.shape(AZ))
+a = np.reshape(matrix[0][:, 0].real, (1000, 24))
+# print(a, a[0], a[:,0], np.shape(a), a[:][0])
 
-print(np.shape(AZ2))
-
-
-ax = sns.heatmap(AZ[0].real, linewidth=0.5)
+# ax = sns.heatmap(AZ[0].real, linewidth=0.5)
+sns.heatmap(a.T)
 plt.show()
 
-ax = sns.heatmap(AZ2[0].real, linewidth=0.5)
-plt.show()
+# ax = sns.heatmap(AZ2[0].real, linewidth=0.5)
+# plt.show()
 # plt.polar(A[0], A[1])
 # plt.show()
 # plt.plot(A[0], A[1])
