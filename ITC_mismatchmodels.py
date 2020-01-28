@@ -5,47 +5,54 @@ University of California, Riverside
 """
 import numpy as np
 import numpy.matlib
+from scipy import interpolate
 import math
 import cmath
 import os
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
+from numpy.core.multiarray import ndarray
+
+global conversion_factor_to_THz
+conversion_factor_to_THz = 15.633302
 
 
-def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=1e4):
+def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
     """
     This function calculate vibrational density of state from hessian matrix
     of molecular dynamics calculations
     :arg
-        path_to_mass_weighted_hessian    : point to the mass weighted hessian file
-        eps                              : tuning parameter, relate to line width
-        nq                               : sampling grid
+        path_to_mass_weighted_hessian       : point to the mass weighted hessian file
+        eps                                 : tuning parameter, relate to line width
+        nq                                  : sampling grid
 
     :type
-       path_to_mass_weighted_hessian        : string
-       eps                                  : float number
-       nq                                   : integer number
+        path_to_mass_weighted_hessian       : string
+        eps                                 : float number
+        nq                                  : integer number
 
     :returns
         hessian_matrix                      : hessian matrix, np.array
-        frq,                                : frequency in 1/cm
+        frq                                 : frequency in 1/cm
         density_state                       : vibrational density of state
+        omg                                 : frequency sampling corresponds to "density_state"
     """
     with open(os.path.expanduser(path_to_mass_weighted_hessian)) as hessian_file:
-        hm_tmp_1 = hessian_file.readlines()
+        hm_tmp_1 = hessian_file.readlines()  # hm stands for hessian matrix
     hm_tmp_2 = [line.split() for line in hm_tmp_1]
     hm_tmp_3 = np.array([[float(_) for _ in __] for __ in hm_tmp_2])
     hessian_file.close()
-    hessian_symmetry = (np.triu(hm_tmp_3) + np.tril(hm_tmp_3).transpose()) / 2
+    hessian_symmetry = (np.triu(hm_tmp_3) + np.tril(hm_tmp_3).transpose()) / 2  # Hessian matrix is Hermitian
     hessian_matrix = hessian_symmetry + np.triu(hessian_symmetry, 1).transpose()
     egn_value, egn_vector = np.linalg.eigh(hessian_matrix)
     egn_value = np.where(egn_value < 0, egn_value, 0)
-    frq = np.sqrt(-1 * egn_value)
+    frq = np.sqrt(-1 * egn_value)  # Frequency from Hessian matrix
     frq = np.sort(frq)
-    omg = np.linspace(np.min(frq), np.max(frq), nq)
+    omg = np.linspace(np.min(frq), np.max(frq), nq)  # Sampling the frequency
     density_state = np.sum(1 / math.sqrt(math.pi) / eps * np.exp(-1 * np.power(np.array([omg]).T - frq, 2) / eps / eps),
-                           axis=1)
-    return hessian_matrix, frq, density_state
+                           axis=1)  # density of state
+    return hessian_matrix, frq, density_state, omg
 
 
 def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines=16):
@@ -78,9 +85,9 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         dynam_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
             sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
-                                        central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
-                                        num_atoms_unit_cell * 3] * cmath.exp(
-                                                             -1j * np.dot(crystal_points[2][__], points[:, _]))
+                         central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
+                                                                      num_atoms_unit_cell * 3] * cmath.exp(
+                -1j * np.dot(crystal_points[2][__], points[:, _]))
             dynam_matrix_per_qpoint = dynam_matrix_per_qpoint + sum_matrix
         d_matrix = np.append(d_matrix, dynam_matrix_per_qpoint, axis=0)
     d_matrix = d_matrix[num_atoms_unit_cell * 3:]
@@ -92,8 +99,7 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         eig_value = np.append(eig_value, eigvals).reshape(-1, num_atoms_unit_cell * 3)
         eig_vector = np.append(eig_vector, eigvecs, axis=0)
     eig_vector = eig_vector[num_atoms_unit_cell * 3:]
-    frequency = np.sqrt(np.abs(-1*eig_value.real))
-    conversion_factor_to_THz = 15.633302
+    frequency = np.sqrt(np.abs(-1 * eig_value.real))
     frequency = frequency * conversion_factor_to_THz
     return eig_vector, frequency
 
@@ -117,7 +123,7 @@ class ITC:
         self.rho = rho
         self.c = c
 
-    def acoustic_mismatch(self, omega_cutoff, omega_max, n_omg=1000, n_mu=2000):
+    def acoustic_mismatch(self, omega_cutoff, omega_max, n_omg=1000, n_mu=2000, n_sf=1e4):
         """
         acoustic_mismatch returns transmission coefficient of two solids in contact.
         The transmission is always from softer material (i) to stiffer one (j).
@@ -154,45 +160,76 @@ class ITC:
         cutoff_idx = np.where(omg > omega_cutoff)
         MTij = np.tile(Tij, (np.shape(omg)[0], 1))
         MTij[cutoff_idx[0][0]:] = 0
-        return mu_i, mu_j, mu_crt, tij, Tij, MTij
+        sf_x = np.linspace(mu_crt, 1, n_sf)
+        tmp_1 = np.sqrt(1-(self.c[1]/self.c[0])**2*(1-np.power(sf_x, 2)))
+        tmp_2 = np.power((z_i/z_j+np.divide(tmp_1, sf_x)), 2)
+        sf_y = (1+z_i/z_j)**2*np.divide(tmp_1, tmp_2)
+        suppression_function = np.trapz(sf_y, sf_x)
+        return mu_i, mu_j, mu_crt, tij, Tij, MTij, suppression_function
 
-    def diffuse_mismatch(self, path_to_mass_weighted_hessian, eps, nq):
-        cdos_i = self.c[0] * vibrational_density_state(path_to_mass_weighted_hessian[0], eps[0], nq[0])[2]
-        print(cdos_i, type(cdos_i), np.shape(cdos_i))
-        cdos_j = self.c[1] * vibrational_density_state(path_to_mass_weighted_hessian[1], eps[1], nq[1])[2]
-        tij = np.array([cdos_j / (cdos_i + cdos_j)])
-        return tij
+    def diffuse_mismatch(self, path_to_mass_weighted_hessian, eps, nq, nsampleing):
+        tmp_1 = vibrational_density_state(path_to_mass_weighted_hessian[0], eps[0], nq[0])
+        tmp_2 = vibrational_density_state(path_to_mass_weighted_hessian[1], eps[1], nq[1])
+        omg_max = np.min([np.max(tmp_1[-1]), np.max(tmp_2[-1])])
+        omg = np.linspace(0, omg_max, nsampleing)
+        f_i = interpolate.PchipInterpolator(tmp_1[-1], tmp_1[2], extrapolate=None)
+        f_j = interpolate.PchipInterpolator(tmp_2[-1], tmp_2[2], extrapolate=None)
+        dos_i = f_i(omg)
+        dos_j = f_j(omg)
+        tij = np.divide(self.c[1] * dos_j, self.c[0] * dos_i + self.c[1] * dos_j, out=np.zeros_like(self.c[1] * dos_j),
+                        where=self.c[0] * dos_i + self.c[1] * dos_j != 0)
+        return tij, omg
 
 
 A = ITC(rho=[1.2, 1.2], c=[2, 1])
+
+# vDoS = vibrational_density_state("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
+#                                  "Run-01-Si-28"
+#                                  "-Si-72/Si-hessian-mass-weighted-hessian.d")
+
+# plt.plot(vDoS[3], vDoS[2])
+# plt.show()
+
+# ax = sns.heatmap(vDoS[0].real, linewidth=0.5)
+# plt.show()
+#
+# ax = sns.heatmap(vDoS[0].imag, linewidth=0.5)
+# plt.show()
+
+# plt.plot(vDoS[1])
+# plt.show()
+
 # B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
 #                    'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, skip_lines=16)
 # print(B[2])
-# C = A.diffuse_mismatch(["~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
-#                         "Run-01-Si-28"
-#                         "-Si-72/Si-hessian-mass-weighted-hessian.d",
-#                         "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-#                         "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d"],
-#                        eps=[3e12, 3e12], nq=[1e4, 1e4])
-matrix = dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
-                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
-AW = np.expand_dims(matrix[0], axis=0)
-AZ = np.reshape(AW, (24, 1000, 24))
-AZ2 = np.reshape(AW, (1000, 24, 24))
+C = A.diffuse_mismatch(["~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
+                        "Run-01-Si-28"
+                        "-Si-72/Si-hessian-mass-weighted-hessian.d",
+                        "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+                        "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d"],
+                       eps=[3e12, 3e12], nq=[1e4, 1e4], nsampleing=1e4)
+plt.plot(C[1], C[0])
+plt.show()
+
+# matrix = dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+#                           "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
+#                           '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+#                           'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
+# AW = np.expand_dims(matrix[0], axis=0)
+# AZ = np.reshape(AW, (24, 1000, 24))
+# AZ2 = np.reshape(AW, (1000, 24, 24))
 # print(np.shape(matrix[1]))
 # plt.plot(matrix[1])
 # plt.show()
 
-print(np.shape(matrix[0][:24, :]), np.shape(matrix), np.shape(np.reshape(matrix[0][:, 0].real, (1000, 24))))
-
-a = np.reshape(matrix[0][:, 0].real, (1000, 24))
+# print(np.shape(matrix[0][:24, :]), np.shape(matrix), np.shape(np.reshape(matrix[0][:, 0].real, (1000, 24))))
+#
+# a = np.reshape(matrix[0][:, 0].real, (1000, 24))
 # print(a, a[0], a[:,0], np.shape(a), a[:][0])
 
 # ax = sns.heatmap(AZ[0].real, linewidth=0.5)
-sns.heatmap(a.T)
-plt.show()
+# sns.heatmap(a.T)
+# plt.show()
 
 # ax = sns.heatmap(AZ2[0].real, linewidth=0.5)
 # plt.show()
