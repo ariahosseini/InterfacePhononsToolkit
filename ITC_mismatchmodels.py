@@ -9,6 +9,7 @@ from scipy import interpolate
 import math
 import cmath
 import os
+from sys import exit
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -85,8 +86,8 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         dynam_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
             sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
-                         central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
-                                                                      num_atoms_unit_cell * 3] * cmath.exp(
+                                        central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
+                                        num_atoms_unit_cell * 3] * cmath.exp(
                 -1j * np.dot(crystal_points[2][__], points[:, _]))
             dynam_matrix_per_qpoint = dynam_matrix_per_qpoint + sum_matrix
         d_matrix = np.append(d_matrix, dynam_matrix_per_qpoint, axis=0)
@@ -123,7 +124,7 @@ class ITC:
         self.rho = rho
         self.c = c
 
-    def acoustic_mismatch(self, omega_cutoff, omega_max, n_omg=1000, n_mu=2000, n_sf=1e4):
+    def acoustic_mismatch(self, n_mu=2e4, n_sf=5e4):
         """
         acoustic_mismatch returns transmission coefficient of two solids in contact.
         The transmission is always from softer material (i) to stiffer one (j).
@@ -153,19 +154,19 @@ class ITC:
         z_j = self.rho[1] * self.c[1]
         mu_i = np.linspace(0, 1, n_mu)
         mu_j = np.sqrt(1 - ((self.c[1] / self.c[0]) ** 2) * (1 - np.power(mu_i, 2)))
-        Tij = 4 * (z_i * z_j) * np.divide(np.multiply(mu_i, mu_j), np.power(z_i * mu_i + z_j * mu_j, 2))
-        Tij[mu_i < mu_crt] = 0
-        tij = np.trapz(y=Tij, x=mu_i, dx=mu_i[1] - mu_i[0], axis=-1)
-        omg = np.linspace(0, omega_max, n_omg)
-        cutoff_idx = np.where(omg > omega_cutoff)
-        MTij = np.tile(Tij, (np.shape(omg)[0], 1))
-        MTij[cutoff_idx[0][0]:] = 0
+        tij = 4 * (z_i * z_j) * np.divide(np.multiply(mu_i, mu_j), np.power(z_i * mu_i + z_j * mu_j, 2))
+        tij[mu_i < mu_crt] = 0
+        # tij = np.trapz(y=Tij, x=mu_i, dx=mu_i[1] - mu_i[0], axis=-1)
+        # omg = np.linspace(0, omega_max, n_omg)
+        # cutoff_idx = np.where(omg > omega_cutoff)
+        # MTij = np.tile(Tij, (np.shape(omg)[0], 1))
+        # MTij[cutoff_idx[0][0]:] = 0
         sf_x = np.linspace(mu_crt, 1, n_sf)
         tmp_1 = np.sqrt(1-(self.c[1]/self.c[0])**2*(1-np.power(sf_x, 2)))
         tmp_2 = np.power((z_i/z_j+np.divide(tmp_1, sf_x)), 2)
         sf_y = (1+z_i/z_j)**2*np.divide(tmp_1, tmp_2)
         suppression_function = np.trapz(sf_y, sf_x)
-        return mu_i, mu_j, mu_crt, tij, Tij, MTij, suppression_function
+        return mu_i, mu_j, mu_crt, tij, suppression_function
 
     def diffuse_mismatch(self, path_to_mass_weighted_hessian, eps, nq, nsampleing):
         tmp_1 = vibrational_density_state(path_to_mass_weighted_hessian[0], eps[0], nq[0])
@@ -180,10 +181,22 @@ class ITC:
                         where=self.c[0] * dos_i + self.c[1] * dos_j != 0)
         return tij, omg
 
+    def equilibrium_thermal_conductance(self):
+
+
 
 A = ITC(rho=[1.2, 1.2], c=[2, 1])
+B = A.acoustic_mismatch()
+plt.polar(np.arccos(B[0]), B[-2], 'o')
+plt.show()
 
-# vDoS = vibrational_density_state("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
+print(B[-1])
+
+# exit(0)                              # Successful exit
+#
+#
+# vDoS = vibrational_density_state("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+#                                  "Run-14-hessian-analysis/"
 #                                  "Run-01-Si-28"
 #                                  "-Si-72/Si-hessian-mass-weighted-hessian.d")
 
@@ -202,14 +215,14 @@ A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
 #                    'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, skip_lines=16)
 # print(B[2])
-C = A.diffuse_mismatch(["~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
-                        "Run-01-Si-28"
-                        "-Si-72/Si-hessian-mass-weighted-hessian.d",
-                        "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-                        "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d"],
-                       eps=[3e12, 3e12], nq=[1e4, 1e4], nsampleing=1e4)
-plt.plot(C[1], C[0])
-plt.show()
+# C = A.diffuse_mismatch(["~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
+#                         "Run-01-Si-28"
+#                         "-Si-72/Si-hessian-mass-weighted-hessian.d",
+#                         "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+#                         "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d"],
+#                        eps=[3e12, 3e12], nq=[1e4, 1e4], nsampleing=1e4)
+# plt.plot(C[1], C[0])
+# plt.show()
 
 # matrix = dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
 #                           "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
