@@ -83,14 +83,14 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
     d_matrix = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
     points = qpoints(num_qpoints, lattice_parameter)
     for _ in range(num_qpoints):
-        dynam_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+        dynamical_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
             sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
-                                        central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
-                                        num_atoms_unit_cell * 3] * cmath.exp(
+                         central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
+                                                                      num_atoms_unit_cell * 3] * cmath.exp(
                 -1j * np.dot(crystal_points[2][__], points[:, _]))
-            dynam_matrix_per_qpoint = dynam_matrix_per_qpoint + sum_matrix
-        d_matrix = np.append(d_matrix, dynam_matrix_per_qpoint, axis=0)
+            dynamical_matrix_per_qpoint = dynamical_matrix_per_qpoint + sum_matrix
+        d_matrix = np.append(d_matrix, dynamical_matrix_per_qpoint, axis=0)
     d_matrix = d_matrix[num_atoms_unit_cell * 3:]
     eig_value = np.array([])
     eig_vector = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
@@ -103,6 +103,16 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
     frequency = np.sqrt(np.abs(-1 * eig_value.real))
     frequency = frequency * conversion_factor_to_THz
     return eig_vector, frequency
+
+
+def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
+                    central_unit_cell, lattice_parameter, intersection, skip_lines=16, num_qpoints=1000):
+    frq = dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
+                           central_unit_cell, lattice_parameter, skip_lines=16, num_qpoints=1000)
+    transverse_mode_frq = frq[1][int(num_qpoints//2):, -1]
+    longitudinal_mode_frq = np.concatenate((frq[1][int(num_qpoints//2):intersection, -3], frq[1][intersection:, -5]),
+                                           axis=None)
+    return transverse_mode_frq, longitudinal_mode_frq
 
 
 class ITC:
@@ -162,9 +172,9 @@ class ITC:
         # MTij = np.tile(Tij, (np.shape(omg)[0], 1))
         # MTij[cutoff_idx[0][0]:] = 0
         sf_x = np.linspace(mu_crt, 1, n_sf)
-        tmp_1 = np.sqrt(1-(self.c[1]/self.c[0])**2*(1-np.power(sf_x, 2)))
-        tmp_2 = np.power((z_i/z_j+np.divide(tmp_1, sf_x)), 2)
-        sf_y = (1+z_i/z_j)**2*np.divide(tmp_1, tmp_2)
+        tmp_1 = np.sqrt(1 - (self.c[1] / self.c[0]) ** 2 * (1 - np.power(sf_x, 2)))
+        tmp_2 = np.power((z_i / z_j + np.divide(tmp_1, sf_x)), 2)
+        sf_y = (1 + z_i / z_j) ** 2 * np.divide(tmp_1, tmp_2)
         suppression_function = np.trapz(sf_y, sf_x)
         return mu_i, mu_j, mu_crt, tij, suppression_function
 
@@ -181,16 +191,15 @@ class ITC:
                         where=self.c[0] * dos_i + self.c[1] * dos_j != 0)
         return tij, omg
 
-    def equilibrium_thermal_conductance(self):
-
+    # def equilibrium_thermal_conductance(self):
 
 
 A = ITC(rho=[1.2, 1.2], c=[2, 1])
-B = A.acoustic_mismatch()
-plt.polar(np.arccos(B[0]), B[-2], 'o')
-plt.show()
+# B = A.acoustic_mismatch()
+# plt.polar(np.arccos(B[0]), B[-2], 'o')
+# plt.show()
 
-print(B[-1])
+# print(B[-1])
 
 # exit(0)                              # Successful exit
 #
@@ -228,12 +237,17 @@ print(B[-1])
 #                           "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
 #                           '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
 #                           'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
-# AW = np.expand_dims(matrix[0], axis=0)
-# AZ = np.reshape(AW, (24, 1000, 24))
-# AZ2 = np.reshape(AW, (1000, 24, 24))
-# print(np.shape(matrix[1]))
-# plt.plot(matrix[1])
+# print(np.shape(matrix))
+# plt.plot(matrix[1][:, -1], 'r--', matrix[1][:, 0])
 # plt.show()
+
+matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
+                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 900, skip_lines=16)
+# print(np.shape(matrix))
+plt.plot(matrix[0], '--', matrix[1])
+plt.show()
 
 # print(np.shape(matrix[0][:24, :]), np.shape(matrix), np.shape(np.reshape(matrix[0][:, 0].real, (1000, 24))))
 #
