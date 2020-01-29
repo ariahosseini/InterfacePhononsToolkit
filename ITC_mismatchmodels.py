@@ -86,8 +86,8 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         dynamical_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
             sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
-                         central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
-                                                                      num_atoms_unit_cell * 3] * cmath.exp(
+                                        central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
+                                        num_atoms_unit_cell * 3] * cmath.exp(
                 -1j * np.dot(crystal_points[2][__], points[:, _]))
             dynamical_matrix_per_qpoint = dynamical_matrix_per_qpoint + sum_matrix
         d_matrix = np.append(d_matrix, dynamical_matrix_per_qpoint, axis=0)
@@ -233,29 +233,29 @@ A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # plt.plot(C[1], C[0])
 # plt.show()
 
-# matrix = dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-#                           "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
-#                           '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-#                           'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
-# print(np.shape(matrix))
-# plt.plot(matrix[1][:, -1], 'r--', matrix[1][:, 0])
-# plt.show()
-
-matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+matrix = dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
                           "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
                           '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 900, skip_lines=16)
+                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
+# print(np.shape(matrix[0]))
+# plt.plot(matrix[1][:, -1], 'r--', matrix[1][:, 0])
+# plt.show()
+#
+# matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+#                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
+#                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+#                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 900, skip_lines=16)
 # print(np.shape(matrix))
-plt.plot(matrix[0], '--', matrix[1])
-plt.show()
+# plt.plot(matrix[0], '--', matrix[1])
+# plt.show()
 
 # print(np.shape(matrix[0][:24, :]), np.shape(matrix), np.shape(np.reshape(matrix[0][:, 0].real, (1000, 24))))
 #
 # a = np.reshape(matrix[0][:, 0].real, (1000, 24))
 # print(a, a[0], a[:,0], np.shape(a), a[:][0])
-
-# ax = sns.heatmap(AZ[0].real, linewidth=0.5)
-# sns.heatmap(a.T)
+np.shape(matrix[0])
+ax = sns.heatmap(matrix[0][::24, :].real.T)
+# sns.heatmap(ax)
 # plt.show()
 
 # ax = sns.heatmap(AZ2[0].real, linewidth=0.5)
