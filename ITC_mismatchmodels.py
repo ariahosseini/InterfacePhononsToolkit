@@ -86,8 +86,8 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         dynamical_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
             sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
-                                        central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
-                                        num_atoms_unit_cell * 3] * cmath.exp(
+                         central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
+                                                                      num_atoms_unit_cell * 3] * cmath.exp(
                 -1j * np.dot(crystal_points[2][__], points[:, _]))
             dynamical_matrix_per_qpoint = dynamical_matrix_per_qpoint + sum_matrix
         d_matrix = np.append(d_matrix, dynamical_matrix_per_qpoint, axis=0)
@@ -113,25 +113,40 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
                     central_unit_cell, lattice_parameter, intersection, skip_lines=16, num_qpoints=1000):
     frq = dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
                            central_unit_cell, lattice_parameter, skip_lines=16, num_qpoints=1000)
-    transverse_mode_frq = frq[1][int(num_qpoints//2):, 0]
-    longitudinal_mode_frq = np.concatenate((frq[1][int(num_qpoints//2):intersection, 2], frq[1][intersection:, 4]))
-    tmp1 = np.reshape(frq[0][:, 2], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints//2):intersection, :]
+    transverse_mode_frq = frq[1][int(num_qpoints // 2):, 0]
+    longitudinal_mode_frq = np.concatenate((frq[1][int(num_qpoints // 2):intersection, 2], frq[1][intersection:, 4]))
+    tmp1 = np.reshape(frq[0][:, 2], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints // 2):intersection, :]
     tmp2 = np.reshape(frq[0][:, 4], (num_qpoints, num_atoms_unit_cell * 3))[intersection:, :]
     longitudinal_eigvec = np.concatenate((tmp1.T, tmp2.T), axis=1)
-    tmp3 = np.reshape(frq[0][:, 0], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints//2):, :]
-    tmp4 = np.reshape(frq[0][:, 1], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints//2):, :]
+    tmp3 = np.reshape(frq[0][:, 0], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints // 2):, :]
+    tmp4 = np.reshape(frq[0][:, 1], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints // 2):, :]
     # transverse_eigvec = frq[0][int(num_qpoints//2):, :2]
-    angleX = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([0, 1, 0]), int(num_qpoints//2),
-                                                                                   num_atoms_unit_cell)), axis=1),
-                                 np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([0, 1, 0]),int(num_qpoints//2),
-                                                                                  num_atoms_unit_cell
-                                                                                  )), axis=1)))])
-    angleY = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([1, 0, 0]), int(num_qpoints//2),
-                                                                                   num_atoms_unit_cell)), axis=1),
-                                 np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([1, 0, 0]),int(num_qpoints//2),
-                                                                                  num_atoms_unit_cell
-                                                                                  )), axis=1)))])
-    return transverse_mode_frq, longitudinal_mode_frq, longitudinal_eigvec, angleX
+    angleX = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([0, 1, 0]),
+                                                                                             int(num_qpoints // 2),
+                                                                                             num_atoms_unit_cell)),
+                                                  axis=1),
+                                           np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([0, 1, 0]),
+                                                                                             int(num_qpoints // 2),
+                                                                                             num_atoms_unit_cell)),
+                                                  axis=1)))])
+    angleY = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([1, 0, 0]),
+                                                                                             int(num_qpoints // 2),
+                                                                                             num_atoms_unit_cell)),
+                                                  axis=1),
+                                           np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([1, 0, 0]),
+                                                                                             int(num_qpoints // 2),
+                                                                                             num_atoms_unit_cell)),
+                                                  axis=1)))])
+    transverse_eigvec_x = np.multiply(tmp3, numpy.matlib.repmat(np.cos(angleX).T, 1, 3 * num_atoms_unit_cell)) + \
+                          np.multiply(tmp4, numpy.matlib.repmat(np.sin(angleX).T, 1, 3 * num_atoms_unit_cell))
+
+    transverse_eigvec_y = np.multiply(tmp3, numpy.matlib.repmat(np.cos(angleY).T, 1, 3 * num_atoms_unit_cell)) + \
+                          np.multiply(tmp4, numpy.matlib.repmat(np.sin(angleY).T, 1, 3 * num_atoms_unit_cell))
+
+    transverse_eigvec = np.array([transverse_eigvec_x, transverse_eigvec_y])
+
+    return transverse_mode_frq, longitudinal_mode_frq, longitudinal_eigvec, transverse_eigvec
+
 
 # alpha = atan(sum((-1*egn_vec_t1.*repmat([0,1,0]',8,1)))./sum((egn_vec_t2.*repmat([0,1,0]',8,1))));
 # beta = atan(sum((-1*egn_vec_t1.*repmat([1,0,0]',8,1)))./sum((egn_vec_t2.*repmat([1,0,0]',8,1))));
