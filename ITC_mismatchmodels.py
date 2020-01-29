@@ -118,8 +118,27 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
     tmp1 = np.reshape(frq[0][:, 2], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints//2):intersection, :]
     tmp2 = np.reshape(frq[0][:, 4], (num_qpoints, num_atoms_unit_cell * 3))[intersection:, :]
     longitudinal_eigvec = np.concatenate((tmp1.T, tmp2.T), axis=1)
-    return transverse_mode_frq, longitudinal_mode_frq, longitudinal_eigvec
+    tmp3 = np.reshape(frq[0][:, 0], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints//2):, :]
+    tmp4 = np.reshape(frq[0][:, 1], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints//2):, :]
+    # transverse_eigvec = frq[0][int(num_qpoints//2):, :2]
+    angleX = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([0, 1, 0]), int(num_qpoints//2),
+                                                                                   num_atoms_unit_cell)), axis=1),
+                                 np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([0, 1, 0]),int(num_qpoints//2),
+                                                                                  num_atoms_unit_cell
+                                                                                  )), axis=1)))])
+    angleY = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([1, 0, 0]), int(num_qpoints//2),
+                                                                                   num_atoms_unit_cell)), axis=1),
+                                 np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([1, 0, 0]),int(num_qpoints//2),
+                                                                                  num_atoms_unit_cell
+                                                                                  )), axis=1)))])
+    return transverse_mode_frq, longitudinal_mode_frq, longitudinal_eigvec, angleX
 
+# alpha = atan(sum((-1*egn_vec_t1.*repmat([0,1,0]',8,1)))./sum((egn_vec_t2.*repmat([0,1,0]',8,1))));
+# beta = atan(sum((-1*egn_vec_t1.*repmat([1,0,0]',8,1)))./sum((egn_vec_t2.*repmat([1,0,0]',8,1))));
+# alpha(isnan(real(alpha))) = pi/2;
+# beta(isnan(real(beta))) = pi/2;
+# egn_vec_x = egn_vec_t1.*cos(alpha)+egn_vec_t2.*sin(alpha);
+# egn_vec_y = egn_vec_t1.*cos(beta)+egn_vec_t2.*sin(beta);
 
 class ITC:
     """
@@ -253,7 +272,7 @@ A = ITC(rho=[1.2, 1.2], c=[2, 1])
 matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-                         'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 900, skip_lines=16)
+                         'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 901, skip_lines=16)
 # print(np.shape(matrix[2]))
 # plt.plot(matrix[0], '--', matrix[1])
 # plt.show()
