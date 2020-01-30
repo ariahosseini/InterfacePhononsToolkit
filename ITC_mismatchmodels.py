@@ -148,12 +148,25 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
     return transverse_mode_frq, longitudinal_mode_frq, longitudinal_eigvec, transverse_eigvec
 
 
-# alpha = atan(sum((-1*egn_vec_t1.*repmat([0,1,0]',8,1)))./sum((egn_vec_t2.*repmat([0,1,0]',8,1))));
-# beta = atan(sum((-1*egn_vec_t1.*repmat([1,0,0]',8,1)))./sum((egn_vec_t2.*repmat([1,0,0]',8,1))));
-# alpha(isnan(real(alpha))) = pi/2;
-# beta(isnan(real(beta))) = pi/2;
-# egn_vec_x = egn_vec_t1.*cos(alpha)+egn_vec_t2.*sin(alpha);
-# egn_vec_y = egn_vec_t1.*cos(beta)+egn_vec_t2.*sin(beta);
+def gaussian_distribution(sigma, expected_value, num_qpoints, lattice_parameter):
+    points = qpoints(num_qpoints, lattice_parameter)
+    gaussian = (1.0 / np.sqrt(2 * math.pi) / sigma) * np.exp(
+        (-1.0 / 2) * np.power(((points - expected_value) / sigma), 2))
+    return gaussian
+
+
+def sorted_atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines=16):
+    positions = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell,
+                               skip_lines=16)[0]
+    tmp = positions[positions[:, 0].argsort()]
+
+    return positions[0]
+
+
+def single_wave(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines=16):
+    positions = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines)
+    return positions
+
 
 class ITC:
     """
@@ -261,8 +274,8 @@ A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # plt.plot(vDoS[1])
 # plt.show()
 
-# B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-#                    'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, skip_lines=16)
+B = sorted_atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, skip_lines=16)
 # print(B[2])
 # C = A.diffuse_mismatch(["~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
 #                         "Run-01-Si-28"
@@ -284,15 +297,15 @@ A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # plt.plot(matrix[1][:, -1], 'r--', matrix[1][:, 0])
 # plt.show()
 #
-matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-                         "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
-                         '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-                         'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 901, skip_lines=16)
+# matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+#                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
+#                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+#                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 901, skip_lines=16)
 # print(np.shape(matrix[2]))
 # plt.plot(matrix[0], '--', matrix[1])
 # plt.show()
 
-ax = sns.heatmap(matrix[2].real)
+# ax = sns.heatmap(matrix[-1][0].real)
 # print(np.shape(matrix[0][:24, :]), np.shape(matrix), np.shape(np.reshape(matrix[0][:, 0].real, (1000, 24))))
 #
 # a = np.reshape(matrix[0][:, 0].real, (1000, 24))
