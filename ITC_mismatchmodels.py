@@ -155,16 +155,13 @@ def gaussian_distribution(sigma, expected_value, num_qpoints, lattice_parameter)
     return gaussian
 
 
-def sorted_atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines=16):
-    positions = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell,
-                               skip_lines=16)[0]
-    tmp = positions[positions[:, 0].argsort()]
-
-    return positions[0]
-
-
-def single_wave(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines=16):
-    positions = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines)
+def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms,
+                num_atoms_unit_cell, central_unit_cell, lattice_parameter, intersection, frq_mode, idx_ko,
+                origin_unit_cell=1, skip_lines=16, num_qpoints=1000):
+    positions = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, origin_unit_cell, skip_lines)
+    frq = acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
+                          central_unit_cell, lattice_parameter, intersection, skip_lines, num_qpoints)
+    sign_correction = np.exp(-1j * (np.arctan(frq[2][frq_mode, idx_ko].imag / frq[2][frq_mode, idx_ko].real)))
     return positions
 
 
