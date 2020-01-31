@@ -5,6 +5,7 @@ University of California, Riverside
 """
 import numpy as np
 import numpy.matlib
+from mpl_toolkits.mplot3d import Axes3D  # This import registers the 3D projection, but is otherwise unused
 from scipy import interpolate
 import math
 import cmath
@@ -162,7 +163,16 @@ def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atom
     frq = acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
                           central_unit_cell, lattice_parameter, intersection, skip_lines, num_qpoints)
     sign_correction = np.exp(-1j * (np.arctan(frq[2][frq_mode, idx_ko].imag / frq[2][frq_mode, idx_ko].real)))
-    return positions
+    
+
+    # u = zeros(size(atom_site, 1), 3);
+    # for i = 1:3
+    # u(:, i) = real(gauss(1, idx_ko) * repmat(egn_vec_l(i: 3:end, idx_ko), n_cell, 1)...
+    #                                                                                     . * exp(
+    #     -1j * (atom_site * kp(:, idx_ko))).*crct_trm);
+    # end
+
+    return positions,sign_correction, frq
 
 
 class ITC:
@@ -271,8 +281,26 @@ A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # plt.plot(vDoS[1])
 # plt.show()
 
-B = sorted_atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, skip_lines=16)
+B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+                   'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, skip_lines=16)
+
+
+C = single_wave("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+                "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
+                "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+                "Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5", 1000, 8, 63, 5.43, 901, 3, 200,
+                origin_unit_cell=1, skip_lines=16, num_qpoints=1000)
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(C[0][0][:, 2], C[0][0][:, 3], C[0][0][:, 4])
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(C[0][1][:, 0], C[0][1][:, 1], C[0][1][:, 2])
+
+
+
 # print(B[2])
 # C = A.diffuse_mismatch(["~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
 #                         "Run-01-Si-28"
@@ -314,3 +342,4 @@ B = sorted_atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summe
 # plt.show()
 # plt.plot(A[0], A[1])
 # plt.show()
+
