@@ -157,13 +157,19 @@ def gaussian_distribution(sigma, expected_value, num_qpoints, lattice_parameter)
 
 
 def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms,
-                num_atoms_unit_cell, central_unit_cell, lattice_parameter, intersection, frq_mode, idx_ko,
+                num_atoms_unit_cell, central_unit_cell, lattice_parameter, intersection, frq_mode,
+                idx_ko, sigma, expected_value, num_cell,
                 origin_unit_cell=1, skip_lines=16, num_qpoints=1000):
     positions = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, origin_unit_cell, skip_lines)
     frq = acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
                           central_unit_cell, lattice_parameter, intersection, skip_lines, num_qpoints)
+    gaussian = gaussian_distribution(sigma, expected_value, num_qpoints, lattice_parameter)
+    points = qpoints(num_qpoints, lattice_parameter)
     sign_correction = np.exp(-1j * (np.arctan(frq[2][frq_mode, idx_ko].imag / frq[2][frq_mode, idx_ko].real)))
-    
+    wave = gaussian[idx_ko]*np.multiply(numpy.matlib.repmat(frq[frq_mode], num_cell, 1),
+                                        -1j*np.exp(positions[1]*points[idx_ko])*sign_correction)
+    return wave
+
 
     # u = zeros(size(atom_site, 1), 3);
     # for i = 1:3
@@ -172,7 +178,7 @@ def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atom
     #     -1j * (atom_site * kp(:, idx_ko))).*crct_trm);
     # end
 
-    return positions,sign_correction, frq
+    # return positions,sign_correction, frq
 
 
 class ITC:
@@ -288,8 +294,11 @@ B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/
 C = single_wave("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
                 "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
                 "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-                "Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5", 1000, 8, 63, 5.43, 901, 3, 200,
+                "Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5", 1000, 8, 63, 5.43, 901, 2, 200, 0.001, 0.005, 10,
                 origin_unit_cell=1, skip_lines=16, num_qpoints=1000)
+
+
+
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
