@@ -158,19 +158,23 @@ def gaussian_distribution(sigma, expected_value, num_qpoints, lattice_parameter)
 
 def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms,
                 num_atoms_unit_cell, central_unit_cell, lattice_parameter, intersection, frq_mode,
-                idx_ko, sigma, expected_value, num_cell, rep,
+                idx_ko, sigma, expected_value, rep,
                 origin_unit_cell=1, skip_lines=[16, 9], num_qpoints=1000):
+    num_cell = rep[0]*rep[1]*rep[2]
     positions = atoms_position(path_to_atoms_positions[1], num_atoms[1], num_atoms_unit_cell, origin_unit_cell,
                                skip_lines[1])
-    solid_I_positions = positions[1][:num_cell*rep[0]*rep[1]]
+    solid_lattice_points = positions[-1][:num_cell]
     frq = acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions[0], num_atoms[0], num_atoms_unit_cell,
                           central_unit_cell, lattice_parameter, intersection, skip_lines[0], num_qpoints)
     gaussian = gaussian_distribution(sigma, expected_value, num_qpoints, lattice_parameter)[frq_mode]
     points = qpoints(num_qpoints, lattice_parameter)
     sign_correction = np.exp(-1j * (np.arctan(frq[2][frq_mode, idx_ko].imag / frq[2][frq_mode, idx_ko].real)))
-    wave = gaussian[idx_ko]*np.multiply(numpy.matlib.repmat(frq[frq_mode::3], num_cell, 1),
-                                         -1j*np.exp(np.matmul(solid_I_positions, points[:, idx_ko][np.newaxis].T))*sign_correction)
-    return positions, frq, gaussian, sign_correction, points
+    wave = gaussian[idx_ko]*np.multiply(numpy.matlib.repmat(frq[frq_mode][::3,idx_ko][np.newaxis].T, num_cell, 1),
+                                        np.exp(-1j*np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                                                num_atoms_unit_cell),
+                                                                        (num_cell*num_atoms_unit_cell,3)),
+                                                             points[:, idx_ko][np.newaxis].T)))*sign_correction
+    return positions, frq, gaussian, sign_correction, points, solid_lattice_points, wave
 
 
     # u = zeros(size(atom_site, 1), 3);
@@ -296,19 +300,18 @@ class ITC:
 C = single_wave("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
                 ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
                  "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
-                [1000, 5*5*400+5*5*400], 8, 63, 5.43, 901, 2, 400, 0.01, 0.005, 10, [5,5,400],
+                [1000, 8*5*5*400+8*5*5*400], 8, 63, 5.43, 901, 2, 300, 0.01, 0.005, [5, 5, 400],
                 origin_unit_cell=1, num_qpoints=1000)
 
 
-
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.scatter(C[0][0][:, 2], C[0][0][:, 3], C[0][0][:, 4])
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.scatter(C[0][1][:, 0], C[0][1][:, 1], C[0][1][:, 2])
+#
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(C[0][0][:, 2], C[0][0][:, 3], C[0][0][:, 4])
+#
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(C[0][1][:, 0], C[0][1][:, 1], C[0][1][:, 2])
 
 
 
