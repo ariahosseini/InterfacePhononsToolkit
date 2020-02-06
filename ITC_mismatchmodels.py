@@ -6,7 +6,7 @@ University of California, Riverside
 import numpy as np
 import numpy.matlib
 from numpy import linalg as LA
-from mpl_toolkits.mplot3d import Axes3D  # This import registers the 3D projection, but is otherwise unused
+from mpl_toolkits.mplot3d import Axes3D     # This import registers the 3D projection, but is otherwise unused
 from scipy import interpolate
 import math
 import cmath
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 global conversion_factor_to_THz
-conversion_factor_to_THz = 1 / 2 / math.pi / 1e12
+conversion_factor_to_THz = 1 / 2 / math.pi / 1e12   # Convert rad/s to THz
 
 
 def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
@@ -25,40 +25,51 @@ def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
     This function calculate vibrational density of state from hessian matrix
     of molecular dynamics calculations
     :arg
-        path_to_mass_weighted_hessian       : point to the mass weighted hessian file
-        eps                                 : tuning parameter, relate to line width
-        nq                                  : sampling grid
-
-    :type
-        path_to_mass_weighted_hessian       : string
-        eps                                 : float number
-        nq                                  : integer number
-
+        path_to_mass_weighted_hessian       : Point to the mass weighted hessian file, string
+        eps                                 : Tuning parameter, show the life time relate to line width, small eps leads
+                                              to noisy vDoS and large eps leads to unrealistic vDoS, float number
+        nq                                  : Sampling grid, integer number
     :returns
-        hessian_matrix                      : hessian matrix, np.array
-        frq                                 : frequency in 1/cm
-        density_state                       : vibrational density of state
-        omg                                 : frequency sampling corresponds to "density_state"
+        hessian_matrix                      : Hessian matrix, np.array, 3N by 3N array where N is number of atoms
+        frq                                 : Frequency in rad/S, can be converted to THz using conversion_factor_to_THz
+        density_state                       : Vibrational density of state, an array of 1 by nq
+        omg                                 : Frequency sampling corresponds to "density_state", an array of 1 by nq
     """
     with open(os.path.expanduser(path_to_mass_weighted_hessian)) as hessian_file:
-        hm_tmp_1 = hessian_file.readlines()  # hm stands for hessian matrix
+        hm_tmp_1 = hessian_file.readlines()     # hm stands for hessian matrix
     hm_tmp_2 = [line.split() for line in hm_tmp_1]
     hm_tmp_3 = np.array([[float(_) for _ in __] for __ in hm_tmp_2])
     hessian_file.close()
     hessian_symmetry = (np.triu(hm_tmp_3) + np.tril(hm_tmp_3).transpose()) / 2  # Hessian matrix is Hermitian
     hessian_matrix = hessian_symmetry + np.triu(hessian_symmetry, 1).transpose()
-    egn_value, egn_vector = np.linalg.eigh(hessian_matrix)
-    egn_value = np.where(egn_value < 0, egn_value, 0)
+    egn_value, egn_vector = np.linalg.eigh(hessian_matrix)  # egn_value are negative
+    egn_value = np.where(egn_value < 0, egn_value, 0)   # Get rid of unstable modes
     frq = np.sqrt(-1 * egn_value)  # Frequency from Hessian matrix
     frq = np.sort(frq)
-    omg = np.linspace(np.min(frq), np.max(frq), nq)  # Sampling the frequency
+    frq = frq[np.newaxis]
+    omg = np.linspace(np.min(frq), np.max(frq), nq)[np.newaxis]  # Sampling the frequency
     density_state = 1 / nq * np.sum(
-        1 / math.sqrt(math.pi) / eps * np.exp(-1 * np.power(np.array([omg]).T - frq, 2) / eps / eps),
-        axis=1)  # density of state
+        1 / math.sqrt(math.pi) / eps * np.exp(-1 * np.power(omg.T - frq, 2) / eps / eps),
+        axis=1)[np.newaxis]  # density of state
     return hessian_matrix, frq, density_state, omg
 
 
-def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, central_unit_cell, skip_lines=16):
+def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, reference_unit_cell, skip_lines=16):
+    """
+    This function returns the position of atoms, lattice points and positional vectors respect to a reference lattice
+    point
+    :arg
+        path_to_atoms_positions             : Point to the data file in LAMMPS format, string
+        num_atoms                           : Number of atoms, integer
+        num_atoms_unit_cell                 : Number of atoms per unitcell
+        reference_unit_cell                 : The index of the unitcell that is considered as the origin (0, 0, 0),
+                                              integer
+    :returns
+        position_of_atoms                   : Atoms position, [index, atom type, x, y, z], N by 5 array
+        lattice_points                      : Lattice point [x, y, z] N/Number of atoms per unitcell by 3 array
+        lattice_points_vectors              : Positional vector from origin to the unitcells,
+                                              N/Number of atoms per unitcell by 3 array
+    """
     with open(os.path.expanduser(path_to_atoms_positions)) as atomsPositionsFile:
         position_tmp_1 = atomsPositionsFile.readlines()
     position_tmp_2 = [line.split() for line in position_tmp_1]
@@ -66,12 +77,26 @@ def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, cent
     position_tmp_3 = np.array([[float(_) for _ in __] for __ in position_tmp_2[0:num_atoms]])
     position_of_atoms = position_tmp_3[np.argsort(position_tmp_3[:, 0])]
     lattice_points = np.array([_[2:5] for _ in position_of_atoms[::num_atoms_unit_cell]])
-    lattice_points_vectors = lattice_points - numpy.matlib.repmat(lattice_points[central_unit_cell],
+    lattice_points_vectors = lattice_points - numpy.matlib.repmat(lattice_points[reference_unit_cell],
                                                                   len(lattice_points), 1)
     return position_of_atoms, lattice_points, lattice_points_vectors
 
 
 def qpoints(num_qpoints, lattice_parameter):
+    """
+    This function calculate vibrational density of state from hessian matrix
+    of molecular dynamics calculations
+    :arg
+        path_to_mass_weighted_hessian       : Point to the mass weighted hessian file, string
+        eps                                 : Tuning parameter, show the life time relate to line width, small eps leads
+                                              to noisy vDoS and large eps leads to unrealistic vDoS, float number
+        nq                                  : Sampling grid, integer number
+    :returns
+        hessian_matrix                      : Hessian matrix, np.array, 3N by 3N array where N is number of atoms
+        frq                                 : Frequency in rad/S, can be converted to THz using conversion_factor_to_THz
+        density_state                       : Vibrational density of state, an array of 1 by nq
+        omg                                 : Frequency sampling corresponds to "density_state", an array of 1 by nq
+    """
     points = np.array([np.zeros(num_qpoints), np.zeros(num_qpoints),
                        np.linspace(0, math.pi / lattice_parameter, num_qpoints)])
     return points
@@ -191,13 +216,14 @@ def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms
     gaussian = gaussian_distribution(amplitude, sigma, idx_ko, num_qpoints, lattice_parameter)
     sign_correction = np.exp(-1j * (np.arctan(frq[2][frq_mode, :].imag / frq[2][frq_mode, :].real)))
     phonon_wavepacket = np.sum(np.multiply(numpy.matlib.repmat(np.multiply(gaussian, sign_correction), num_cell *
-                                                          num_atoms_unit_cell, 1),
-                                      np.multiply(numpy.matlib.repmat(frq[2][::3], num_cell, 1),
-                                                  np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
-                                                                                            num_atoms_unit_cell),
-                                                                                    (
-                                                                                    num_cell * num_atoms_unit_cell, 3)),
-                                                                         points)))), axis=1)
+                                                               num_atoms_unit_cell, 1),
+                                           np.multiply(numpy.matlib.repmat(frq[2][::3], num_cell, 1),
+                                                       np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                                                                 num_atoms_unit_cell),
+                                                                                         (
+                                                                                             num_cell * num_atoms_unit_cell,
+                                                                                             3)),
+                                                                              points)))), axis=1)
 
     return phonon_wavepacket
 
@@ -285,7 +311,7 @@ class ITC:
 #                                  eps=3e12, nq=1e3)
 #
 # plt.figure()
-# plt.plot(vDoS[3], vDoS[2])
+# plt.plot(vDoS[3][0], vDoS[2][0])
 # plt.show()
 #
 # plt.figure()
@@ -295,11 +321,11 @@ class ITC:
 # ax = sns.heatmap(vDoS[0].imag)
 #
 # plt.figure()
-# plt.plot(vDoS[1])
+# plt.plot(vDoS[1][0])
 # plt.show()
 #
 # plt.figure()
-# plt.plot(vDoS[3])
+# plt.plot(vDoS[3][0])
 # plt.show()
 
 # position_wrapped = atoms_position("~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.SiSi",
@@ -313,7 +339,7 @@ class ITC:
 # fig = plt.figure()
 # ax = fig.add_subplot(111, projection='3d')
 # ax.scatter(position_unwrapped[0][:, 2], position_unwrapped[0][:, 3], position_unwrapped[0][:, 4])
-#
+
 # dynam_matrix = dynamical_matrix("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
 #                                 "~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-unwraped",
 #                                 1000, 8, 63, 5.43, skip_lines=9)
@@ -354,12 +380,12 @@ class ITC:
 
 # plt.plot(wave[-2][:,2],wave[-1][1::8].real)
 
-wv = wavepacket("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
-                        ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
-                         "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
-                        [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.0005, 5.43, 401, 2, 110, 0.005, [5, 5, 400],
-                        )
-plt.plot(wv)
+# wv = wavepacket("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
+#                 ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
+#                  "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
+#                 [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.0005, 5.43, 401, 2, 110, 0.005, [5, 5, 400],
+#                 )
+# plt.plot(wv)
 # A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # B = A.acoustic_mismatch()
 # plt.polar(np.arccos(B[0]), B[-2], 'o')
