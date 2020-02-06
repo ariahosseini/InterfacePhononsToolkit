@@ -5,6 +5,7 @@ University of California, Riverside
 """
 import numpy as np
 import numpy.matlib
+from numpy import linalg as LA
 from mpl_toolkits.mplot3d import Axes3D  # This import registers the 3D projection, but is otherwise unused
 from scipy import interpolate
 import math
@@ -14,10 +15,9 @@ from sys import exit
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
-from numpy.core.multiarray import ndarray
 
 global conversion_factor_to_THz
-conversion_factor_to_THz = 15.633302
+conversion_factor_to_THz = 1 / 2 / math.pi / 1e12
 
 
 def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
@@ -52,8 +52,9 @@ def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
     frq = np.sqrt(-1 * egn_value)  # Frequency from Hessian matrix
     frq = np.sort(frq)
     omg = np.linspace(np.min(frq), np.max(frq), nq)  # Sampling the frequency
-    density_state = np.sum(1 / math.sqrt(math.pi) / eps * np.exp(-1 * np.power(np.array([omg]).T - frq, 2) / eps / eps),
-                           axis=1)  # density of state
+    density_state = 1 / nq * np.sum(
+        1 / math.sqrt(math.pi) / eps * np.exp(-1 * np.power(np.array([omg]).T - frq, 2) / eps / eps),
+        axis=1)  # density of state
     return hessian_matrix, frq, density_state, omg
 
 
@@ -72,7 +73,7 @@ def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, cent
 
 def qpoints(num_qpoints, lattice_parameter):
     points = np.array([np.zeros(num_qpoints), np.zeros(num_qpoints),
-                       np.linspace(-math.pi / lattice_parameter, math.pi / lattice_parameter, num=num_qpoints)])
+                       np.linspace(0, math.pi / lattice_parameter, num_qpoints)])
     return points
 
 
@@ -106,36 +107,35 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         eig_value = np.append(eig_value, energy).reshape(-1, num_atoms_unit_cell * 3)
         eig_vector = np.append(eig_vector, eigvecs, axis=0)
     eig_vector = eig_vector[num_atoms_unit_cell * 3:]
-    frequency = np.sqrt(np.abs(eig_value))
-    return eig_vector, frequency
+    frequency = np.sqrt(np.abs(eig_value)) * conversion_factor_to_THz
+    return eig_vector, frequency, points
 
 
 def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
                     central_unit_cell, lattice_parameter, intersection, skip_lines=16, num_qpoints=1000):
     frq = dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                           central_unit_cell, lattice_parameter, skip_lines=16, num_qpoints=1000)
-    transverse_mode_frq = frq[1][int(num_qpoints // 2):, 0]
-    longitudinal_mode_frq = np.concatenate((frq[1][int(num_qpoints // 2):intersection, 2], frq[1][intersection:, 4]))
-    tmp1 = np.reshape(frq[0][:, 2], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints // 2):intersection, :]
+                           central_unit_cell, lattice_parameter, skip_lines, num_qpoints)
+    transverse_mode_frq = frq[1][:, 0]
+    longitudinal_mode_frq = np.concatenate((frq[1][0:intersection, 2], frq[1][intersection:, 4]))
+    tmp1 = np.reshape(frq[0][:, 2], (num_qpoints, num_atoms_unit_cell * 3))[0:intersection, :]
     tmp2 = np.reshape(frq[0][:, 4], (num_qpoints, num_atoms_unit_cell * 3))[intersection:, :]
     longitudinal_eigvec = np.concatenate((tmp1.T, tmp2.T), axis=1)
-    tmp3 = np.reshape(frq[0][:, 0], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints // 2):, :]
-    tmp4 = np.reshape(frq[0][:, 1], (num_qpoints, num_atoms_unit_cell * 3))[int(num_qpoints // 2):, :]
-    # transverse_eigvec = frq[0][int(num_qpoints//2):, :2]
+    tmp3 = np.reshape(frq[0][:, 0], (num_qpoints, num_atoms_unit_cell * 3))
+    tmp4 = np.reshape(frq[0][:, 1], (num_qpoints, num_atoms_unit_cell * 3))
     angleX = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([0, 1, 0]),
-                                                                                             int(num_qpoints // 2),
+                                                                                             int(num_qpoints),
                                                                                              num_atoms_unit_cell)),
                                                   axis=1),
                                            np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([0, 1, 0]),
-                                                                                             int(num_qpoints // 2),
+                                                                                             int(num_qpoints),
                                                                                              num_atoms_unit_cell)),
                                                   axis=1)))])
     angleY = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([1, 0, 0]),
-                                                                                             int(num_qpoints // 2),
+                                                                                             int(num_qpoints),
                                                                                              num_atoms_unit_cell)),
                                                   axis=1),
                                            np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([1, 0, 0]),
-                                                                                             int(num_qpoints // 2),
+                                                                                             int(num_qpoints),
                                                                                              num_atoms_unit_cell)),
                                                   axis=1)))])
     transverse_eigvec_x = np.multiply(tmp3, numpy.matlib.repmat(np.cos(angleX).T, 1, 3 * num_atoms_unit_cell)) + \
@@ -146,45 +146,57 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
 
     transverse_eigvec = np.array([transverse_eigvec_x, transverse_eigvec_y])
 
-    return transverse_mode_frq, longitudinal_mode_frq, longitudinal_eigvec, transverse_eigvec
+    return transverse_mode_frq, longitudinal_mode_frq, longitudinal_eigvec, transverse_eigvec, frq[-1]
 
 
-def gaussian_distribution(sigma, expected_value, num_qpoints, lattice_parameter):
+def gaussian_distribution(amplitude, sigma, wavenumber_idx, num_qpoints, lattice_parameter):
     points = qpoints(num_qpoints, lattice_parameter)
-    gaussian = (1.0 / np.sqrt(2 * math.pi) / sigma) * np.exp(
-        (-1.0 / 2) * np.power(((points - expected_value) / sigma), 2))
+    points_norm = LA.norm(points, axis=0)
+    expected_value = points_norm[wavenumber_idx]
+    gaussian = amplitude * (1.0 / np.sqrt(2 * math.pi) / sigma) * np.exp(
+        -1.0 * np.power(((points_norm - expected_value) / np.sqrt(2) / sigma), 2))
     return gaussian
 
 
 def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms,
-                num_atoms_unit_cell, central_unit_cell, lattice_parameter, intersection, frq_mode,
-                idx_ko, sigma, expected_value, rep,
+                num_atoms_unit_cell, central_unit_cell, amplitude, lattice_parameter, intersection, frq_mode,
+                idx_ko, sigma, rep,
                 origin_unit_cell=1, skip_lines=[16, 9], num_qpoints=1000):
-    num_cell = rep[0]*rep[1]*rep[2]
+    num_cell = rep[0] * rep[1] * rep[2]
     positions = atoms_position(path_to_atoms_positions[1], num_atoms[1], num_atoms_unit_cell, origin_unit_cell,
                                skip_lines[1])
     solid_lattice_points = positions[-1][:num_cell]
     frq = acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions[0], num_atoms[0], num_atoms_unit_cell,
                           central_unit_cell, lattice_parameter, intersection, skip_lines[0], num_qpoints)
-    gaussian = gaussian_distribution(sigma, expected_value, num_qpoints, lattice_parameter)[frq_mode]
+    gaussian = gaussian_distribution(amplitude, sigma, idx_ko, num_qpoints, lattice_parameter)
     points = qpoints(num_qpoints, lattice_parameter)
     sign_correction = np.exp(-1j * (np.arctan(frq[2][frq_mode, idx_ko].imag / frq[2][frq_mode, idx_ko].real)))
-    wave = gaussian[idx_ko]*np.multiply(numpy.matlib.repmat(frq[frq_mode][::3,idx_ko][np.newaxis].T, num_cell, 1),
-                                        np.exp(-1j*np.matmul(np.reshape(np.tile(solid_lattice_points,
-                                                                                num_atoms_unit_cell),
-                                                                        (num_cell*num_atoms_unit_cell,3)),
-                                                             points[:, idx_ko][np.newaxis].T)))*sign_correction
+    print(np.shape(sign_correction))
+    print(np.shape(frq[2][::3, idx_ko][np.newaxis].T))
+    print(np.shape(numpy.matlib.repmat(frq[2][::3, idx_ko][np.newaxis].T, num_cell, 1)))
+    print(np.shape(solid_lattice_points))
+    print(np.shape(np.tile(solid_lattice_points, num_atoms_unit_cell)))
+    print(np.shape(np.reshape(np.tile(solid_lattice_points, num_atoms_unit_cell), (num_cell * num_atoms_unit_cell, 3))))
+    print(np.shape(points[:, idx_ko][np.newaxis].T))
+    print(np.shape(np.matmul(np.reshape(np.tile(solid_lattice_points, num_atoms_unit_cell),
+                                        (num_cell * num_atoms_unit_cell, 3)), points[:, idx_ko][np.newaxis].T)))
+    print(np.shape(np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                             num_atoms_unit_cell),
+                                                     (num_cell * num_atoms_unit_cell, 3)),
+                                          points[:, idx_ko][np.newaxis].T))))
+    print(np.shape(np.multiply(numpy.matlib.repmat(frq[2][::3, idx_ko][np.newaxis].T, num_cell, 1),
+                               np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                                         num_atoms_unit_cell),
+                                                                 (num_cell * num_atoms_unit_cell, 3)),
+                                                      points[:, idx_ko][np.newaxis].T)))))
+    print(np.shape(gaussian[idx_ko]))
+
+    wave = gaussian[idx_ko] * np.multiply(numpy.matlib.repmat(frq[2][::3, idx_ko][np.newaxis].T, num_cell, 1),
+                                          np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                                                    num_atoms_unit_cell),
+                                                                            (num_cell * num_atoms_unit_cell, 3)),
+                                                                 points[:, idx_ko][np.newaxis].T))) * sign_correction
     return positions, frq, gaussian, sign_correction, points, solid_lattice_points, wave
-
-
-    # u = zeros(size(atom_site, 1), 3);
-    # for i = 1:3
-    # u(:, i) = real(gauss(1, idx_ko) * repmat(egn_vec_l(i: 3:end, idx_ko), n_cell, 1)...
-    #                                                                                     . * exp(
-    #     -1j * (atom_site * kp(:, idx_ko))).*crct_trm);
-    # end
-
-    # return positions,sign_correction, frq
 
 
 class ITC:
@@ -265,95 +277,88 @@ class ITC:
 
     # def equilibrium_thermal_conductance(self):
 
+# vDoS = vibrational_density_state("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
+#                                  eps=3e12, nq=1e3)
+#
+# plt.figure()
+# plt.plot(vDoS[3], vDoS[2])
+# plt.show()
+#
+# plt.figure()
+# ax = sns.heatmap(vDoS[0].real)
+#
+# plt.figure()
+# ax = sns.heatmap(vDoS[0].imag)
+#
+# plt.figure()
+# plt.plot(vDoS[1])
+# plt.show()
+#
+# plt.figure()
+# plt.plot(vDoS[3])
+# plt.show()
+
+# position_wrapped = atoms_position("~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.SiSi",
+#                                   160000, 8, 0, skip_lines=16)
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(position_wrapped[0][:, 2], position_wrapped[0][:, 3], position_wrapped[0][:, 4])
+#
+# position_unwrapped = atoms_position("~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped",
+#                                     160000, 8, 0, skip_lines=9)
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(position_unwrapped[0][:, 2], position_unwrapped[0][:, 3], position_unwrapped[0][:, 4])
+#
+# dynam_matrix = dynamical_matrix("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
+#                                 "~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-unwraped",
+#                                 1000, 8, 63, 5.43, skip_lines=9)
+# print(np.shape(dynam_matrix[0]))
+#
+# fig = plt.figure()
+# ax = sns.heatmap(np.reshape(dynam_matrix[0][:, 2], (1000, 8 * 3)).real.T)
+#
+# fig = plt.figure()
+# plt.plot(dynam_matrix[1])
+# plt.show()
+# fig = plt.figure()
+# plt.plot(dynam_matrix[1][:, 0], 'b--', dynam_matrix[1][:, -1], 'r--')
+# plt.show()
+#
+# matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
+#                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
+#                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
+#                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 803, skip_lines=16)
+# print(np.shape(matrix[2]))
+# plt.plot(matrix[0], '--', matrix[1])
+# plt.show()
+#
+# plt.figure()
+# ax = sns.heatmap(matrix[-2][0].real.T)
+#
+# plt.figure()
+# ax = sns.heatmap(matrix[2].real)
+#
+# Gaussian = gaussian_distribution(0.0005, 0.005, 300, 1000, 5.43)
+# plt.plot(Gaussian)
+#
+# wave = single_wave("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
+#                    ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
+#                     "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
+#                    [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.0005, 5.43, 401, 2, 100, 0.005, [5, 5, 400],
+#                    origin_unit_cell=1, num_qpoints=1000)
+
+# plt.plot(wave[-2][:,2],wave[-1][1::8].real)
+
 
 # A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # B = A.acoustic_mismatch()
 # plt.polar(np.arccos(B[0]), B[-2], 'o')
 # plt.show()
 
-# print(B[-1])
-
-# exit(0)                              # Successful exit
-#
-#
-# vDoS = vibrational_density_state("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-#                                  "Run-14-hessian-analysis/"
-#                                  "Run-01-Si-28"
-#                                  "-Si-72/Si-hessian-mass-weighted-hessian.d")
-
-# plt.plot(vDoS[3], vDoS[2])
-# plt.show()
-
-# ax = sns.heatmap(vDoS[0].real, linewidth=0.5)
-# plt.show()
-#
-# ax = sns.heatmap(vDoS[0].imag, linewidth=0.5)
-# plt.show()
-
-# plt.plot(vDoS[1])
-# plt.show()
-
-# B = atoms_position('~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-#                    'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, skip_lines=16)
-
-
-C = single_wave("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
-                ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
-                 "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
-                [1000, 8*5*5*400+8*5*5*400], 8, 63, 5.43, 901, 2, 300, 0.01, 0.005, [5, 5, 400],
-                origin_unit_cell=1, num_qpoints=1000)
-
-
-#
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
-# ax.scatter(C[0][0][:, 2], C[0][0][:, 3], C[0][0][:, 4])
-#
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
-# ax.scatter(C[0][1][:, 0], C[0][1][:, 1], C[0][1][:, 2])
-
-
-
-# print(B[2])
 # C = A.diffuse_mismatch(["~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/Run-14-hessian-analysis/"
 #                         "Run-01-Si-28"
 #                         "-Si-72/Si-hessian-mass-weighted-hessian.d",
 #                         "~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
 #                         "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d"],
 #                        eps=[3e12, 3e12], nq=[1e4, 1e4], nsampleing=1e4)
-# plt.plot(C[1], C[0])
-# plt.show()
-
-# matrix = dynamical_matrix("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-#                           "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
-#                           '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-#                           'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, skip_lines=16)
-# print(np.shape(matrix[0]))
-# np.shape(matrix[0])
-# ax = sns.heatmap(np.reshape(matrix[0][12000:, 2].real, (500, 24)).T)
-
-# plt.plot(matrix[1][:, -1], 'r--', matrix[1][:, 0])
-# plt.show()
-#
-# matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
-#                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
-#                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
-#                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 901, skip_lines=16)
-# print(np.shape(matrix[2]))
-# plt.plot(matrix[0], '--', matrix[1])
-# plt.show()
-
-# ax = sns.heatmap(matrix[-1][0].real)
-# print(np.shape(matrix[0][:24, :]), np.shape(matrix), np.shape(np.reshape(matrix[0][:, 0].real, (1000, 24))))
-#
-# a = np.reshape(matrix[0][:, 0].real, (1000, 24))
-# print(a, a[0], a[:,0], np.shape(a), a[:][0])
-
-# ax = sns.heatmap(AZ2[0].real, linewidth=0.5)
-# plt.show()
-# plt.polar(A[0], A[1])
-# plt.show()
-# plt.plot(A[0], A[1])
-# plt.show()
-
