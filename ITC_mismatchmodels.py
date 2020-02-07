@@ -250,7 +250,7 @@ def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atom
     num_cell = rep[0] * rep[1] * rep[2]
     positions = atoms_position(path_to_atoms_positions[1], num_atoms[1], num_atoms_unit_cell, origin_unit_cell,
                                skip_lines[1])
-    solid_lattice_points = positions[-1][:num_cell]
+    solid_lattice_points = positions[2][:num_cell]
     frq = acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions[0], num_atoms[0], num_atoms_unit_cell,
                           central_unit_cell, lattice_parameter, intersection, BZ_path, skip_lines[0], num_qpoints)
     gaussian = gaussian_distribution(amplitude, sigma, idx_ko, num_qpoints, lattice_parameter)[0]
@@ -293,21 +293,28 @@ def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms
     num_cell = rep[0] * rep[1] * rep[2]
     positions = atoms_position(path_to_atoms_positions[1], num_atoms[1], num_atoms_unit_cell, origin_unit_cell,
                                skip_lines[1])
-    solid_lattice_points = positions[-1][:num_cell]
+    solid_lattice_points = positions[2][:num_cell]
     frq = acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions[0], num_atoms[0], num_atoms_unit_cell,
-                          central_unit_cell, lattice_parameter, intersection, skip_lines[0], num_qpoints)
+                          central_unit_cell, lattice_parameter, intersection, BZ_path, skip_lines[0], num_qpoints)
     points = qpoints(num_qpoints, lattice_parameter, BZ_path)
     gaussian = gaussian_distribution(amplitude, sigma, idx_ko, num_qpoints, lattice_parameter)[0]
-    sign_correction = np.exp(-1j * (np.arctan(frq[2][frq_mode, :].imag / frq[2][frq_mode, :].real)))[np.newaxis]
-    phonon_wavepacket = np.sum(np.multiply(numpy.matlib.repmat(np.multiply(gaussian, sign_correction), num_cell *
+    sign_correction = np.exp(-1j * (np.arctan(frq[1][frq_mode][frq_mode, :].imag / frq[1][frq_mode][frq_mode, :].real)))[np.newaxis]
+    print(np.shape(solid_lattice_points))
+    print(np.shape(frq[1][frq_mode]))
+    print(np.shape(frq[1][frq_mode][frq_mode, :]))
+    print(np.shape(frq[1][frq_mode][::3, :]))
+    print(np.shape(gaussian))
+    print(np.shape(sign_correction))
+    # phonon_wavepacket = 0
+    phonon_wavepacket = np.sum(np.multiply(numpy.matlib.repmat(np.multiply(gaussian[np.newaxis], sign_correction), num_cell *
                                                                num_atoms_unit_cell, 1),
-                                           np.multiply(numpy.matlib.repmat(frq[2][::3], num_cell, 1),
+                                           np.multiply(numpy.matlib.repmat(frq[1][frq_mode][::3,:], num_cell, 1),
                                                        np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
                                                                                                  num_atoms_unit_cell),
                                                                                          (
                                                                                              num_cell * num_atoms_unit_cell,
                                                                                              3)),
-                                                                              points)))), axis=1)
+                                                                              points[np.newaxis].T)))), axis=1)
 
     return phonon_wavepacket
 
@@ -475,12 +482,12 @@ class ITC:
 # plt.plot(wave[-2][:,2],wave[-1][2][::8])
 
 
-# wv = wavepacket("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
-#                 ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
-#                  "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
-#                 [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.0005, 5.43, 401, 2, 110, 0.005, [5, 5, 400],
-#                 )
-# plt.plot(wv)
+wv = wavepacket("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
+                ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
+                 "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
+                [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.0005, 5.43, 401, 2, 110, 0.005, [5, 5, 400],
+                )
+plt.plot(wv)
 # A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # B = A.acoustic_mismatch()
 # plt.polar(np.arccos(B[0]), B[-2], 'o')
