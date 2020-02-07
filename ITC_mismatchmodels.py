@@ -6,7 +6,7 @@ University of California, Riverside
 import numpy as np
 import numpy.matlib
 from numpy import linalg as LA
-from mpl_toolkits.mplot3d import Axes3D     # This import registers the 3D projection, but is otherwise unused
+from mpl_toolkits.mplot3d import Axes3D  # This import registers the 3D projection, but is otherwise unused
 from scipy import interpolate
 import math
 import cmath
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 global conversion_factor_to_THz
-conversion_factor_to_THz = 1 / 2 / math.pi / 1e12   # Convert rad/s to THz
+conversion_factor_to_THz = 1 / 2 / math.pi / 1e12  # Convert rad/s to THz
 
 
 def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
@@ -36,14 +36,14 @@ def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
         omg                                 : Frequency sampling corresponds to "density_state", an array of 1 by nq
     """
     with open(os.path.expanduser(path_to_mass_weighted_hessian)) as hessian_file:
-        hm_tmp_1 = hessian_file.readlines()     # hm stands for hessian matrix
+        hm_tmp_1 = hessian_file.readlines()  # hm stands for hessian matrix
     hm_tmp_2 = [line.split() for line in hm_tmp_1]
     hm_tmp_3 = np.array([[float(_) for _ in __] for __ in hm_tmp_2])
     hessian_file.close()
     hessian_symmetry = (np.triu(hm_tmp_3) + np.tril(hm_tmp_3).transpose()) / 2  # Hessian matrix is Hermitian
     hessian_matrix = hessian_symmetry + np.triu(hessian_symmetry, 1).transpose()
     egn_value, egn_vector = np.linalg.eigh(hessian_matrix)  # egn_value are negative
-    egn_value = np.where(egn_value < 0, egn_value, 0)   # Get rid of unstable modes
+    egn_value = np.where(egn_value < 0, egn_value, 0)  # Get rid of unstable modes
     frq = np.sqrt(-1 * egn_value)  # Frequency from Hessian matrix
     frq = np.sort(frq)
     frq = frq[np.newaxis]
@@ -82,33 +82,49 @@ def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, refe
     return position_of_atoms, lattice_points, lattice_points_vectors
 
 
-def qpoints(num_qpoints, lattice_parameter):
+def qpoints(num_qpoints, lattice_parameter, path):
     """
-    This function calculate vibrational density of state from hessian matrix
-    of molecular dynamics calculations
+    This function samples the BZ path
     :arg
-        path_to_mass_weighted_hessian       : Point to the mass weighted hessian file, string
-        eps                                 : Tuning parameter, show the life time relate to line width, small eps leads
-                                              to noisy vDoS and large eps leads to unrealistic vDoS, float number
-        nq                                  : Sampling grid, integer number
+        num_qpoints                         : Sampling number, integer
+        lattice_parameter                   : Lattice parameter, floating
+        path                                : 1 by 3 list of [1s or 0s], where 1 is yes and 0 is no
     :returns
-        hessian_matrix                      : Hessian matrix, np.array, 3N by 3N array where N is number of atoms
-        frq                                 : Frequency in rad/S, can be converted to THz using conversion_factor_to_THz
-        density_state                       : Vibrational density of state, an array of 1 by nq
-        omg                                 : Frequency sampling corresponds to "density_state", an array of 1 by nq
+        points                              : wave vectors
     """
-    points = np.array([np.zeros(num_qpoints), np.zeros(num_qpoints),
-                       np.linspace(0, math.pi / lattice_parameter, num_qpoints)])
+    points = np.multiply(
+        numpy.matlib.repmat(np.array([path]).T, 1, num_qpoints),
+        numpy.matlib.repmat(np.linspace(0, math.pi / lattice_parameter, num_qpoints)[np.newaxis], 3, 1)
+    )
     return points
 
 
 def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                     central_unit_cell, lattice_parameter, skip_lines=16, num_qpoints=1000):
+                     central_unit_cell, lattice_parameter, path=[0, 0, 1], skip_lines=16, num_qpoints=1000):
+    """
+    This function calculate vibrational eigenvectors and frequencies from dynamical matrix
+    of molecular dynamics calculations
+    :arg
+        path_to_mass_weighted_hessian       : Point to the mass weighted hessian file, string
+        path_to_atoms_positions             : Point to the data file in LAMMPS format, string
+        num_atoms                           : Number of atoms, integer
+        num_atoms_unit_cell                 : Number of atoms per unitcell
+        central_unit_cell                   : The index of the unitcell that is considered as the origin (0, 0, 0),
+                                              It is better to be at the center and number of cells should be odd number
+                                              , integer
+        lattice_parameter                   : Lattice parameter, floating
+        path                                : 1 by 3 list of [1s or 0s], where 1 is yes and 0 is no
+        num_qpoints                         : Sampling number, integer
+    :returns
+        eig_vector                          : Eigenvector
+        frequency                           : Frequency in rad/S, can be converted to THz using conversion_factor_to_THz
+        points                              : BZ path sampling, 3 by num_qpoints array
+    """
     hessian_matrix = vibrational_density_state(path_to_mass_weighted_hessian)[0]
     crystal_points = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
                                     central_unit_cell, skip_lines)
     d_matrix = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
-    points = qpoints(num_qpoints, lattice_parameter)
+    points = qpoints(num_qpoints, lattice_parameter, [0, 0, 1])
     for _ in range(num_qpoints):
         dynamical_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
@@ -132,14 +148,36 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         eig_value = np.append(eig_value, energy).reshape(-1, num_atoms_unit_cell * 3)
         eig_vector = np.append(eig_vector, eigvecs, axis=0)
     eig_vector = eig_vector[num_atoms_unit_cell * 3:]
-    frequency = np.sqrt(np.abs(eig_value)) * conversion_factor_to_THz
+    frequency = np.sqrt(np.abs(eig_value))
     return eig_vector, frequency, points
 
 
 def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                    central_unit_cell, lattice_parameter, intersection, skip_lines=16, num_qpoints=1000):
+                    central_unit_cell, lattice_parameter, intersection, path=[0, 0, 1], skip_lines=16,
+                    num_qpoints=1000):
+    """
+        This function returns transverse and longitudinal eigenmodes from dynamical matrix
+        of molecular dynamics calculations
+        :arg
+            path_to_mass_weighted_hessian       : Point to the mass weighted hessian file, string
+            path_to_atoms_positions             : Point to the data file in LAMMPS format, string
+            num_atoms                           : Number of atoms, integer
+            num_atoms_unit_cell                 : Number of atoms per unitcell
+            central_unit_cell                   : The index of the unitcell that is considered as the origin (0, 0, 0),
+                                                  It is better to be at the center and number of cells should be odd number
+                                                  , integer
+            lattice_parameter                   : Lattice parameter, floating
+            path                                : 1 by 3 list of [1s or 0s], where 1 is yes and 0 is no
+            num_qpoints                         : Sampling number, integer
+            intersection                        : any possible cross band. This works for one cross band between 3rd and
+                                                  fifth bands. It needs modification for other cases (simple).
+        :returns
+            eigvector                           : Eigenvector
+            eigenvalues                         : Frequency in rad/S, can be converted to THz using conversion_factor_to_THz
+            frq[-1]                             : BZ path sampling, 3 by num_qpoints array
+        """
     frq = dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                           central_unit_cell, lattice_parameter, skip_lines, num_qpoints)
+                           central_unit_cell, lattice_parameter, path, skip_lines, num_qpoints)
     transverse_mode_frq = frq[1][:, 0]
     longitudinal_mode_frq = np.concatenate((frq[1][0:intersection, 2], frq[1][intersection:, 4]))
     tmp1 = np.reshape(frq[0][:, 2], (num_qpoints, num_atoms_unit_cell * 3))[0:intersection, :]
@@ -169,9 +207,10 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
     transverse_eigvec_y = np.multiply(tmp3, numpy.matlib.repmat(np.cos(angleY).T, 1, 3 * num_atoms_unit_cell)) + \
                           np.multiply(tmp4, numpy.matlib.repmat(np.sin(angleY).T, 1, 3 * num_atoms_unit_cell))
 
-    transverse_eigvec = np.array([transverse_eigvec_x, transverse_eigvec_y])
+    eigenvalue = np.array([transverse_mode_frq, longitudinal_mode_frq])
+    eigenvector = np.array([transverse_eigvec_x.T, transverse_eigvec_y.T, longitudinal_eigvec])
 
-    return transverse_mode_frq, longitudinal_mode_frq, longitudinal_eigvec, transverse_eigvec, frq[-1]
+    return eigenvalue, eigenvector, frq[2]
 
 
 def gaussian_distribution(amplitude, sigma, wavenumber_idx, num_qpoints, lattice_parameter):
@@ -339,7 +378,12 @@ class ITC:
 # fig = plt.figure()
 # ax = fig.add_subplot(111, projection='3d')
 # ax.scatter(position_unwrapped[0][:, 2], position_unwrapped[0][:, 3], position_unwrapped[0][:, 4])
-
+#
+# points = qpoints(100, 5, [1,1,0])
+# plt.plot(points[0])
+# plt.plot(points[1])
+# plt.plot(points[2])
+#
 # dynam_matrix = dynamical_matrix("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
 #                                 "~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-unwraped",
 #                                 1000, 8, 63, 5.43, skip_lines=9)
@@ -354,21 +398,28 @@ class ITC:
 # fig = plt.figure()
 # plt.plot(dynam_matrix[1][:, 0], 'b--', dynam_matrix[1][:, -1], 'r--')
 # plt.show()
-#
+
 # matrix = acoustic_phonon("~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/"
 #                          "Run-14-hessian-analysis/Run-06-Ge/Si-hessian-mass-weighted-hessian.d",
 #                          '~/Desktop/cleanUpDesktop/LamResearch_Internship_Summer_2019/'
 #                          'Run-14-hessian-analysis/Run-05-Si/data.Si-5x5x5', 1000, 8, 63, 5.43, 803, skip_lines=16)
 # print(np.shape(matrix[2]))
-# plt.plot(matrix[0], '--', matrix[1])
+# plt.plot(LA.norm(matrix[2], axis=0), matrix[0][0], '--', LA.norm(matrix[2], axis=0), matrix[0][1])
 # plt.show()
 #
 # plt.figure()
-# ax = sns.heatmap(matrix[-2][0].real.T)
+# ax = sns.heatmap(matrix[1][0].real.T)
 #
 # plt.figure()
-# ax = sns.heatmap(matrix[2].real)
+# ax = sns.heatmap(matrix[1][1].real.T)
 #
+# plt.figure()
+# ax = sns.heatmap(matrix[1][2].real.T)
+#
+# plt.figure()
+# ax = sns.heatmap(matrix[1][0].imag.T)
+
+
 # Gaussian = gaussian_distribution(0.0005, 0.005, 300, 1000, 5.43)
 # plt.plot(Gaussian)
 #
