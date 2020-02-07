@@ -256,18 +256,26 @@ def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atom
     gaussian = gaussian_distribution(amplitude, sigma, idx_ko, num_qpoints, lattice_parameter)[0]
     points = qpoints(num_qpoints, lattice_parameter, BZ_path)
     sign_correction = np.exp(-1j * (np.arctan(frq[1][frq_mode][frq_mode, idx_ko].imag / frq[1][frq_mode][frq_mode, idx_ko].real)))
-    print(np.shape(gaussian))
-    print(np.shape(points))
-    print(sign_correction)
-    print(gaussian[0, idx_ko])
-    print(frq[1][frq_mode][::3, idx_ko].T)
-    wave = 0
-    # wave = gaussian[0, idx_ko] * np.multiply(numpy.matlib.repmat(frq[2][::3, idx_ko][np.newaxis].T, num_cell, 1),
-    #                                       np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
-    #                                                                                 num_atoms_unit_cell),
-    #                                                                         (num_cell * num_atoms_unit_cell, 3)),
-    #                                                              points[:, idx_ko][np.newaxis].T))) * sign_correction
-    return positions, frq, gaussian, sign_correction, points, solid_lattice_points, wave
+    wv_x = gaussian[0, idx_ko] * \
+           np.multiply(numpy.matlib.repmat(frq[1][frq_mode][::3, idx_ko][np.newaxis].T, num_cell, 1),
+                                          np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                                                    num_atoms_unit_cell),
+                                                                            (num_cell * num_atoms_unit_cell, 3)),
+                                                                 points[:, idx_ko][np.newaxis].T))) * sign_correction
+    wv_y = gaussian[0, idx_ko] * \
+           np.multiply(numpy.matlib.repmat(frq[1][frq_mode][1::3, idx_ko][np.newaxis].T, num_cell, 1),
+                                          np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                                                    num_atoms_unit_cell),
+                                                                            (num_cell * num_atoms_unit_cell, 3)),
+                                                                 points[:, idx_ko][np.newaxis].T))) * sign_correction
+    wv_z = gaussian[0, idx_ko] * \
+           np.multiply(numpy.matlib.repmat(frq[1][frq_mode][2::3, idx_ko][np.newaxis].T, num_cell, 1),
+                                          np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                                                    num_atoms_unit_cell),
+                                                                            (num_cell * num_atoms_unit_cell, 3)),
+                                                                 points[:, idx_ko][np.newaxis].T))) * sign_correction
+    wave = np.concatenate((wv_x.T, wv_y.T, wv_z.T), axis=0)
+    return positions, frq, gaussian, sign_correction, points, solid_lattice_points, wave.real
 
 
 def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms,
@@ -459,13 +467,13 @@ class ITC:
 # Gaussian = gaussian_distribution(0.0005, 0.005, 300, 1000, 5.43)
 # plt.plot(Gaussian[1][0], Gaussian[0][0])
 #
-wave = single_wave("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
-                   ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
-                    "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
-                   [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.0005, 5.43, 401, 2, 100, 0.005, [5, 5, 400],
-                   origin_unit_cell=1, num_qpoints=1000)
+# wave = single_wave("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
+#                    ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
+#                     "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
+#                    [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.0005, 5.43, 401, 2, 20, 0.005, [5, 5, 400],
+#                    origin_unit_cell=1, num_qpoints=1000)
+# plt.plot(wave[-2][:,2],wave[-1][2][::8])
 
-plt.plot(wave[-2][:,2],wave[-1][1::8].real)
 
 # wv = wavepacket("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
 #                 ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
