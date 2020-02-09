@@ -237,7 +237,7 @@ def gaussian_distribution(amplitude, sigma, wavenumber_idx, num_qpoints, lattice
 
 def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms,
                 num_atoms_unit_cell, central_unit_cell, amplitude, lattice_parameter, intersection, frq_mode,
-                idx_ko, sigma, rep, BZ_path=[0, 0, 1], origin_unit_cell=1, skip_lines=[16, 9], num_qpoints=1000):
+                idx_ko, sigma, rep, BZ_path=None, origin_unit_cell=1, skip_lines=[16, 9], num_qpoints=1000):
     """
     This function samples the BZ path
     :arg
@@ -247,6 +247,8 @@ def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atom
     :returns
         points                              : wave vectors
     """
+    if BZ_path is None:
+        BZ_path = [0, 0, 1]
     num_cell = rep[0] * rep[1] * rep[2]
     positions = atoms_position(path_to_atoms_positions[1], num_atoms[1], num_atoms_unit_cell, origin_unit_cell,
                                skip_lines[1])
@@ -281,8 +283,8 @@ def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atom
 
 def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms,
                num_atoms_unit_cell, central_unit_cell, amplitude, lattice_parameter, intersection, frq_mode,
-               idx_ko, sigma, rep, time=10, BZ_path=[0, 0, 1], origin_unit_cell=1, skip_lines=[16, 9],
-               num_qpoints=1000):
+               idx_ko, sigma, rep, time=10, BZ_path=None, origin_unit_cell=0, skip_lines=[16, 9],
+               num_qpoints=500):
     """
     This function samples the BZ path
     :arg
@@ -292,6 +294,8 @@ def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms
     :returns
         points                              : wave vectors
     """
+    if BZ_path is None:
+        BZ_path = [0, 0, 1]
     num_cell = rep[0] * rep[1] * rep[2]
     positions = atoms_position(path_to_atoms_positions[1], num_atoms[1], num_atoms_unit_cell, origin_unit_cell,
                                skip_lines[1])
@@ -301,21 +305,9 @@ def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms
     points = qpoints(num_qpoints, lattice_parameter, BZ_path)
     gaussian = gaussian_distribution(amplitude, sigma, idx_ko, num_qpoints, lattice_parameter)[0]
     sign_correction = \
-    np.exp(-1j * (np.arctan(np.divide(frq[1][frq_mode][frq_mode, :].imag, frq[1][frq_mode][frq_mode, :].real))))[np.newaxis]
+    np.exp(-1j * (np.arctan(np.divide(frq[1][frq_mode][frq_mode, :].imag[np.newaxis],
+                                      frq[1][frq_mode][frq_mode, :].real[np.newaxis]))))
     omega_time = np.exp(1j * (2 * math.pi) * time * frq[0][frq_mode,:])[np.newaxis]
-    print(np.shape(gaussian))
-    print(np.shape(sign_correction))
-    print(np.shape(numpy.matlib.repmat(np.multiply(gaussian, sign_correction), num_cell * num_atoms_unit_cell, 1)))
-    print(np.shape(frq[1][frq_mode][::3, :]))
-    print(np.shape(frq[1][frq_mode][frq_mode, :]))
-    print(np.shape(omega_time))
-    print(np.shape(points))
-    print(np.shape(np.reshape(np.tile(solid_lattice_points,
-                                                                                                num_atoms_unit_cell),
-                                                                                        (
-                                                                                            num_cell * num_atoms_unit_cell,
-                                                                                            3))))
-    print(np.shape(0))
 
     wv_x = np.sum(np.multiply(
         np.multiply(
@@ -327,30 +319,28 @@ def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms
                )
     ), axis=1)[np.newaxis]
 
-    wv_y = np.sum(np.multiply(numpy.matlib.repmat(np.multiply(gaussian, sign_correction), num_cell * num_atoms_unit_cell, 1),
-                              np.multiply(np.multiply(numpy.matlib.repmat(frq[1][frq_mode][1::3, :], num_cell, 1),
-                                                      np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
-                                                                                                num_atoms_unit_cell),
-                                                                                        (
-                                                                                            num_cell * num_atoms_unit_cell,
-                                                                                            3)),
-                                                                             points))),
-                                          numpy.matlib.repmat(omega_time, num_cell * num_atoms_unit_cell, 1))
-                              ), axis=1)[np.newaxis]
+    wv_y = np.sum(np.multiply(
+        np.multiply(
+    numpy.matlib.repmat(np.multiply(np.multiply(gaussian, sign_correction),omega_time), num_cell * num_atoms_unit_cell, 1),
+    numpy.matlib.repmat(frq[1][frq_mode][1::3, :], num_cell, 1)
+        ),
+        np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points, num_atoms_unit_cell),
+                                      (num_cell * num_atoms_unit_cell, 3)), points)
+               )
+    ), axis=1)[np.newaxis]
 
-    wv_z = np.sum(np.multiply(numpy.matlib.repmat(np.multiply(gaussian, sign_correction), num_cell * num_atoms_unit_cell, 1),
-                              np.multiply(np.multiply(numpy.matlib.repmat(frq[1][frq_mode][2::3, :], num_cell, 1),
-                                                      np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
-                                                                                                num_atoms_unit_cell),
-                                                                                        (
-                                                                                            num_cell * num_atoms_unit_cell,
-                                                                                            3)),
-                                                                             points))),
-                                          numpy.matlib.repmat(omega_time, num_cell * num_atoms_unit_cell, 1))
-                              ), axis=1)[np.newaxis]
+    wv_z = np.sum(np.multiply(
+        np.multiply(
+    numpy.matlib.repmat(np.multiply(np.multiply(gaussian, sign_correction),omega_time), num_cell * num_atoms_unit_cell, 1),
+    numpy.matlib.repmat(frq[1][frq_mode][2::3, :], num_cell, 1)
+        ),
+        np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points, num_atoms_unit_cell),
+                                      (num_cell * num_atoms_unit_cell, 3)), points)
+               )
+    ), axis=1)[np.newaxis]
     phonon_wavepacket = np.concatenate((wv_x, wv_y, wv_z), axis=0)
+    # return num_cell, positions, solid_lattice_points, frq, points, gaussian, sign_correction, omega_time
     return phonon_wavepacket, positions
-
 
 class ITC:
     """
@@ -511,14 +501,12 @@ class ITC:
 #                    [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.0005, 5.43, 390, 2, 50, 0.005, [5, 5, 400],
 #                    origin_unit_cell=1, num_qpoints=501)
 # plt.plot(wave[-2][:,2],wave[-1][2,::8])
-
-
 wv = wavepacket("~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/Si-hessian-mass-weighted-hessian.d",
                 ["~/Desktop/ITC/Run-00-si-heavy-si/Run-01-hessian/data.Si-5x5x5",
                  "~/Desktop/ITC/Run-00-si-heavy-si/Run-00-configuration-add-heavy-si/data.unwraped"],
-                [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.005, 5.43, 401, 2, 140, 0.05, [5, 5, 400],
-                )
-plt.plot(wv[1][:,2],wv[0][2,::8].real)
+                [1000, 8 * 5 * 5 * 400 + 8 * 5 * 5 * 400], 8, 63, 0.005, 5.43, 391, 1, 140, 0.05, [5, 5, 400],
+                time=0)
+plt.plot(wv[1][0][:80000,4],wv[0][2,:].real)
 # A = ITC(rho=[1.2, 1.2], c=[2, 1])
 # B = A.acoustic_mismatch()
 # plt.polar(np.arccos(B[0]), B[-2], 'o')
