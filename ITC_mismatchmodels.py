@@ -22,6 +22,7 @@ conversion_factor_to_THz = 1 / 2 / math.pi / 1e12  # Convert rad/s to THz
 
 
 def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
+    
     """
     This function calculate vibrational density of state from hessian matrix
     of molecular dynamics calculations
@@ -30,28 +31,28 @@ def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
         eps                                 : Tuning parameter, show the life time relate to line width, small eps leads
                                               to noisy vDoS and large eps leads to unrealistic vDoS, float number
         nq                                  : Sampling grid, integer number
+
     :returns
         hessian_matrix                      : Hessian matrix, np.array, 3N by 3N array where N is number of atoms
         frq                                 : Frequency in rad/S, can be converted to THz using conversion_factor_to_THz
         density_state                       : Vibrational density of state, an array of 1 by nq
         omg                                 : Frequency sampling corresponds to "density_state", an array of 1 by nq
     """
+
     with open(os.path.expanduser(path_to_mass_weighted_hessian)) as hessian_file:
-        hm_tmp_1 = hessian_file.readlines()  # hm stands for hessian matrix
-    hm_tmp_2 = [line.split() for line in hm_tmp_1]
-    hm_tmp_3 = np.array([[float(_) for _ in __] for __ in hm_tmp_2])
+        _hessian = np.loadtxt(hessian_file, delimiter=None)
     hessian_file.close()
-    hessian_symmetry = (np.triu(hm_tmp_3) + np.tril(hm_tmp_3).transpose()) / 2  # Hessian matrix is Hermitian
+    hessian_symmetry = (np.triu(_hessian) + np.tril(_hessian).transpose()) / 2      # Hessian matrix is Hermitian
     hessian_matrix = hessian_symmetry + np.triu(hessian_symmetry, 1).transpose()
-    egn_value, egn_vector = np.linalg.eigh(hessian_matrix)  # egn_value are negative
-    egn_value = np.where(egn_value < 0, egn_value, 0)  # Get rid of unstable modes
-    frq = np.sqrt(-1 * egn_value)  # Frequency from Hessian matrix
+    egn_value, egn_vector = np.linalg.eigh(hessian_matrix)                          # egn_value are negative
+    egn_value = np.where(egn_value < 0, egn_value, 0.0)                             # Get rid of unstable modes
+    frq = np.sqrt(-1 * egn_value)                                                   # Frequency from Hessian matrix
     frq = np.sort(frq)
     frq = frq[np.newaxis]
-    omg = np.linspace(np.min(frq), np.max(frq), nq)[np.newaxis]  # Sampling the frequency
-    density_state = 1 / nq * np.sum(
-        1 / math.sqrt(math.pi) / eps * np.exp(-1 * np.power(omg.T - frq, 2) / eps / eps),
-        axis=1)[np.newaxis]  # density of state
+    omg = np.linspace(np.min(frq), np.max(frq), int(nq))[np.newaxis]                # Sampling the frequency
+    density_state = 1 / nq * np.sum(1 / math.sqrt(np.pi) / eps * np.exp(-1 * np.power(omg.T - frq, 2) / eps / eps),
+                                    axis=1)[np.newaxis]                             # density of state
+    
     return hessian_matrix, frq, density_state, omg
 
 
