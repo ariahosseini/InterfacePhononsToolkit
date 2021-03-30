@@ -125,11 +125,12 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
     if BZ_path is None:
         BZ_path = [0, 0, 1]
 
-    hessian_matrix = vibrational_density_state(path_to_mass_weighted_hessian)[0]
-    crystal_points = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                                    central_unit_cell, skip_lines)
+    hessian_matrix = vibrational_density_state(path_to_mass_weighted_hessian=path_to_mass_weighted_hessian)[0]
+    crystal_points = atoms_position(path_to_atoms_positions=path_to_atoms_positions, num_atoms=num_atoms,
+                                    num_atoms_unit_cell=num_atoms_unit_cell, reference_unit_cell=central_unit_cell,
+                                    skip_lines=skip_lines)
     dynamical_matrix = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
-    points = qpoints(num_qpoints, lattice_parameter, BZ_path)
+    points = qpoints(num_qpoints=num_qpoints, lattice_parameter=lattice_parameter, BZ_path=BZ_path)
     for _ in range(num_qpoints):
         dynamical_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
