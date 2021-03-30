@@ -162,8 +162,9 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
 
 
 def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                    central_unit_cell, lattice_parameter, intersection, BZ_path=None, skip_lines=16,
+                    central_unit_cell, lattice_parameter, BZ_path=None, skip_lines=16,
                     num_qpoints=1000):
+
     """
         This function returns transverse and longitudinal eigenmodes from dynamical matrix
         of molecular dynamics calculations
@@ -185,38 +186,50 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
             eigenvalues                         : Frequency in rad/S, can be converted to THz using conversion_factor_to_THz
             frq[-1]                             : BZ path sampling, 3 by num_qpoints array
         """
+
     if BZ_path is None:
         BZ_path = [0, 0, 1]
-    frq = dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                           central_unit_cell, lattice_parameter, BZ_path, skip_lines, num_qpoints)
-    transverse_mode_frq = frq[1][:, 0]
-    longitudinal_mode_frq = np.concatenate((frq[1][0:intersection, 2], frq[1][intersection:, 4]))
-    tmp1 = np.reshape(frq[0][:, 2], (num_qpoints, num_atoms_unit_cell * 3))[0:intersection, :]
-    tmp2 = np.reshape(frq[0][:, 4], (num_qpoints, num_atoms_unit_cell * 3))[intersection:, :]
-    longitudinal_eigvec = np.concatenate((tmp1.T, tmp2.T), axis=1)
-    tmp3 = np.reshape(frq[0][:, 0], (num_qpoints, num_atoms_unit_cell * 3))
-    tmp4 = np.reshape(frq[0][:, 1], (num_qpoints, num_atoms_unit_cell * 3))
-    angle_x = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([0, 1, 0]),
-                                                                                              int(num_qpoints),
-                                                                                              num_atoms_unit_cell)),
-                                                   axis=1),
-                                            np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([0, 1, 0]),
-                                                                                              int(num_qpoints),
-                                                                                              num_atoms_unit_cell)),
-                                                   axis=1)))])
-    angle_y = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(tmp3, numpy.matlib.repmat(np.array([1, 0, 0]),
-                                                                                              int(num_qpoints),
-                                                                                              num_atoms_unit_cell)),
-                                                   axis=1),
-                                            np.sum(-1 * np.multiply(tmp4, numpy.matlib.repmat(np.array([1, 0, 0]),
-                                                                                              int(num_qpoints),
-                                                                                              num_atoms_unit_cell)),
-                                                   axis=1)))])
-    transverse_eigvec_x = np.multiply(tmp3, numpy.matlib.repmat(np.cos(angle_x).T, 1, 3 * num_atoms_unit_cell)) + \
-                          np.multiply(tmp4, numpy.matlib.repmat(np.sin(angle_x).T, 1, 3 * num_atoms_unit_cell))
 
-    transverse_eigvec_y = np.multiply(tmp3, numpy.matlib.repmat(np.cos(angle_y).T, 1, 3 * num_atoms_unit_cell)) + \
-                          np.multiply(tmp4, numpy.matlib.repmat(np.sin(angle_y).T, 1, 3 * num_atoms_unit_cell))
+    frq = dynamical_matrix(path_to_mass_weighted_hessian=path_to_mass_weighted_hessian,
+                           path_to_atoms_positions=path_to_atoms_positions, num_atoms=num_atoms,
+                           num_atoms_unit_cell=num_atoms_unit_cell, central_unit_cell=central_unit_cell,
+                           lattice_parameter=lattice_parameter, BZ_path = BZ_path, skip_lines=skip_lines,
+                           num_qpoints=num_qpoints)
+
+    longitudinal_mode_frq = frq[1][:, 2]
+    transverse_mode_frq = frq[1][:, 0]
+
+    longitudinal_eigvec = np.reshape(frq[0][:, 2],(num_qpoints, num_atoms_unit_cell * 3)).T
+
+    _transverse_mode_eigvec = np.reshape(frq[0][:, 0], (num_qpoints, num_atoms_unit_cell * 3))
+    __transverse_mode_eigvec = np.reshape(frq[0][:, 1], (num_qpoints, num_atoms_unit_cell * 3))
+
+    angle_x = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(_transverse_mode_eigvec,
+                                                                    np.tile(np.array([0, 1, 0]), (int(num_qpoints),
+                                                                                                  num_atoms_unit_cell))
+                                                                    ), axis = 1),
+                                            np.sum(-1 * np.multiply(__transverse_mode_eigvec,
+                                                                    np.tile(np.array([0, 1, 0]), (int(num_qpoints),
+                                                                                                  num_atoms_unit_cell))
+                                                                    ), axis = 1)))])
+    angle_y = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(_transverse_mode_eigvec,
+                                                                    np.tile(np.array([1, 0, 0]), (int(num_qpoints),
+                                                                                                  num_atoms_unit_cell))
+                                                                    ), axis = 1),
+                                            np.sum(-1 * np.multiply(__transverse_mode_eigvec,
+                                                                    np.tile(np.array([1, 0, 0]), (int(num_qpoints),
+                                                                                                  num_atoms_unit_cell))
+                                                                    ), axis = 1)))])
+
+    transverse_eigvec_x = np.multiply(_transverse_mode_eigvec,
+                                      np.tile(np.cos(angle_x).T, (1, 3 * num_atoms_unit_cell))) +\
+                          np.multiply(__transverse_mode_eigvec,
+                                      np.tile(np.sin(angle_x).T, (1, 3 * num_atoms_unit_cell)))
+
+    transverse_eigvec_y = np.multiply(_transverse_mode_eigvec,
+                                      np.tile(np.cos(angle_y).T, (1, 3 * num_atoms_unit_cell))) +\
+                          np.multiply(__transverse_mode_eigvec,
+                                      np.tile(np.sin(angle_y).T, (1, 3 * num_atoms_unit_cell)))
 
     eigenvalue = np.array([transverse_mode_frq, transverse_mode_frq, longitudinal_mode_frq])
     eigenvector = np.array([transverse_eigvec_x.T, transverse_eigvec_y.T, longitudinal_eigvec])
