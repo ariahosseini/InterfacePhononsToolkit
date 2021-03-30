@@ -22,7 +22,7 @@ conversion_factor_to_THz = 1 / 2 / math.pi / 1e12  # Convert rad/s to THz
 
 
 def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
-    
+
     """
     This function calculate vibrational density of state from hessian matrix
     of molecular dynamics calculations
@@ -50,13 +50,14 @@ def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
     frq = np.sort(frq)
     frq = frq[np.newaxis]
     omg = np.linspace(np.min(frq), np.max(frq), int(nq))[np.newaxis]                # Sampling the frequency
-    density_state = 1 / nq * np.sum(1 / math.sqrt(np.pi) / eps * np.exp(-1 * np.power(omg.T - frq, 2) / eps / eps),
+    density_state = 1 / nq * np.sum(1 / np.sqrt(np.pi) / eps * np.exp(-1 * np.power(omg.T - frq, 2) / eps / eps),
                                     axis=1)[np.newaxis]                             # density of state
-    
+
     return hessian_matrix, frq, density_state, omg
 
 
 def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, reference_unit_cell, skip_lines=16):
+
     """
     This function returns the position of atoms, lattice points and positional vectors respect to a reference lattice
     point. Note that atoms are sort by their index.
@@ -64,7 +65,7 @@ def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, refe
         path_to_atoms_positions             : Point to the data file in LAMMPS format, string
         num_atoms                           : Number of atoms, integer
         num_atoms_unit_cell                 : Number of atoms per unitcell
-        reference_unit_cell                 : The index of the unitcell that is considered as the origin (0, 0, 0),
+        reference_unit_cell                 : The index of the unitcell that is set as the origin (0, 0, 0),
                                               integer
     :returns
         position_of_atoms                   : Atoms position, [index, atom type, x, y, z], N by 5 array
@@ -72,37 +73,35 @@ def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, refe
         lattice_points_vectors              : Positional vector from origin to the unitcells,
                                               N/Number of atoms per unitcell by 3 array
     """
+
     with open(os.path.expanduser(path_to_atoms_positions)) as atomsPositionsFile:
-        position_tmp_1 = atomsPositionsFile.readlines()
-    position_tmp_2 = [line.split() for line in position_tmp_1]
-    [position_tmp_2.pop(0) for _ in range(skip_lines)]
-    position_tmp_3 = np.array([[float(_) for _ in __] for __ in position_tmp_2[0:num_atoms]])
-    position_of_atoms = position_tmp_3[np.argsort(position_tmp_3[:, 0])]
-    lattice_points = np.array([_[2:5] for _ in position_of_atoms[::num_atoms_unit_cell]])
-    lattice_points_vectors = lattice_points - numpy.matlib.repmat(lattice_points[reference_unit_cell],
-                                                                  len(lattice_points), 1)
+        _position = np.loadtxt(atomsPositionsFile, skiprows=skip_lines, max_rows=num_atoms)
+    position_of_atoms = _position[np.argsort(_position[:, 0])]
+    lattice_points = position_of_atoms[::num_atoms_unit_cell, 2:5]
+    lattice_points_vectors = lattice_points - lattice_points[reference_unit_cell-1, :][np.newaxis]
     return position_of_atoms, lattice_points, lattice_points_vectors
 
 
 def qpoints(num_qpoints, lattice_parameter, BZ_path):
+
     """
     This function samples the BZ path
     :arg
         num_qpoints                         : Sampling number, integer
         lattice_parameter                   : Lattice parameter, floating
         BZ_path                             : 1 by 3 list of [1s or 0s], where 1 is yes and 0 is no
+
     :returns
-        points                              : wave vectors
+        points                              : wave vectors along BZ_path
     """
-    points = np.multiply(
-        numpy.matlib.repmat(np.array([BZ_path]).T, 1, num_qpoints),
-        numpy.matlib.repmat(np.linspace(0, math.pi / lattice_parameter, num_qpoints)[np.newaxis], 3, 1)
-    )
+
+    points = np.asarray(BZ_path)[np.newaxis].T * np.linspace(0, 2*np.pi / lattice_parameter, num_qpoints)[np.newaxis]
     return points
 
 
 def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                     central_unit_cell, lattice_parameter, BZ_path=None, skip_lines=16, num_qpoints=1000):
+                     central_unit_cell, lattice_parameter, BZ_path = None, skip_lines=16, num_qpoints=1000):
+
     """
     This function calculate vibrational eigenvectors and frequencies from dynamical matrix
     of molecular dynamics calculations
@@ -122,33 +121,38 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         frequency                           : Frequency in rad/S, can be converted to THz using conversion_factor_to_THz
         points                              : BZ path sampling, 3 by num_qpoints array
     """
+
     if BZ_path is None:
         BZ_path = [0, 0, 1]
+
     hessian_matrix = vibrational_density_state(path_to_mass_weighted_hessian)[0]
     crystal_points = atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
                                     central_unit_cell, skip_lines)
-    d_matrix = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
-    points = qpoints(num_qpoints, lattice_parameter, [0, 0, 1])
+    dynamical_matrix = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+    points = qpoints(num_qpoints, lattice_parameter, BZ_path)
     for _ in range(num_qpoints):
         dynamical_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
             sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
-                         central_unit_cell * num_atoms_unit_cell * 3: (central_unit_cell + 1) *
-                                                                      num_atoms_unit_cell * 3] * cmath.exp(
-                -1j * np.dot(crystal_points[2][__], points[:, _]))
+                                        (central_unit_cell-1) * num_atoms_unit_cell * 3:
+                                        (central_unit_cell) * num_atoms_unit_cell * 3] * \
+                         np.exp(-1j * np.dot(crystal_points[2][__], points[:, _]))
             dynamical_matrix_per_qpoint = dynamical_matrix_per_qpoint + sum_matrix
-        d_matrix = np.append(d_matrix, dynamical_matrix_per_qpoint, axis=0)
-    d_matrix = d_matrix[num_atoms_unit_cell * 3:]
+        dynamical_matrix = np.append(dynamical_matrix, dynamical_matrix_per_qpoint, axis=0)
+
+    dynamical_matrix = dynamical_matrix[num_atoms_unit_cell * 3:]
+
     eig_value = np.array([])
     eig_vector = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
+
     for _ in range(num_qpoints):
-        dynmat = d_matrix[_ * num_atoms_unit_cell * 3:(_ + 1) * num_atoms_unit_cell * 3]
-        eigvals, eigvecs_tmp1, = np.linalg.eigh(dynmat)
+        dynmat = dynamical_matrix[_ * num_atoms_unit_cell * 3:(_ + 1) * num_atoms_unit_cell * 3]
+        eigvals, __eigvecs, = np.linalg.eigh(dynmat)
         energy = -1 * eigvals.real
         order = np.argsort(energy)
         energy = energy[order]
-        eigvecs_tmp2, _ = np.linalg.qr(eigvecs_tmp1)
-        eigvecs = np.array([eigvecs_tmp2[_][order] for _ in range(np.shape(eigvecs_tmp2)[1])])
+        _eigvecs, _ = np.linalg.qr(__eigvecs)
+        eigvecs = np.array([_eigvecs[_][order] for _ in range(np.shape(_eigvecs)[1])])
         eig_value = np.append(eig_value, energy).reshape(-1, num_atoms_unit_cell * 3)
         eig_vector = np.append(eig_vector, eigvecs, axis=0)
     eig_vector = eig_vector[num_atoms_unit_cell * 3:]
