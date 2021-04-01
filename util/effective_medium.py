@@ -5,7 +5,7 @@ import os
 
 
 def Logistic(mfp, lc):
-    return So / (1 + mfp / lc)
+    return S_diffusive / (1 + mfp / lc)
 
 
 def Minnich(phi, Lp):
@@ -23,67 +23,64 @@ def Liu(phi, Lp):
     return Lc
 
 
-def Maxwell_Garnett(phi, Lp):
+def Maxwell_Garnett(phi):
     So = (1 - phi) / (1 + phi)
-    lambda_inside = 2 * r
-    lambda_outside = sqrt()
     return So
 
 
-def Maxwell_Eucken(phi, Lp):
+def Maxwell_Eucken(phi):
     So = (1 - phi) / (1 + phi / 2)
     return So
 
 
-def Rayleigh(phi, Lp):
+def Rayleigh(phi):
     So = 1. / 3 * (2 * (1 - 2 * phi / (1 + phi + 0.30584 * np.power(phi, 4) + 0.013363 * np.power(phi, 8))) + (1 - phi))
     return So
 
+def bulk_mean_free_path(path_kappa_cumulative, phi, So, maxfev=1000):
 
-def Triangle(phi, Lp):
-    So = -4.37 * phi**3 + 3.47 * phi**2 - 2.67 * phi + 1
-    return So
+    cumulative_data = np.loadtxt(path_kappa_cumulative, skiprows=1, delimiter=',')
+
+    lambda_bulk = np.array([])
+
+    for porosity_index in range(np.shape(phi)[1]):
+        global S_diffusive
+        S_diffusive = So[0, porosity_index]
+        _lambda_bulk, _ = curve_fit(Logistic, cumulative_data[:, 0], cumulative_data[:, 1], maxfev=maxfev)
+        lambda_bulk = np.append(lambda_bulk, _lambda_bulk)
+        del S_diffusive
+
+    return lambda_bulk
 
 
-def Tall_rectangular(phi, Lp):
-    So = -2.27 * phi**3 + 2.97 * phi**2 - 2.61 * phi + 1
-    return So
+path_kappa_cumulative = '../kappa_almabte/GaN_30_30_30_1,0,0_800K.kappacumul_MFP'
+# cumulative_data = np.loadtxt(path_kappa_cumulative, skiprows=1, delimiter=',')
+# maxfev = 1000
 
+# lambda_bulk, a = curve_fit(Logistic, cumulative_data[:, 0], cumulative_data[:, 1], maxfev=maxfev)
 
-def Flat_rectangular(phi, Lp):
-    So = -2.09 * phi**3 + 2.924 * phi**2 - 1.8 * phi + 1
-    return So
-
-
-path_kappa_cumulative = 'kappa_almabte/GaN_30_30_30_1,0,0_800K.kappacumul_MFP'
-cumulative_data = np.loadtxt('path_kappa_cumulative', skiprows=1, delimiter=',')
-maxfev = 1000
-
-popt, pcov = curve_fit(Logistic, cumulative_data[:, 0], cumulative_data[:, 1], maxfev=maxfev)
+# print(lambda_bulk)
 
 phi = np.array([[0.05, 0.25, 0.40, 0.55, 0.70, 0.15]])
 Lp = np.array([[40, 80, 100, 500, 1000, 4000, 10000]])
 
+So = Rayleigh(phi=phi)
+Lc = Liu(phi=phi, Lp=Lp)
+# print(np.shape(Lc))
 
-# i: porosity index 0:005, 1:0.25, 2:040, 3:0.55, 4:070, 5:0.15
-# j: pore pore spacing index 0:40nm, 1:80nm, 2:100nm, 3:500nm, 4:1000nm, 5:4000, 6:10000nm
-for i in range(6):
-    for j in range(7):
+# lambda_bulk = np.array([])
 
-        if i == 0:
-            S = S_005
-        elif i == 1:
-            S = S_025
-        elif i == 2:
-            S = S_040
-        elif i == 3:
-            S = S_055
-        elif i == 4:
-            S = S_070
-        elif i == 5:
-            S = S_015
+# for porosity_index in range(np.shape(phi)[1]):
 
-        global So
-        # So = (1 - phi[0, i]) / (1 + phi[0, i])
-        So = S[0, j]
-        popt, pcov = curve_fit(Logistic, mfp.flatten(), S[:, j], maxfev=1000)
+#     global S_diffusive
+#     S_diffusive = So[0, porosity_index]
+#     _lambda_bulk, _ = curve_fit(Logistic, cumulative_data[:, 0], cumulative_data[:, 1], maxfev=maxfev)
+#     lambda_bulk = np.append(lambda_bulk, _lambda_bulk)
+#     del S_diffusive
+
+
+Lambda_o = bulk_mean_free_path(path_kappa_cumulative=path_kappa_cumulative, phi=phi, So=So, maxfev=1000)
+print(Lambda_o)
+
+
+exit()
