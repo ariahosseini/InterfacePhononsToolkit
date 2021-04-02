@@ -1,4 +1,4 @@
-# InterfacePhononsToolkit — a Python Set of Libraries for Computing Thermal Behavior at the Interfaces
+# InterfacePhononsToolkit — a Python Set of Libraries for Computing Phonons Behavior at the Interfaces
 
 <div align="justify">
   
