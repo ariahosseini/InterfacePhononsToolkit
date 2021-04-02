@@ -1,5 +1,5 @@
 """
-autocorrelation_func.py compute the autocorrelation (ACF) using different methods
+autocorrelation_func.py computes the autocorrelation (ACF) using different methods
 
 Author: S. Aria Hosseini
 Email: shoss008@ucr.edu
@@ -15,10 +15,11 @@ def ACF(time, J):
     Compute the autocorrelation of the instantaneous heat flux vector
 
     :arg
-        time                                 : Autocorrelation time lag
+        time                                 : Correlation time lag
         J                                    : Instantaneous heat flux vector, Numpy array of 3 by np.shape(time)
     :returns
         acf                                  : Autocorrelation
+
     """
 
     time_intervals = time.size
@@ -37,7 +38,7 @@ def ACF_FFT(time, J):
     the length of the vector is doubled and fill the 2nd half with zeros. The first half of the result is taken.
 
     :arg
-        time                                 : Autocorrelation time lag
+        time                                 : Correlation time lag
         J                                    : Instantaneous heat flux vector, Numpy array of 3 by np.shape(time)
     :returns
         acf                                  : Autocorrelation
@@ -45,9 +46,9 @@ def ACF_FFT(time, J):
     """
 
     time_intervals = np.shape(J)[1]
-    acf = np.zeros([3, time_intervals * 2])   # Autocorrelation   # Autocorrelation
+    acf = np.zeros([3, time_intervals * 2])   # Autocorrelation
 
-    dt = time[-1] / float(time_intervals)
+    dt = time[-1] / float(time_intervals)     # Timestep
     for j in range(3):
         dft = np.fft.fft(np.concatenate([J[j], np.zeros(time_intervals)]))
         acf[j] = np.fft.ifft(dft * np.conjugate(dft)) * dt
@@ -75,6 +76,7 @@ def _ACF(time, J):
         J                                    : Instantaneous heat flux vector, Numpy array of 3 by np.shape(time)
     :returns
         acf                                  : Autocorrelation
+
     """
 
     acf = 0 * J
