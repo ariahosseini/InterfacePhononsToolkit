@@ -1,4 +1,6 @@
-# Define plotting functions
+# Generate plots
+
+import matplotlib.pyplot as plt
 
 plt.rc("font", size=18, family='sans-serif')
 plt.rcParams["figure.figsize"] = (6, 5)
