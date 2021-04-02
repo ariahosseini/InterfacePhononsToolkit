@@ -1,28 +1,48 @@
+"""
+
+ray_tracing.py computes ...
+
+
+Authors: S. Aria Hosseini and P.Alex Greaney
+Email: shoss008@ucr.edu
+
+"""
+
+import numpy as np
+
 def RandomDirection():
-    theta = np.arccos(1 - (2*np.random.uniform(0, 1)))
-    phi = np.random.uniform(-np.pi, np.pi)
+
+    # A method to pick a random direction for phonon propagation
+
+    theta = np.arccos(1 - (2*np.random.uniform(0, 1)))  # theta is the angle with x in Cartesian coordinates
+    phi = np.random.uniform(-np.pi, np.pi)              # phi is the angle with z in Cartesian coordinates
+
     return theta, phi
+
 
 TimeIndex = lambda time, maxtime, timesteps: int(round((timesteps-1)*time/maxtime))
 
+
 def getRandomPhononSpecWall(tau_max, time_intervals, v_g, tau_0_0, d, P_reflection):
 
-    J = np.zeros([3,time_intervals])
+    J = np.zeros([3, time_intervals])                   # Initiate heat flux vector, an array of 3 by time_intervals
+    t = np.linspace(0, tau_max, time_intervals)         # Time
+    theta, phi = RandomDirection()                      # Get random direction
 
-    t = np.linspace(0, tau_max, time_intervals)
-
-    # Get random direction
-    theta, phi = RandomDirection()
+    # Phonon group velocity vector
     nv = np.array([np.cos(theta), np.sin(theta)*np.cos(phi), np.sin(theta)*np.sin(phi)])
-    v  = v_g * nv
-    direction = float(np.sign(v[0]))
+    v = v_g * nv
+    direction = float(np.sign(v[0]))                    # Find the direction along x
 
-    # Get random starting position and time of flight to the wall
-    x = np.random.uniform(0, d)
-    tau_hit = (d * 0.5 *(1 + direction) - x) / v[0]
+    x = np.random.uniform(0, d)                         # Get random starting position
+    tau_hit = (d * 0.5 * (1 + direction) - x) / v[0]    # Time of flight to the wall
+
+    # Time index of the phonon flight to the wall
     hit_index = TimeIndex(tau_hit, tau_max, time_intervals)
 
-    Delta_tau = d/np.abs(v[0])                      # Time of flight between walls
+    Delta_tau = d/np.abs(v[0])                          # Time of flight between walls
+
+    # Get random lifetime
 
     # Get random lifetime
     r_tau = np.random.random()
