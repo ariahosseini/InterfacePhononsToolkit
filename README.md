@@ -331,7 +331,7 @@ In addition to computing the contribution from different occupancy durations, it
   
 <p>
   
-as plotted in Figure below with values for ω ̅ of 0.5, 1.0, and 1.5 (which corresponds to average occupancies of 〈n〉 of 0.16, 0.58, and 1.1). It can be seen that because of the (n-〈n〉)<sup>2</sup> dependence on the ACF infrequency multiple phonon excitations of the modes account for a large fraction of the heat carried, even at temperatures where 〈n〉~0.5. This suggests that scattering processes involving four or more phonons, although rare, will have a significant impact on the overall thermal conductivity, even at low temperatures.
+as plotted in Figure below with values for ω ̅ of 0.5, 1.0, and 1.5 (which corresponds to average occupancies of 〈n〉 of 0.16, 0.58, and 1.1). It can be seen that because of the (n-〈n〉)<sup>2</sup> dependence on the ACF infrequency multiple phonon excitations of the modes account for a large fraction of the heat carried, even at temperatures where 〈n〉~ 0.5. This suggests that scattering processes involving four or more phonons, although rare, will have a significant impact on the overall thermal conductivity, even at low temperatures.
 </p>
 
 ## Monte Carlo ray tracing model of correlated scattering 
@@ -369,7 +369,7 @@ As this population phonons are in a volume that includes physical scattering cen
 Rather than perform the average analytically, we average using Monte Carlo sampling — tracing the trajectory of wavepackets as they collide with pores and are scattered off into new directions. In this scheme we took the average HCACF from 20,000 randomly sampled wavepacket trajectories; each beginning from a randomly selected starting point, with random initial direction, and with a lifetime drawn randomly from the Poisson distribution. The single wavepacket HCACFs in the x, y, and z directions were computed numerically out to a correlation time of 20 times the mean scattering time θ ̅ to prevent truncation of contributions from long-lived phonons in the tails of the Poisson distribution. This averaging was sufficient to reduce the uncertainty in the computed values of κ<sub>bulk</sub> to < 3%. The details of how the correlated scattering from pores was modeled are described in the next section.
 </p>
 
-## Pore scattering models
+## Pore Scattering Models
 
 <p>
   
@@ -443,7 +443,7 @@ The effective thermal conductivity materials containing nanoscale pores is given
 
 <p>
   
-where $S(\Lambda)$ is the phonon suppression function describing the scattering events at the interface of the pores for the phonon with mean free path of $\Lambda$ and $\mathbb{K}(\Lambda)$ is the mean free path dependent thermal conductivity of the bulk material. In diffusive regime, for gray phonons, $S(\Lambda \rightarrow 0, L_c) \approx \frac{1-\phi}{1+\phi}$, which is in agreement with Maxwell-Garnett prediction, while in ballistic regime, $S(\Lambda \rightarrow \infty, L_c) \propto L_c^{-1}$. We remark that for a given porosity of $\phi$, the specific heat and group velocity of the porous materials change as $C(\phi) = (1-\phi) C_{bulk}$ and $\nu(\phi) = \frac{1}{1-\phi}\nu_{bulk}$, and thereby the $(1-\phi)$ term in $C(\phi)$ and $\frac{1}{1-\phi}$ term in $\nu(\phi)$ are canceled out in kinetic theory expression of thermal conductivity ($\kappa \approx \frac{1}{3}C \nu \Lambda$), leaving $\Lambda$ the only parameter that $S(\Lambda,L_c)$ relies on.
+where S(Λ) is the phonon suppression function describing the scattering events at the interface of the pores for the phonon with mean free path of Λ and K(Λ) is the mean free path dependent thermal conductivity of the bulk material. In diffusive regime, for gray phonons, S(Λ→0,L_c )≈(1-ϕ)/(1+ϕ), which is in agreement with Maxwell-Garnett prediction, while in ballistic regime, S(Λ→ ∞,L_c )≈L_c^(-1). We remark that for a given porosity of ϕ, the specific heat and group velocity of the porous materials change as C(ϕ) = (1-ϕ) C<sub>bulk</sub> and ν(ϕ)=1/(1-ϕ) ν_bulk, and thereby the 1-ϕ term in C(ϕ) and 1/(1-ϕ) term in ν(ϕ) are canceled out in kinetic theory expression of thermal conductivity (κ≈1/3 CνΛ), leaving Λ the only parameter that S(Λ,L_c) relies on.
 </p>
 
 <p>
@@ -456,7 +456,7 @@ Let's integrate by parts
 </p>
 
 <p>
-where the normalized cumulative thermal conductivity, $\alpha(\Lambda)$, is defined as
+where the normalized cumulative thermal conductivity, α(Λ), is defined as
   
  </p>
  
@@ -484,7 +484,7 @@ We note that
 
 <p>
   
-therefore, equation \ref{des} turns into
+therefore, we will have
 </p>
 
 <p align="center">
@@ -502,7 +502,7 @@ The cumulative thermal conductivity is often approximated by a logistic function
 
 <p>
   
-Here $\Lambda_o$ is a uniparameter used to fit the logistic function to the cumulative thermal conductivity \cite{li2014shengbte}. We use following form for the suppression function
+Here Λ<sub>o</sub> is a uniparameter used to fit the logistic function to the cumulative thermal conductivity. We use following form for the suppression function
 </p>
 
 <p align="center">
@@ -510,7 +510,7 @@ Here $\Lambda_o$ is a uniparameter used to fit the logistic function to the cumu
 </p>
 
 <p>
-where $L_c$ is the mean distance phonons travel before being scattered by pores. In derivation of this equation, it is assumed that phonon-pore scattering happens independent from the phonon-phonon scattering and therefor $\Lambda_{p}^{-1} = \Lambda^{-1}+L_c^{-1}$. Here, $S(0)$ is normalized diffusive thermal conductivity as $S(0) = \kappa_{\mathrm{fourier}}/ \kappa_{\mathrm{bulk}}$. Using equations \ref{alpha} and \ref{S_model}, equation \ref{descript} becomes
+where L<sub>c</sub> is the mean distance phonons travel before being scattered by pores. In derivation of this equation, it is assumed that phonon-pore scattering happens independent from the phonon-phonon scattering and therefor Λ<sup>p</sup><sub>-1</sub> = Λ<sub>-1</sub>+L<sup>c</sup><sub>-1</sub>. Here, S(0) is normalized diffusive thermal conductivity as S(0) = κ<sub>fourier</sub>/κ<sub>bulk</sub>. Thereby, we will have
   
 </p>
 
@@ -529,14 +529,14 @@ which leads to
 
 <p>
   
-where $\Xi (Kn) = \left[\frac{1 + Kn \left( \ln(Kn) - 1  \right)}{\left ( Kn -1 \right)^2} \right]$. In this equation, $Kn=\frac{\Lambda_o}{L_c}$ is the Knudsen number . This equation relates the effective thermal conductivity of porous materials and Knudsen number of $Kn$ to bulk lattice thermal conductivity. Note that in diffusive regime where $Kn \ll 1$, this equation simplify to the diffusive heat conduction equation through $\kappa_{\mathrm{bulk}}S(0) = \kappa_{\mathrm{fourier}}$. In the remaining of this section, we describe the best descriptors for $L_c$ and $S(0)$. 
+where Ξ(Kn)=(1+Kn(Ln(Kn)-1))/(Kn-1)^2. In this equation, Kn=Λ<sub>o</sub>/L<sub>c</sub> is the Knudsen number. This equation relates the effective thermal conductivity of porous materials and Knudsen number of Kn to bulk lattice thermal conductivity. Note that in diffusive regime where Kn << 1, this equation simplify to the diffusive heat conduction equation through κ<sub>bulk</sub>S(0)=κ<sub>fourier</sub>. In the remaining of this section, we describe the best descriptors for L<sub>c</sub> and S(0). 
 <\p>
 
-## Descriptor for $L_c$
+## Descriptor for L<sub>c</sub>
 
 <p>
   
-The $L_c$ shows the average interval for a free-flying phonon to collide with a boundary. Minnich and Chen defined $L_c$ as
+The L<sub>c</sub> shows the average interval for a free-flying phonon to collide with a boundary. Minnich and Chen defined L<sub>c</sub> as
 <\p>
 
 <p align="center">
@@ -545,7 +545,7 @@ The $L_c$ shows the average interval for a free-flying phonon to collide with a 
 
 <p>
   
-For cylindrical pores, equation \ref{eq:minnich} leads to
+For cylindrical pores, equation this equation leads to
 </p>
 
 <p align="center">
@@ -554,7 +554,7 @@ For cylindrical pores, equation \ref{eq:minnich} leads to
 
 <p>
   
-where $L_p$ is the distance between the pores. In the limit of high porosity, the mean free path of the phonons colliding with pores is expected to tend to zero, thereby Machrafi and Lebon proposed \cite{machrafi2015size}
+where L<sub>p</sub> is the distance between the pores. In the limit of high porosity, the mean free path of the phonons colliding with pores is expected to tend to zero, thereby Machrafi and Lebon proposed
 
 </p>
 
@@ -564,7 +564,7 @@ where $L_p$ is the distance between the pores. In the limit of high porosity, th
 
 <p>
   
-that differs from equation \ref{eq:min-cylinder} by a factor of $(1-\phi)$ in the numerator. Liu and Huang proposed 
+that differs from equation above by a factor of 1-ϕ in the numerator. Liu and Huang proposed 
 </p>
 
 <p align="center">
@@ -573,14 +573,14 @@ that differs from equation \ref{eq:min-cylinder} by a factor of $(1-\phi)$ in th
 
 <p>
   
-in which, $\lambda_i$ is the geometric average of phonon’s flying distance per number of collisions with the pores -- proposed by Minnich in equation \ref{eq:minnich} -- and the inter-pore distance, and $\lambda_{ii}$ is the hydraulic diameter of the pore. For the aligned cylindrical pores, the inter-pore distance is $L_p-2r$, where $r$ is the radius of the pore, $\lambda_i = \sqrt{(L_p^2/2r)(L_p-2r)} = L_p\sqrt{\left(\frac{1}{\sqrt{\frac{\phi}{\pi}}}-1\right)}$, and $\lambda_{ii} = 2r= 2L_p\sqrt{\frac{\phi}{\pi}}$. We refer to their original paper for the complete list of equations for $L_c$ in materials containing pores with different shapes. 
+in which, λ<sub>i</sub> is the geometric average of phonon’s flying distance per number of collisions with the pores -- proposed by Minnich in equation -- and the inter-pore distance, and λ<sub>ii</sub> is the hydraulic diameter of the pore. For the aligned cylindrical pores, the inter-pore distance is L<sub>p</sub>-2r, where r is the radius of the pore, λ<sub>i</sub> = √ (L<sub>p</sub><sup>2</sup>)/2r(L<sub>p</sub>-2r)    = L<sub>p</sub √(1/√(ϕ/π)-1), and λ<sub>ii</sub> = 2r = 2L<sub>p</sub> √(ϕ/π). We refer to their original paper for the complete list of equations for L<sub>c</sub> in materials containing pores with different shapes. 
 </p>
 
 ## Descriptor for S(0)
 
 <p>
   
-The term $S(0) = S(\Lambda \rightarrow 0, L_c)$ is a dimensionless figure shows the effect of pores on thermal conductivity in the diffusive regime (note that in this definition we neglect ballistic effects). In this manuscript, we briefly describe three models of $S(0)$ and refer to literature for other available expressions.
+The term S(Λ→0,L_c ) is a dimensionless figure shows the effect of pores on thermal conductivity in the diffusive regime (note that in this definition we neglect ballistic effects). In this manuscript, we briefly describe three models of S(0) and refer to literature for other available expressions.
 </p>
 
 <p>
@@ -626,12 +626,13 @@ For cylindrical pore extended along $\hat k$ direction in Cartesian coordinates,
 
 <p>
   
-and, thereby, the effective suppression function for cubic crystal structures, is $S(0) = \frac{1}{3}\sum_{i}S_i(0) \approx 3-\phi-\frac{4\phi}{1+\phi+0.3\phi^4}$. Note that the Maxwell-Eucken's and Rayleigh's models give quite similar value for $S(0)$. 
+and, thereby, the effective suppression function for cubic crystal structures, is S(0)=1/3 ∑S<sub>i</sub>(0) ≈ 3-ϕ-4ϕ/(1+ϕ+0.3ϕ<sup>4</sup>. Note that the Maxwell-Eucken's and Rayleigh's models give quite similar value for S(0). 
 </p>
 
 <p>
-Here, we use equations \ref{eq:min-cylinder} and \ref{eq:maxwell} to model $L_c$ and $S(0)$, respectively. Substituting equation \ref{eq:maxwell} in equation \ref{eq:keff}, we will have
-  </p>
+  
+Using these equations, we will have
+</p>
  
  <p align="center">
 <img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Ckappa_%7B%5Cmathrm%7Beff%7D%7D%28L_c%29%20%3D%20%5Cfrac%7B1-%5Cphi%7D%7B1&plus;%5Cphi%7D%20%5Ckappa_%7B%5Cmathrm%7Bbulk%7D%7D%5CXi%28Kn%29." align="center" alt="drawing">
@@ -639,22 +640,25 @@ Here, we use equations \ref{eq:min-cylinder} and \ref{eq:maxwell} to model $L_c$
 
 <p>
   
-Similar equations can be used for structures with extended cubic and discrete spherical pores but with different $L_c$ terms of $\frac{1}{\sqrt{\phi}}L_p$ (\textcolor{red}{this means materials with cubic pores have higher thermal conductivity than materials with cylindrical pores which is not right!}) and $\frac{4}{3}L_p\sqrt[3]{}\frac{3}{4\pi\phi^2}$, respectively. Finally, we remark that for prism pores with equilateral triangle base, a better approximation for $S(0)$ and $L_c$ are $-4.37\phi^3+3.47\phi^2-2.67\phi+1$ and $\sqrt{\phi\sqrt{3}}L_p$, respectively.
+Similar equations can be used for structures with extended cubic and discrete spherical pores but with different L<sub>c</sub> terms of 1/√ϕ L<sub>p</sub> and 4/3 L<sub>p</sub> ∛(3/(4πϕ^2), respectively. Finally, we remark that for prism pores with equilateral triangle base, a better approximation for S(0) and L<sub>c</sub> are -4.37ϕ<sup>3</sup>+3.47ϕ<sup>2</sup>-2.67ϕ+1$ and √(ϕ√3)L<sub>p</sub>, respectively.
 </p>
 
 ## Model Prediction
 
 <p>
   
-Figure \ref{fig:2.1} and \ref{fig:2.2} show the model and BTE predictions of lattice thermal conductivity for Si, GaAs, InAs, and Sn at 300 K for different pore-pore spacing of $L_p$ but fixed porosity of 0.25 and 0.55, respectively. The model prediction is marked with open circle while BTE simulation is marked with open triangle. The model prediction is in excellent agreement with BTE prediction for pore-pore spacing as short as 10 nm up up to macro-level spacing and for porosity up to  $\sim 0.6$. For highly porous structures (0.70 in figure \ref{fig:A1} in appendix), the model slightly overestimates the thermal conductivity [\textcolor{red}{why?}]. Figure \ref{fig:2.3} shows the variation of thermal conductivity normalized with the bulk thermal conductivity with temperature for InP with 0.15 and 0.40 porosity plotted in blue and red, respectively. The pore spacing is fixed at $L_p = 500\ nm$. The model prediction is marked with open circle and BTE prediction is marked with triangle. The figure suggests the accuracy of the model for a wide range of temperature.
+Figures bellow show the model and BTE predictions of lattice thermal conductivity for Si, GaAs, InAs, and Sn at 300 K for different pore-pore spacing of L<sub>p</sub> but fixed porosity of 0.25 and 0.55, respectively. The model prediction is marked with open circle while BTE simulation is marked with open triangle. The model prediction is in excellent agreement with BTE prediction for pore-pore spacing as short as 10 nm up up to macro-level spacing and for porosity up to  ~0.6. For highly porous structures, the model slightly overestimates the thermal conductivity. Figure bellow shows the variation of thermal conductivity normalized with the bulk thermal conductivity with temperature for InP with 0.15 and 0.40 porosity plotted in blue and red, respectively. The pore spacing is fixed at L<sub>p</sub> = 500 nm. The model prediction is marked with open circle and BTE prediction is marked with triangle. The figure suggests the accuracy of the model for a wide range of temperature.
 </p>
+
+
+
 
 
 
 
 <p>
   
-In the following section, we use our model to predict the effect of porosity on thermoelectric (TE) performance of dielectrics. The energy performance of TE materials at a given temperature, $T$, is quantified by the dimensionless figure of merit, $ZT = \sigma S^2/(\kappa_e + \kappa_l)T$. Here, $\sigma$, $S$, $\kappa_e$ and $\kappa_l$ are electrical conductivity, thermopower, electrical thermal conductivity and lattice thermal conductivity, respectively. In dielectric TEs, electrical thermal conductivity is negligible and therefore we neglect $\kappa_e$ term in $ZT$. We remark that, in general, the charge carrier's (electron or hole) mean free path is much shorter than phonon mean free path so that in most cases, charge carrier transport is diffusive for pore-pore spacing much shorter than the spacing in which phonons start behave diffusively (\textcolor{red}{maybe I should rewrite this sentence}). In a recent work, we have developed a fast algorithm to compute electron-pore scattering rate from solving Fermi's golden rule. The model shows how careful tuning the carrier concentration can mitigate the effect of nanoscale pores on electrical conductivity through enhancing thermopower via selective electron energy filtering. Here, we consider two cases: discrete spherical pores and extended cylindrical pores, we also limit our study to diffusive regime ($Kn\leq 1$). We \textit{emphasize} that the effective medium theory does not account for interface effects such as filtering effect and therefore the proposed model for TE $ZT$ should be used by caution. In case of spherical pores, the effective medium theory formula for the electrical conductivity is
+In the following section, we use our model to predict the effect of porosity on thermoelectric (TE) performance of dielectrics. The energy performance of TE materials at a given temperature, T, is quantified by the dimensionless figure of merit, ZT = σS<sup>2</sup>/(κ<sub>e</sub> + κ<sub>l</sub>)T. Here, σ, S, κ<sub>e</sub> and κ<sub>l</sub> are electrical conductivity, thermopower, electrical thermal conductivity and lattice thermal conductivity, respectively. In dielectric TEs, electrical thermal conductivity is negligible and therefore we neglect κ<sub>e</sub> term in ZT. We remark that, in general, the charge carrier's (electron or hole) mean free path is much shorter than phonon mean free path so that in most cases, charge carrier transport is diffusive for pore-pore spacing much shorter than the spacing in which phonons start behave diffusively. In a recent work, we have developed a fast algorithm to compute electron-pore scattering rate from solving Fermi's golden rule. The model shows how careful tuning the carrier concentration can mitigate the effect of nanoscale pores on electrical conductivity through enhancing thermopower via selective electron energy filtering. Here, we consider two cases: discrete spherical pores and extended cylindrical pores, we also limit our study to diffusive regime (Kn≤1). We *emphasize* that the effective medium theory does not account for interface effects such as filtering effect and therefore the proposed model for TE ZT should be used by caution. In case of spherical pores, the effective medium theory formula for the electrical conductivity is
 </p>
 
 <p align="center">
@@ -663,7 +667,7 @@ In the following section, we use our model to predict the effect of porosity on 
 
 <p>
   
-We use following equation for thermopower \cite{sonntag2009thermoelectric}
+We use following equation for thermopower
 </p>
 
 <p align="center">
@@ -672,7 +676,7 @@ We use following equation for thermopower \cite{sonntag2009thermoelectric}
 
 <p>
   
-This equation is valid when the phase grains are spherical without preferred orientations and arranged in a symmetrical fashion.  Using the model prediction for $\kappa_{\mathrm{eff}}$, equation \ref{eq:kappa_Kn}, we will have
+This equation is valid when the phase grains are spherical without preferred orientations and arranged in a symmetrical fashion.  Using the model prediction for κ<sub>eff</sub>, we will have
 </p>
 
 <p align="center">
@@ -681,7 +685,7 @@ This equation is valid when the phase grains are spherical without preferred ori
 
 <p>
   
-This equation relates thermopower in dielectrics containing spherical pores to bulk thermopower. We can derive the equation for $ZT_{\mathrm{eff}}$ in this class of porous materials by substituting \ref{eq:s}, \ref{eq:sigma}, and \ref{eq:kappa_Kn} in $ZT$ formula as
+This equation relates thermopower in dielectrics containing spherical pores to bulk thermopower. We can derive the equation for ZT<sub>eff</sub> in this class of porous materials by substituting equations abouve in ZT formula as
 </p>
 
 <p align="center">
@@ -690,7 +694,7 @@ This equation relates thermopower in dielectrics containing spherical pores to b
 
 <p>
   
-We remark that this equation is \textit{only} valid materials with spherical pores ($L_c =\frac{4}{3}L_p\sqrt[3]{}\frac{3}{4\pi\phi^2}$) in diffusive regime where $Kn \ll 1$. In case of extended cylindrical pores, the rate of electron scattering is dramatically less than discrete due to the limited number of states that are available to accept scattered electrons. Therefore changes in the electrical conductivity of dielectrics containing extended cylindrical pore is due to changes in volume-averaged electron density as
+We remark that this equation is *only* valid materials with spherical pores (L<sub>c</sub> = 4/3 L<sub>p</sub> ∛3/(4πϕ^2)) in diffusive regime where Kn << 1. In case of extended cylindrical pores, the rate of electron scattering is dramatically less than discrete due to the limited number of states that are available to accept scattered electrons. Therefore changes in the electrical conductivity of dielectrics containing extended cylindrical pore is due to changes in volume-averaged electron density as
 </p>
 
 <p align="center">
@@ -699,7 +703,7 @@ We remark that this equation is \textit{only} valid materials with spherical por
 
 <p>
   
-The density of state exists in both denominator and numerator of thermopower so that the effect of volume averaging is canceled out. This is in agreement with Webman-Jortner-Cohen (WJC) model for the thermopower \cite{webman1977thermoelectric}
+The density of state exists in both denominator and numerator of thermopower so that the effect of volume averaging is canceled out. This is in agreement with Webman-Jortner-Cohen (WJC) model for the thermopower
 
 </p>
 
@@ -709,7 +713,7 @@ The density of state exists in both denominator and numerator of thermopower so 
 
 <p>
   
-Finally, the TE $ZT$ for materials containing extended cylindrical pores will be
+Finally, the TE ZT for materials containing extended cylindrical pores will be
 </p>
 
 <p align="center">
@@ -718,13 +722,13 @@ Finally, the TE $ZT$ for materials containing extended cylindrical pores will be
 
 <p>
   
-It is notable that, in general, the electron filtering effect in extended pores is negligible and therefore equation \ref{eq:ZT_cylinder} does not suffer from the erroneous in equation \ref{eq:ZT} and can be used for a wider range of Knudsen number.  
+It is notable that, in general, the electron filtering effect in extended pores is negligible and therefore equation above does not suffer from the erroneous in previous equation and can be used for a wider range of Knudsen number.  
 </p>
 
 
 <p>
   
-The variation of $ZT_{\mathrm{eff}}/ZT_{\mathrm{bulk}}$ with porosity and Knudsen number for discrete spherical pore and extended cylinder are shown in figure \ref{fig:ZT_sp}, and \ref{fig:ZT_cy}, respectively. For the spherical pores we used equation \ref{eq:ZT} and for the cylindrical pore we used equation \ref{eq:ZT_cylinder}.The model predicts that spherical pores detriment $ZT$ for $Kn \approx 1$ while for $Kn \ll 1$ it predicts enhancement in $ZT$. We \textit{reemphasize} that the energy filtering effect is neglected in derivation of equation \ref{eq:s} which by no means acceptable when $Kn \rightarrow 1$ (\textcolor{red}{I think this is very interesting argument but might be confusing for the reviews.}); However the model predicts improvement in $ZT$ in all range of $Kn$ with the largest enhancement in Knudsen regime for TEs with extended cylindrical pores -- note that there is no filtering effect in materials with extended pore. 
+The variation of ZT<sub>eff</sub>/ZT<sub>ibulk</sub> with porosity and Knudsen number for discrete spherical pore and extended cylinder are shown in figures bellow, respectively. The model predicts that spherical pores detriment ZT for Kn≈1 while for Kn<1 it predicts enhancement in ZT. We *reemphasize* that the energy filtering effect is neglected in derivation of equation for S which by no means acceptable when Kn→1; However the model predicts improvement in ZT in all range of Kn with the largest enhancement in Knudsen regime for TEs with extended cylindrical pores -- note that there is no filtering effect in materials with extended pore. 
 </p>
 
   
