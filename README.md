@@ -215,35 +215,130 @@ If the scattering processes that lead to the occupation fluctuations are random,
 <img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20P_%7B%5Coverline%7B%5Ctheta%7D%7D%28%5Ctheta%29%20%3D%20%5Cfrac%7B1%7D%7B%5Coverline%7B%5Ctheta%7D%7D%20e%5E%7B-%5Ctheta/%5Coverline%7B%5Ctheta%7D%7D." align="center" alt="drawing">
 </p>
 
+<p>
+  
+The rate, R<sub>n</sub>, of scattering into occupancy n is related to the thermodynamic probability P<sub>n</sub> of finding the mode in its n-th state of occupancy by
+</p>
 
-The rate, R_n, of scattering into occupancy n is related to the thermodynamic probability P_n of finding the mode in its n-th state of occupancy by
-█(R_n=P_n⁄θ ̅ ,#(15) )
-where P_n is the probability distribution for the canonical ensemble  
-█(P_n=e^(-nω ̃  ) (1-e^(-ω ̃  ) ).#(16) )
-Using Eq. 14–16 in 10 and performing the integral over lifetimes and summing over n gives
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20R_n%20%3D%20%5Cfrac%7BP_n%7D%7B%5Coverline%7B%5Ctheta%7D%7D%2C" align="center" alt="drawing">
+</p>
+
+<p>
+  
+where P<sub>n</sub> is the probability distribution for the canonical ensemble
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20P_n%20%3D%20e%5E%7B-n%5Cwidetilde%7B%5Comega%7D%7D%20%5Cleft%281%20-%20e%5E%7B-%5Cwidetilde%7B%5Comega%7D%7D%20%5Cright%29." align="center" alt="drawing">
+</p>
+
+<p>
+  
+Using Equations above and performing the integral over lifetimes and summing over n gives:
+</p>
+
+<p>
+  
 Performing the averaging over all possible occupancies gives
-█(⟨(n(t)-〈n〉)(n(t+τ)-〈n〉)⟩=1/θ ̅   e^(ω ̃  )/(e^(ω ̃  )-1)^2  ∫_0^∞▒〖dθ^' 〗 A(τ,θ^' ) e^(-θ^'⁄θ ̅ ),#(17) )
+</p>
+  
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cleft%5Clangle%20%5Cleft%28%20n%28t%29%20-%20%5Cleft%5Clangle%20n%20%5Cright%5Crangle%20%5Cright%29%20%5Cleft%28%20n%28t&plus;%5Ctau%29%20-%20%5Cleft%5Clangle%20n%20%5Cright%5Crangle%20%5Cright%29%20%5Cright%5Crangle%20%3D%20%5Cfrac%7B1%7D%7B%5Coverline%7B%5Ctheta%7D%7D%20%5Cfrac%7Be%5E%7B%5Cwidetilde%7B%5Comega%7D%7D%7D%7B%28e%5E%7B%5Cwidetilde%7B%5Comega%7D%7D-1%29%5E2%7D%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20d%5Ctheta%27A%28%5Ctau%2C%5Ctheta%29e%5E%7B-%5Ctheta%27/%5Coverline%7B%5Ctheta%7D%7D%2C" align="center" alt="drawing">
+</p> 
+
+<p>
+  
 and averaging over all possible fluctuation durations gives 
-█(⟨(n(t)-〈n〉)(n(t+τ)-〈n〉)⟩=e^(ω ̃  )/(e^ω ̃ -1)^2  e^(-τ⁄θ ̅ ).#(18) )
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cleft%5Clangle%20%5Cleft%28%20n%28t%29%20-%20%5Cleft%5Clangle%20n%20%5Cright%5Crangle%20%5Cright%29%20%5Cleft%28%20n%28t&plus;%5Ctau%29%20-%20%5Cleft%5Clangle%20n%20%5Cright%5Crangle%20%5Cright%29%20%5Cright%5Crangle%20%3D%20%5Cfrac%7Be%5E%7B%5Cwidetilde%7B%5Comega%7D%7D%7D%7B%28e%5E%7B%5Cwidetilde%7B%5Comega%7D%7D-1%29%5E2%7D%20e%5E%7B-%5Ctheta%27/%5Coverline%7B%5Ctheta%7D%7D." align="center" alt="drawing">
+</p> 
+
+<p>
+  
 The cumulative thermal conductivity tensor is then
-█(κ(τ)=V/(k_B T^2 ) ∑_kp^ ▒〖(〖ℏω〗_kp/V)^2  e^(ω ̃  )/(e^(ω ̃  )-1)^2  〖vv〗_kp ∫_0^τ▒〖dτ^' 〗 e^(-τ^'⁄θ ̅_kp ) 〗,#(19) )
+  </p>
+  
+  <p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cmathbf%7B%5Ckappa%7D%28%5Ctau%29%3D%20%5Cfrac%7BV%7D%7Bk_B%20T%5E2%7D%20%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cleft%28%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D%20%5Cright%29%5E2%20%5Cfrac%7Be%5E%7B%5Cwidetilde%7B%5Comega%7D%7D%7D%7B%28e%5E%7B%5Cwidetilde%7B%5Comega%7D%7D-1%29%5E2%7D%20%5Cnu%20%5Cnu_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cint_%7B0%7D%5E%7B%5Ctau%7D%20d%5Ctau%27e%5E%7B-%5Ctau%27/%5Coverline%7B%5Ctheta%7D_%7B%5Cmathbf%7Bk%7Dp%7D%7D%2C" align="center" alt="drawing">
+</p> 
+
+<p>
+  
 which after some mathematical manipulation simplifies to
-█(κ(τ)=∑_kp^ ▒〖(〖ℏω〗_kp/V  d〈n_kp 〉/dT) 〖vv〗_kp  θ ̅_kp (1-e^(-〖τ⁄θ ̅ 〗_kp ) ) 〗.#(20) )
+</p> 
+
+ <p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cmathbf%7B%5Ckappa%7D%28%5Ctau%29%3D%20%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cleft%28%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D%20%5Cfrac%7Bd%20%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%5Crangle%7D%7BdT%7D%20%5Cright%29%20%5Cnu%20%5Cnu_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Coverline%7B%5Ctheta%7D_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cleft%28%201%20-%20e%5E%7B-%5Ctau/%5Coverline%7B%5Ctheta%7D_%7B%5Cmathbf%7Bk%7Dp%7D%7D%20%5Cright%29." align="center" alt="drawing">
+</p>
+
+<p>
+  
 The first term in parenthesis is the mode’s volumetric specific heat. If the phonon modes all have the same scattering rate and group velocity and assuming cubic symmetry, the first element of the thermal conductivity tensor reduces to the well-known result from kinetic theory:
-█(κ_xx (∞)=1/3 C_v v ̅_g λ,#(21) )
-where C_v, v ̅_g and λ are the systems volumetric specific heat, group velocity, and mean free path.  This result shows that in order to understand the HCACF and the reduction in thermal conductivity we need only consider just the autocorrelation of individual occupancy fluctuation or phonon wavepackets by themselves, and thus provides the formal theoretical footing for the ray tracing model that follows. Before moving on to the ray tracing model, however, we make note of several insights that can be obtained from the analysis above. 
-The correlation function in Eq. 18 decays (and the cumulative conductivity in 19 saturates) exponentially over a correlation time equal to the mean phonon scattering time θ ̅, so is all modes have the same lifetime the cumulative thermal conductivity distribution over correlation time τ is  
-█(κ(τ)/κ_∞ =1-e^(-τ⁄θ ̅ ).#(22) )
-This masks the importance for the transport of heat of long-lived occupancy fluctuations in the tail of the Poisson distribution of lifetimes. As can be seen from Eq. 13, the contribution that occupancy fluctuations make to the thermal conductivity is proportional to their lifetime squared, and so we can compute the cumulative thermal conductivity distribution over phonon lifetimes as 
-█(κ(θ)/κ_∞ =(∫_0^θ▒〖dθ^' θ^'2 P_θ ̅  (θ^' ) 〗)/(∫_0^∞▒〖dθ^' θ^'2 P_θ ̅  (θ^' ) 〗)=1- 1/2 (2+θ/θ ̅  (2+θ/θ ̅ )) ⅇ^(-θ⁄θ ̅ ).#(23) )
-Both Eq. 22 and 23 are plotted in figure XX.c. where it can be seen that the short-lived fluctuations (small θ) contribute very little to the thermal conductivity while the cumulative conductivity distribution in τ  rises rapidly at small correlation times. This illustrates the conceptual difference between fluctuation duration θ and correlation time τ; the change in κ(τ) at correlation time τ includes contributions from all fluctuations with θ> τ.  It is common in heat transport texts to see plots of the cumulative contribution to thermal conductivity over the distribution of phonon modes’ mean free paths in a crystal κ(λ), and so we take pains here to point out that the κ(θ) distribution in Fig. xx.c is due to the shot noise in a mode with average scattering rate θ ̅, it is not from a distribution different θ ̅ over different modes. However, the effect of this noise is significant, with a large contribution to the total conductivity coming from a small number of phonons that travel ballistically over distances many times longer than the mean free path before scattering. This point is further emphasized by computing the cumulative conductivity distribution over the fraction ϕ of occupancy fluctuations ranked in ascending order of their longevity, 
-█(κ(ϕ)/κ_∞ =ϕ-(1-ϕ)ln[1-ϕ](1-1/2 ln[1-ϕ]),#(24) )
-as is plotted in Fig. 1.d. In fact, more than 50% of the heat transported is carried by just 7% of phonons that survive for more than 2.7 times the average phonon lifetime θ ̅. It can also be seen that 80% of the heat current comes from fewer than 20% of the phonon mode occupancy fluctuations. This matches Pareto’s 80-20 rule that is a signature of Lévy flights, although in this case, the distribution of flight lengths is not fractal (power-law), and so this behavior is not a true Lévy flight. The outsized importance of the long-lived phonons is significant as it implied that ballistic effects for heat transport in nanoscale systems should become significant at system sizes significantly larger than the phonons’ nominal mean free path. This observation also has important ramifications for deterministic simulations of the Boltzmann transport equation (BTE) for phonons, implying that to correctly predict the heat conduction due to phonon transport in nanostructured material, one must smear the intrinsic distribution of average phonon lifetimes by the Poisson distribution—a practice that is often overlooked in frequency-dependent and multi-grey BTE simulations [Jackson, Giuseppe].
-In addition to computing the contribution from different occupancy durations, it is also insightful to consider the cumulative distribution contribution from different occupancy 
-█(κ(n)/κ_∞ =(∑_(n^'=0)^n▒〖P_(n^' ) (n^'-〈n〉)^2 〗)⁄(∑_(n^'=0)^∞▒〖P_(n^' ) (n^'-〈n〉)^2 〗),#(25) )
-as plotted in Fig. 1.e with values for ω ̅ of 0.5, 1.0, and 1.5 (which corresponds to average occupancies of 〈n〉 of 0.16, 0.58, and 1.1). It can be seen that because of the (n-〈n〉)^2 dependence on the ACF infrequency multiple phonon excitations of the modes account for a large fraction of the heat carried, even at temperatures where 〈n〉~0.5. This suggests that scattering processes involving four or more phonons, although rare, will have a significant impact on the overall thermal conductivity, even at low temperatures.
-Monte Carlo ray tracing model of correlated scattering 
-To isolate the effects that arise from correlated scattering we study a simpler model system consisting of a grey population of phonons in which we assume that all phonon modes have the same frequency ω, group velocity v_g, and mean intrinsic scattering lifetime θ ̅.  The derivation above shows that the HCACF can be constructed by considering each correlated heat carrier event in isolation and then averaging their contribution to the total HCACF. For a wave packet scattered elastically from one mode (with wavevector k and polarization p) into another mode (k'p') by an interface, one must consider the flight of both the incident wavepacket and the scattered wavepacket together as the occupancy fluctuations in kp and k'p' modes are now (anti)correlated. This is true even in the case of diffuse scattering, where the choice of the scattered k' mode is independent of the incident mode, as after scattering the sign of the velocity component perpendicular to the interface is reversed, making heat flux in that direction after scattering anticorrelated with the flux before scattering. As we now have to consider the sequential occupancy of two or more modes, rather than compute the occupancy auto- and cross-correlations of the modes we instead consider the heat current from individual wavepackets of lattice vibration, starting from their birth, and following them as they are scattered elastically through a series of different phonon modes, up until the uncorrelated phonon-phonon scattering event that causes their annihilation. An example of such a trajectory is shown in Fig. 1.e with the resulting heat flux along x and its autocorrelation function shown in Fig. 1.f.  
+  </p>
+  
+  <p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Ckappa_%7Bxx%7D%28%5Cinfty%29%20%3D%20%5Cfrac%7B1%7D%7B3%7D%20C_v%20%5Coverline%7B%5Cnu%7D_g%20%5Clambda." align="center" alt="drawing">
+</p>
+
+<p>
+  
+where C<sub>v</sub>, v ̅<sub>g</sub> and λ are the systems volumetric specific heat, group velocity, and mean free path.  This result shows that in order to understand the HCACF and the reduction in thermal conductivity we need only consider just the autocorrelation of individual occupancy fluctuation or phonon wavepackets by themselves, and thus provides the formal theoretical footing for the ray tracing model that follows. Before moving on to the ray tracing model, however, we make note of several insights that can be obtained from the analysis above. 
+</p>
+
+<p>
+  
+The correlation function in Equations above decays (and the cumulative conductivity saturates) exponentially over a correlation time equal to the mean phonon scattering time θ ̅, so is all modes have the same lifetime the cumulative thermal conductivity distribution over correlation time τ is
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cfrac%7B%5Ckappa%28%5Ctau%29%7D%7B%5Ckappa_%7B%5Cinfty%7D%7D%20%3D%201%20-%20e%5E%7B-%5Ctau/%5Coverline%7B%5Ctheta%7D%7D." align="center" alt="drawing">
+</p>
+
+<p>
+  
+This masks the importance for the transport of heat of long-lived occupancy fluctuations in the tail of the Poisson distribution of lifetimes. The contribution that occupancy fluctuations make to the thermal conductivity is proportional to their lifetime squared, and so we can compute the cumulative thermal conductivity distribution over phonon lifetimes as 
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cfrac%7B%5Ckappa%28%5Ctheta%29%7D%7B%5Ckappa_%7B%5Cinfty%7D%7D%20%3D%20%5Cfrac%7B%5Cint_%7B0%7D%5E%7B%5Ctheta%7Dd%5Ctheta%27%20%5Ctheta%27%5E2%20P_%7B%5Coverline%7B%5Ctheta%7D%7D%28%5Ctheta%27%29%7D%7B%5Cint_%7B0%7D%5E%7B%5Cinfty%7Dd%5Ctheta%27%20%5Ctheta%27%5E2%20P_%7B%5Coverline%7B%5Ctheta%7D%7D%28%5Ctheta%27%29%7D%20%3D%201-%20%5Cfrac%7B1%7D%7B2%7D%20%5Cleft%28%202%20&plus;%20%5Cfrac%7B%5Ctheta%7D%7B%5Coverline%7B%5Ctheta%7D%7D%20%5Cleft%28%202%20&plus;%20%5Cfrac%7B%5Ctheta%7D%7B%5Coverline%7B%5Ctheta%7D%7D%5Cright%29%20%5Cright%29e%5E%7B-%5Ctheta/%5Coverline%7B%5Ctheta%7D%7D." align="center" alt="drawing">
+</p>
+
+<p>
+  
+These equations are plotted in figure below where it can be seen that the short-lived fluctuations (small θ) contribute very little to the thermal conductivity while the cumulative conductivity distribution in τ  rises rapidly at small correlation times. This illustrates the conceptual difference between fluctuation duration θ and correlation time τ; the change in κ(τ) at correlation time τ includes contributions from all fluctuations with θ> τ.  It is common in heat transport texts to see plots of the cumulative contribution to thermal conductivity over the distribution of phonon modes’ mean free paths in a crystal κ(λ), and so we take pains here to point out that the κ(θ) distribution in the figure is due to the shot noise in a mode with average scattering rate θ ̅, it is not from a distribution different θ ̅ over different modes. However, the effect of this noise is significant, with a large contribution to the total conductivity coming from a small number of phonons that travel ballistically over distances many times longer than the mean free path before scattering. This point is further emphasized by computing the cumulative conductivity distribution over the fraction ϕ of occupancy fluctuations ranked in ascending order of their longevity,
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cfrac%7B%5Ckappa%28%5Cphi%29%7D%7B%5Ckappa_%7B%5Cinfty%7D%7D%20%3D%20%5Cphi%20-%20%281-%5Cphi%29%20%5Cln%7B%281-%5Cphi%29%7D%5Cleft%28%201%20-%20%5Cfrac%7B1%7D%7B2%7D%20%5Cln%7B%281-%5Cphi%29%7D%5Cright%29%2C" align="center" alt="drawing">
+</p>
+
+<p>
+  
+as is plotted in Figure below. In fact, more than 50% of the heat transported is carried by just 7% of phonons that survive for more than 2.7 times the average phonon lifetime θ ̅. It can also be seen that 80% of the heat current comes from fewer than 20% of the phonon mode occupancy fluctuations. This matches Pareto’s 80-20 rule that is a signature of Lévy flights, although in this case, the distribution of flight lengths is not fractal (power-law), and so this behavior is not a true Lévy flight. The outsized importance of the long-lived phonons is significant as it implied that ballistic effects for heat transport in nanoscale systems should become significant at system sizes significantly larger than the phonons’ nominal mean free path. This observation also has important ramifications for deterministic simulations of the Boltzmann transport equation (BTE) for phonons, implying that to correctly predict the heat conduction due to phonon transport in nanostructured material, one must smear the intrinsic distribution of average phonon lifetimes by the Poisson distribution—a practice that is often overlooked in frequency-dependent and multi-grey BTE simulation.
+</p>
+
+<p>
+  
+In addition to computing the contribution from different occupancy durations, it is also insightful to consider the cumulative distribution contribution from different occupancy
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cfrac%7B%5Ckappa%28n%29%7D%7B%5Ckappa_%7B%5Cinfty%7D%7D%20%3D%20%5Csum_%7Bn%27%3D0%7D%5E%7Bn%7D%20P_%7Bn%27%7D%28n%27-%5Clangle%20n%20%5Crangle%29%5E2/%5Csum_%7Bn%27%3D0%7D%5E%7B%5Cinfty%7D%20P_%7Bn%27%7D%28n%27-%5Clangle%20n%20%5Crangle%29%5E2%2C" align="center" alt="drawing">
+</p>
+  
+<p>
+  
+as plotted in Figure below with values for ω ̅ of 0.5, 1.0, and 1.5 (which corresponds to average occupancies of 〈n〉 of 0.16, 0.58, and 1.1). It can be seen that because of the (n-〈n〉)<sup>2</sup> dependence on the ACF infrequency multiple phonon excitations of the modes account for a large fraction of the heat carried, even at temperatures where 〈n〉~0.5. This suggests that scattering processes involving four or more phonons, although rare, will have a significant impact on the overall thermal conductivity, even at low temperatures.
+</p>
+
+## Monte Carlo ray tracing model of correlated scattering 
+
+<p>
+  
+To isolate the effects that arise from correlated scattering we study a simpler model system consisting of a grey population of phonons in which we assume that all phonon modes have the same frequency ω, group velocity v<sub>g</sub>, and mean intrinsic scattering lifetime θ ̅.  The derivation above shows that the HCACF can be constructed by considering each correlated heat carrier event in isolation and then averaging their contribution to the total HCACF. For a wave packet scattered elastically from one mode (with wavevector k and polarization p) into another mode (k'p') by an interface, one must consider the flight of both the incident wavepacket and the scattered wavepacket together as the occupancy fluctuations in kp and k'p' modes are now (anti)correlated. This is true even in the case of diffuse scattering, where the choice of the scattered k' mode is independent of the incident mode, as after scattering the sign of the velocity component perpendicular to the interface is reversed, making heat flux in that direction after scattering anticorrelated with the flux before scattering. As we now have to consider the sequential occupancy of two or more modes, rather than compute the occupancy auto- and cross-correlations of the modes we instead consider the heat current from individual wavepackets of lattice vibration, starting from their birth, and following them as they are scattered elastically through a series of different phonon modes, up until the uncorrelated phonon-phonon scattering event that causes their annihilation. An example of such a trajectory is shown in the figure with the resulting heat flux along x and its autocorrelation function shown in Figure bellow.
 In using this conceptually subtly different approach of following wavepackets rather than occupancy fluctuations, we can apply some of the insights from the derivation above to write the autocorrelation function of the heat current fluctuations along the x direction as the average of the heat flux autocorrelation functions of wavepackets with unit magnitude
 █(〈J_x (t) J_x (t+τ)〉=D/(Vθ ̅ )  e^ω ̃ /(e^ω ̃ -1)^2   (ℏω v_g^  )^2  〈A_xx (τ,θ,r,Ω ̂ )〉,#(26) )
 where D is the density of states (the number of phonon modes per unit volume), and A_xx (τ,θ,r,Ω ̂ ) is the autocorrelation function of the heat flux along x created by a unit wavepacket that was born at location r, traveled initially along direction Ω ̂, and lived for duration θ, before being annihilation into the phonon bath. The total thermal conductivity reduction can thus be computed as: 
