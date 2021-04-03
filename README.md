@@ -212,7 +212,7 @@ If the scattering processes that lead to the occupation fluctuations are random,
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20P_%7B%5Coverline%7B%5Ctheta%7D%7D%28%5Ctheta%29%20%3D%20%5Cfrac%7B1%7D%7B%5Coverline%7B%5Ctheta%7D%7D%20e%5E%7B-%5Ctheta/%5Coverline%7B%5Ctheta%7D%7D." align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20P_%7B%5Coverline%7B%5Ctheta%7D%7D%28%5Ctheta%29%20%3D%20%5Cfrac%7B1%7D%7B%5Coverline%7B%5Ctheta%7D%7D%20e%5E%7B-%5Ctheta/%5Coverline%7B%5Ctheta%7D%7D." align="center" alt="drawing">
 </p>
 
 
