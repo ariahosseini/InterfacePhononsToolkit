@@ -85,7 +85,7 @@ The Green Kubo equation gives the thermal conductivity tensor as the integral of
  </p>
  
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Cmathbf%7B%5Ckappa%7D%20%3D%20%5Cfrac%7BV%7D%7Bk_BT%5E2%7D%5Cint_%7B0%7D%5E%7B%5Cinfty%20%7D%20d%5Ctau%20%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D%28t&plus;%5Ctau%29%5Cright%5Crangle%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cmathbf%7B%5Ckappa%7D%20%3D%20%5Cfrac%7BV%7D%7Bk_BT%5E2%7D%5Cint_%7B0%7D%5E%7B%5Cinfty%20%7D%20d%5Ctau%20%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D%28t&plus;%5Ctau%29%5Cright%5Crangle%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -94,7 +94,7 @@ where J<sub>kp</sub>(t) is the total instantaneous heat flux at time t, in the v
  </p>
  
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%3D%20%5Cleft%28%20%5Cfrac%7B1%7D%7B2%7D&plus;n_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%5Cright%29%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cnu_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%3D%20%5Cleft%28%20%5Cfrac%7B1%7D%7B2%7D&plus;n_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%5Cright%29%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cnu_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -103,7 +103,7 @@ where n<sub>kp</sub>(t) is the mode’s occupancy at time t. This can be rewritt
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%3D%20%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20&plus;%20%5Cleft%28%20n_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20-%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%5Cright%29%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cnu_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%3D%20%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20&plus;%20%5Cleft%28%20n_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20-%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%5Cright%29%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cnu_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -112,7 +112,7 @@ where 〈n<sub>kp</sub>〉 is the Bose-Einstein occupancy
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%3D%20%5Cfrac%7B1%7D%7Be%5E%7B%5Cwidetilde%7B%5Comega%7D_%7B%5Cmathbf%7Bk%7Dp%7D%7D-1%7D%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%3D%20%5Cfrac%7B1%7D%7Be%5E%7B%5Cwidetilde%7B%5Comega%7D_%7B%5Cmathbf%7Bk%7Dp%7D%7D-1%7D%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -121,7 +121,7 @@ and ω ̃<sub>kp</sub> is the dimensionless mode frequency ω ̃<sub>kp</sub>= �
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Cmathbf%7BJ%7D%28t%29%20%3D%20%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%3D%20%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cleft%28%20n_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20-%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%5Cright%29%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cnu_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D." align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cmathbf%7BJ%7D%28t%29%20%3D%20%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%3D%20%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cleft%28%20n_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20-%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%5Cright%29%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cnu_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D." align="center" alt="drawing">
 </p>
 
 <p>
@@ -130,7 +130,7 @@ where the mean flux from pairs of modes with opposite k has canceled one another
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D%28t&plus;%5Ctau%29%5Cright%5Crangle%20%3D%20%5Csum_%7B%5Cmathbf%7Bk%27%7Dp%7D%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%27%7Dp%27%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%5Cright%5Crangle%20%3D%20%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t&plus;%5Ctau%29%5Cright%5Crangle." align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D%28t&plus;%5Ctau%29%5Cright%5Crangle%20%3D%20%5Csum_%7B%5Cmathbf%7Bk%27%7Dp%7D%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%27%7Dp%27%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%5Cright%5Crangle%20%3D%20%5Csum_%7B%5Cmathbf%7Bk%7Dp%7D%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t&plus;%5Ctau%29%5Cright%5Crangle." align="center" alt="drawing">
 </p>
 
 <p>
@@ -139,7 +139,7 @@ This, in turn, depends only on the autocorrelation of the occupancy fluctuations
 </p> 
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t&plus;%5Ctau%29%5Cright%5Crangle%20%3D%20%5Cleft%20%28%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D%20%5Cright%20%29%5E2%20%5Cmathbf%7B%5Cnu%7D%20%5Cmathbf%7B%5Cnu%7D_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cleft%5Clangle%20%5Cleft%28%20n_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20-%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%5Cright%29%20%5Cleft%28%20n_%7B%5Cmathbf%7Bk%7Dp%7D%28t&plus;%5Ctau%29%20-%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%5Cright%29%20%5Cright%5Crangle%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cleft%5Clangle%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20%5Cbigotimes%20%5Cmathbf%7BJ%7D_%7B%5Cmathbf%7Bk%7Dp%7D%28t&plus;%5Ctau%29%5Cright%5Crangle%20%3D%20%5Cleft%20%28%20%5Cfrac%7B%5Chbar%20%5Comega_%7B%5Cmathbf%7Bk%7Dp%7D%7D%7BV%7D%20%5Cright%20%29%5E2%20%5Cmathbf%7B%5Cnu%7D%20%5Cmathbf%7B%5Cnu%7D_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cleft%5Clangle%20%5Cleft%28%20n_%7B%5Cmathbf%7Bk%7Dp%7D%28t%29%20-%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%5Cright%29%20%5Cleft%28%20n_%7B%5Cmathbf%7Bk%7Dp%7D%28t&plus;%5Ctau%29%20-%20%5Cleft%5Clangle%20n_%7B%5Cmathbf%7Bk%7Dp%7D%20%5Cright%5Crangle%20%5Cright%29%20%5Cright%5Crangle%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -153,7 +153,7 @@ The occupancy n(t) of a phonon mode will be a random stepped function in time as
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20n%28t%29%20%3D%20%5Csum_%7Bi%3D1%7D%5E%7B%5Cinfty%7D%20n_i%20%5CPi_%7Bt_i%2C%20t_i&plus;%5Ctheta_i%7D%28t%29%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20n%28t%29%20%3D%20%5Csum_%7Bi%3D1%7D%5E%7B%5Cinfty%7D%20n_i%20%5CPi_%7Bt_i%2C%20t_i&plus;%5Ctheta_i%7D%28t%29%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -162,7 +162,7 @@ where Π<sub>(a,b)</sub>(t) is the boxcar function (plotted in blue in the top p
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5CPi_%7Ba%2Cb%7D%28t%29%20%3D%20%5Cbegin%7Bcases%7D%201%20%26%20%5Ctext%7B%20for%20%7D%20a%20%5Cleq%20t%3C%20b%20%5C%5C%200%20%26%20%5Ctext%7B%20otherwise%20%7D%20%5Cend%7Bcases%7D%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5CPi_%7Ba%2Cb%7D%28t%29%20%3D%20%5Cbegin%7Bcases%7D%201%20%26%20%5Ctext%7B%20for%20%7D%20a%20%5Cleq%20t%3C%20b%20%5C%5C%200%20%26%20%5Ctext%7B%20otherwise%20%7D%20%5Cend%7Bcases%7D%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -176,7 +176,7 @@ If the probability of the i-th occupancy n<sub>i</sub>  and its duration θ<sub>
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Cleft%5Clangle%20%5Cleft%28%20n%28t%29%20-%20%5Cleft%5Clangle%20n%20%5Cright%5Crangle%20%5Cright%29%20%5Cleft%28%20n%28t&plus;%5Ctau%29%20-%20%5Cleft%5Clangle%20n%20%5Cright%5Crangle%20%5Cright%29%20%5Cright%5Crangle%20%3D%20%5Csum_%7Bn%3D0%7D%5E%7B%5Cinfty%7D%20%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20d%20%5Ctheta%27%20P_%7B%5Coverline%7B%5Ctheta%7D%7D%28%5Ctheta%27%29%20R_n%28n-%20%5Clangle%20n%20%5Crangle%29%5E2%20A%28%5Ctau%2C%20%5Ctheta%27%29%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cleft%5Clangle%20%5Cleft%28%20n%28t%29%20-%20%5Cleft%5Clangle%20n%20%5Cright%5Crangle%20%5Cright%29%20%5Cleft%28%20n%28t&plus;%5Ctau%29%20-%20%5Cleft%5Clangle%20n%20%5Cright%5Crangle%20%5Cright%29%20%5Cright%5Crangle%20%3D%20%5Csum_%7Bn%3D0%7D%5E%7B%5Cinfty%7D%20%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20d%20%5Ctheta%27%20P_%7B%5Coverline%7B%5Ctheta%7D%7D%28%5Ctheta%27%29%20R_n%28n-%20%5Clangle%20n%20%5Crangle%29%5E2%20A%28%5Ctau%2C%20%5Ctheta%27%29%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -185,7 +185,7 @@ where the subscripts have been dropped temporarily for clarity. Here R<sub>n</su
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20A%28%5Ctau%2C%20%5Ctheta%29%20%3D%20%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20dt%27%20%5CPi_%7Ba%2C%20a&plus;%5Ctheta%7D%28t%27%29%20%5CPi_%7Ba%2C%20a&plus;%5Ctheta%7D%28t%27&plus;%5Ctau%29%20%3D%20%5Ctheta%20%5Cleft%28%201-%20%5Cfrac%7B%5Ctau%7D%7B%5Ctheta%7D%5Cright%29%20H%28%5Ctheta-%5Ctau%29%2C" align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20A%28%5Ctau%2C%20%5Ctheta%29%20%3D%20%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20dt%27%20%5CPi_%7Ba%2C%20a&plus;%5Ctheta%7D%28t%27%29%20%5CPi_%7Ba%2C%20a&plus;%5Ctheta%7D%28t%27&plus;%5Ctau%29%20%3D%20%5Ctheta%20%5Cleft%28%201-%20%5Cfrac%7B%5Ctau%7D%7B%5Ctheta%7D%5Cright%29%20H%28%5Ctheta-%5Ctau%29%2C" align="center" alt="drawing">
 </p>
 
 <p>
@@ -194,7 +194,7 @@ with H(x) is the Heaviside theta function. The integral of the boxcar’s autoco
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20C%28%5Ctau%2C%20%5Ctheta%29%20%3D%20%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20d%5Ctau%27%20A%28%5Ctau%27%2C%20%5Ctheta%29%20%3D%20%5Cleft%28%20%5Ctheta%20%5Ctau%20-%20%5Cfrac%7B%5Ctau%5E2%7D%7B2%7D%5Cright%29%20H%28%5Ctheta-%5Ctau%29&plus;%5Ctheta%5E2%281-H%28%5Ctheta-%5Ctau%29%29." align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20C%28%5Ctau%2C%20%5Ctheta%29%20%3D%20%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20d%5Ctau%27%20A%28%5Ctau%27%2C%20%5Ctheta%29%20%3D%20%5Cleft%28%20%5Ctheta%20%5Ctau%20-%20%5Cfrac%7B%5Ctau%5E2%7D%7B2%7D%5Cright%29%20H%28%5Ctheta-%5Ctau%29&plus;%5Ctheta%5E2%281-H%28%5Ctheta-%5Ctau%29%29." align="center" alt="drawing">
 </p>
 
 <p>
@@ -203,7 +203,7 @@ The upper pane of Figure below shows the boxcar function for a single fluctuatio
 </p>
 
 <p align="center">
-<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20C%28%5Cinfty%2C%20%5Ctheta%29%20%3D%20%5Cfrac%7B1%7D%7B2%7D%20%5Ctheta%5E2." align="center" alt="drawing">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20C%28%5Cinfty%2C%20%5Ctheta%29%20%3D%20%5Cfrac%7B1%7D%7B2%7D%20%5Ctheta%5E2." align="center" alt="drawing">
 </p>
 
 <p>
