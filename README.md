@@ -339,23 +339,89 @@ as plotted in Figure below with values for ω ̅ of 0.5, 1.0, and 1.5 (which cor
 <p>
   
 To isolate the effects that arise from correlated scattering we study a simpler model system consisting of a grey population of phonons in which we assume that all phonon modes have the same frequency ω, group velocity v<sub>g</sub>, and mean intrinsic scattering lifetime θ ̅.  The derivation above shows that the HCACF can be constructed by considering each correlated heat carrier event in isolation and then averaging their contribution to the total HCACF. For a wave packet scattered elastically from one mode (with wavevector k and polarization p) into another mode (k'p') by an interface, one must consider the flight of both the incident wavepacket and the scattered wavepacket together as the occupancy fluctuations in kp and k'p' modes are now (anti)correlated. This is true even in the case of diffuse scattering, where the choice of the scattered k' mode is independent of the incident mode, as after scattering the sign of the velocity component perpendicular to the interface is reversed, making heat flux in that direction after scattering anticorrelated with the flux before scattering. As we now have to consider the sequential occupancy of two or more modes, rather than compute the occupancy auto- and cross-correlations of the modes we instead consider the heat current from individual wavepackets of lattice vibration, starting from their birth, and following them as they are scattered elastically through a series of different phonon modes, up until the uncorrelated phonon-phonon scattering event that causes their annihilation. An example of such a trajectory is shown in the figure with the resulting heat flux along x and its autocorrelation function shown in Figure bellow.
+</p>
+
+<p>
+  
 In using this conceptually subtly different approach of following wavepackets rather than occupancy fluctuations, we can apply some of the insights from the derivation above to write the autocorrelation function of the heat current fluctuations along the x direction as the average of the heat flux autocorrelation functions of wavepackets with unit magnitude
-█(〈J_x (t) J_x (t+τ)〉=D/(Vθ ̅ )  e^ω ̃ /(e^ω ̃ -1)^2   (ℏω v_g^  )^2  〈A_xx (τ,θ,r,Ω ̂ )〉,#(26) )
-where D is the density of states (the number of phonon modes per unit volume), and A_xx (τ,θ,r,Ω ̂ ) is the autocorrelation function of the heat flux along x created by a unit wavepacket that was born at location r, traveled initially along direction Ω ̂, and lived for duration θ, before being annihilation into the phonon bath. The total thermal conductivity reduction can thus be computed as: 
-█(κ(τ)/κ_bulk =3/θ ̅^2   ∫_0^τ▒〖dτ^' 〗 〈A_xx (τ^',θ,r,Ω ̂ )〉=3/θ ̅^2  〈C_xx (τ,θ,r,Ω ̂ )〉.#(27) )
-As this population phonons are in a volume that includes physical scattering centers such as pores and inclusions, in addition to averaging over the phonon lifetimes θ, the average 〈A_xx (τ^',θ,r,Ω ̂ )〉 is also taken over the spatial domain r, the phonon modes Ω ̂, and the various possibilities for the reflected wave packet at each correlated scattering events. 
-Rather than perform the average in Eq. 27 analytically, we average using Monte Carlo sampling — tracing the trajectory of wavepackets as they collide with pores and are scattered off into new directions. In this scheme we took the average HCACF from 20,000 randomly sampled wavepacket trajectories; each beginning from a randomly selected starting point, with random initial direction, and with a lifetime drawn randomly from the Poisson distribution. The single wavepacket HCACFs in the x, y, and z directions were computed numerically out to a correlation time of 20 times the mean scattering time θ ̅ to prevent truncation of contributions from long-lived phonons in the tails of the Poisson distribution. This averaging was sufficient to reduce the uncertainty in the computed values of κ_bulk to < 3%. The details of how the correlated scattering from pores was modeled are described in the next section.
-Pore scattering models
-The HCACF from the MD simulations of material containing cylindrical pores shows a single pronounced region of anticorrelation. The correlation time at which the HCACF is most negative changes with the distance d between the ranks of pores but is characterized by single effective velocity v_dip which is found to be 0.6XXX of the averaged acoustic phonon velocity. Finally, the anti-correlation effect can be very large, with the final thermal conductivity of the material containing pores κ_∞ being as little as 20% of the peak cumulative thermal conductivity, κ_peak. This implies that the motion of phonons after scattering, on average, undoes 80% of the heat conduction by the phonons before they were scattered from the pores. With the ray tracing model, we aim to understand what factors in the scattering of phonons from pores affect these three factors: single vs multiple anticorrelation, v_dip, and 〖κ_peak/κ〗_∞.  For this, we consider the effect on the HCACF from four phenomenological models of phonon scattering from scattering centers separated by distance d in the material. Two geometries of scattering centers are considered: an array of parallel permeable planer walls, and a series of palisades of cylindrical pores. For each geometry we examined the effect of both specular and diffuse phonon scattering by the obstacles, giving us four scattering models in total. The two geometries have a single geometric degree of freedom α that is related to the probability that phonons are not scattered when they encounter the wall/palisade. 
-Diffuse and specular wall scattering models:  We represent the pores in MD simulation as a series of parallel planer interfaces perpendicular to the x-axis. The spacing, d, between planes is described in terms of the Knudsen number K_n=(v_g θ ̅)/d. When a phonon encounters an interface there is a finite probability 1-α that it will pass through with its trajectory unaltered, otherwise, the phonon is reflected. For the specular model, reflection involves only flipping the direction of the x-component of the velocity. In the diffuse model, a new random directory is chosen in the half-space perpendicular to the reflection plane, so that the x-component of the velocity of the scattered phonon has the opposite sign from the incident phonon.  Simulations were performed sweeping α from 0 to 1 and log⁡〖[K_n ]  〗from -1 to 1. Although we refer to this model as the interface model, it is a reasonable representation of scattering from rectangular pores.
-Diffuse and specular palisade scattering models: With the palisade model we aim to more closely mimic the pore geometry simulate in the MD simulations. We assume that the material contains rows of cylindrical pores, each with radius r and aligned with their axis parallel to the y-direction. The pores are arrayed in the z-direction with spacing L to form a palisade fence. The geometry of the palisade is parameterized the parameter α=2r/L which is the scattering probability for phonons that meeting the palisade head-on. In general, the probability that phonons are scattered by the pores rather than passing between them is a function of incidence angle, χ, of the phonon trajectory in the x-z plane with the x-axis. The transmission probability depends on the gap between cylinders that is visible to the phonons as they travel towards the palisade, given by
-█(T(χ)=1-α/|cos⁡χ | .#(28) )
-Here tan⁡χ=v_z/v_x. The probability of transmission drops to zero at grazing angles of incidence where the shadow of the cylinder one another. Rather than models the location of cylinders explicitly we consider the probability that an incident phonon strikes a cylinder at a position with normal vector at an angle of β relative to the phonon direction. This probability is given by P(β)=cos⁡β/(sin⁡〖β_max 〗-sin⁡〖β_min 〗 ), where β_min and β_max are the limits to the possible incident angles that a phonon could strike the surface of a cylinder. If there is no shadowing β_min=-π/2, and β_max=π/2. Shadowing occurs at angles when T(χ)<0, and in these cases: 
-█(β_min {█(arcsin⁡〖(1-(2 cos⁡χ)/α)for cos⁡χ  sin⁡〖χ>0〗 〗@-π/2  otherwise)┤,#(29) )
-█(β_max {█(〖-arcsin〗⁡(1-(2 cos⁡χ)/α)for cos⁡χ  sin⁡〖χ<0〗@π/2  otherwise)┤.#(30) )
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Clangle%20J_x%28t%29J_x%28t&plus;%5Ctau%29%20%3D%20%5Cfrac%7BD%7D%7BV%20%5Coverline%7B%5Ctheta%7D%7D%5Cfrac%7Be%5E%7B%5Cwidetilde%7B%5Comega%7D%7D%7D%7B%28e%5E%7B%5Cwidetilde%7B%5Comega%7D%7D-1%29%5E2%7D%28%5Chbar%20%5Comega%20%5Cnu_g%29%5E2%20%5Clangle%20A_%7Bxx%7D%28%5Ctau%2C%20%5Ctheta%2C%20%5Cmathbf%7Br%7D%2C%20%5Cwidehat%7B%5COmega%7D%29%20%5Crangle%2C" align="center" alt="drawing">
+</p>
+
+<p>
+  
+where D is the density of states (the number of phonon modes per unit volume), and A<sub>xx</sub>(τ,θ,r,Ω ̂ ) is the autocorrelation function of the heat flux along x created by a unit wavepacket that was born at location r, traveled initially along direction Ω ̂, and lived for duration θ, before being annihilation into the phonon bath. The total thermal conductivity reduction can thus be computed as: 
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cfrac%7B%5Ckappa%28%5Ctau%29%7D%7B%5Ckappa_%7B%5Cmathrm%7Bbulk%7D%7D%7D%20%3D%20%5Cfrac%7B3%7D%7B%5Coverline%7B%5Ctheta%7D%5E2%7D%20%5Cint_0%5E%7B%5Ctau%7Dd%5Ctau%27%20%5Clangle%20A_%7Bxx%7D%28%5Ctau%27%2C%20%5Ctheta%2C%20%5Cmathbf%7Br%7D%2C%5Cwidehat%7B%5COmega%7D%29%20%5Crangle%20%3D%20%5Cfrac%7B3%7D%7B%5Coverline%7B%5Ctheta%7D%5E2%7D%20%5Clangle%20C_%7Bxx%7D%28%5Ctau%2C%5Ctheta%2C%20%5Cmathbf%7Br%7D%2C%5Cwidehat%7B%5COmega%7D%29%20%5Crangle." align="center" alt="drawing">
+</p>
+
+<p>
+  
+As this population phonons are in a volume that includes physical scattering centers such as pores and inclusions, in addition to averaging over the phonon lifetimes θ, the average 〈A<sub>xx</sub>(τ^',θ,r,Ω ̂ )〉 is also taken over the spatial domain r, the phonon modes Ω ̂, and the various possibilities for the reflected wave packet at each correlated scattering events. 
+</p>
+
+<p>
+  
+Rather than perform the average analytically, we average using Monte Carlo sampling — tracing the trajectory of wavepackets as they collide with pores and are scattered off into new directions. In this scheme we took the average HCACF from 20,000 randomly sampled wavepacket trajectories; each beginning from a randomly selected starting point, with random initial direction, and with a lifetime drawn randomly from the Poisson distribution. The single wavepacket HCACFs in the x, y, and z directions were computed numerically out to a correlation time of 20 times the mean scattering time θ ̅ to prevent truncation of contributions from long-lived phonons in the tails of the Poisson distribution. This averaging was sufficient to reduce the uncertainty in the computed values of κ<sub>bulk</sub> to < 3%. The details of how the correlated scattering from pores was modeled are described in the next section.
+</p>
+
+## Pore scattering models
+
+<p>
+  
+The HCACF from the MD simulations of material containing cylindrical pores shows a single pronounced region of anticorrelation. The correlation time at which the HCACF is most negative changes with the distance d between the ranks of pores but is characterized by single effective velocity v_dip which is found to be 0.6XXX of the averaged acoustic phonon velocity. Finally, the anti-correlation effect can be very large, with the final thermal conductivity of the material containing pores κ<sub>∞</sub> being as little as 20% of the peak cumulative thermal conductivity, κ<sub>peak</sub>. This implies that the motion of phonons after scattering, on average, undoes 80% of the heat conduction by the phonons before they were scattered from the pores. With the ray tracing model, we aim to understand what factors in the scattering of phonons from pores affect these three factors: single vs multiple anticorrelation, v<sub>dip</sub>, and κ<sub>peak</sub>/κ<sub>∞</sub>.  For this, we consider the effect on the HCACF from four phenomenological models of phonon scattering from scattering centers separated by distance d in the material. Two geometries of scattering centers are considered: an array of parallel permeable planer walls, and a series of palisades of cylindrical pores. For each geometry we examined the effect of both specular and diffuse phonon scattering by the obstacles, giving us four scattering models in total. The two geometries have a single geometric degree of freedom α that is related to the probability that phonons are not scattered when they encounter the wall/palisade. 
+</p>
+
+### Diffuse and specular wall scattering models  
+
+<p>
+  
+We represent the pores in MD simulation as a series of parallel planer interfaces perpendicular to the x-axis. The spacing, d, between planes is described in terms of the Knudsen number K_n=(v_g θ ̅)/d. When a phonon encounters an interface there is a finite probability 1-α that it will pass through with its trajectory unaltered, otherwise, the phonon is reflected. For the specular model, reflection involves only flipping the direction of the x-component of the velocity. In the diffuse model, a new random directory is chosen in the half-space perpendicular to the reflection plane, so that the x-component of the velocity of the scattered phonon has the opposite sign from the incident phonon.  Simulations were performed sweeping α from 0 to 1 and log⁡(Kn) from -1 to 1. Although we refer to this model as the interface model, it is a reasonable representation of scattering from rectangular pores.
+
+### Diffuse and specular palisade scattering models 
+
+<p>
+  
+With the palisade model we aim to more closely mimic the pore geometry simulate in the MD simulations. We assume that the material contains rows of cylindrical pores, each with radius r and aligned with their axis parallel to the y-direction. The pores are arrayed in the z-direction with spacing L to form a palisade fence. The geometry of the palisade is parameterized the parameter α=2r/L which is the scattering probability for phonons that meeting the palisade head-on. In general, the probability that phonons are scattered by the pores rather than passing between them is a function of incidence angle, χ, of the phonon trajectory in the x-z plane with the x-axis. The transmission probability depends on the gap between cylinders that is visible to the phonons as they travel towards the palisade, given by
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20T%28%5Cchi%29%20%3D%201%20-%20%5Cfrac%7B%5Calpha%7D%7B%7C%5Ccos%20%5Cchi%7C%7D." align="center" alt="drawing">
+</p>
+
+<p>
+  
+Here tan⁡χ=v<sub>z</sub>/v<sub>x</sub>. The probability of transmission drops to zero at grazing angles of incidence where the shadow of the cylinder one another. Rather than models the location of cylinders explicitly we consider the probability that an incident phonon strikes a cylinder at a position with normal vector at an angle of β relative to the phonon direction. This probability is given by P(β)=cos⁡β/(sin⁡(β<sub>max</sub>)-sin⁡(β_<sub>min</sub>)), where β_<sub>min</sub> and β<sub>max</sub> are the limits to the possible incident angles that a phonon could strike the surface of a cylinder. If there is no shadowing β_<sub>min</sub>=-π/2, and β<sub>max</sub>=π/2. Shadowing occurs at angles when T(χ)<0, and in these cases: 
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cbeta_%7Bmin%7D%20%3D%20%5Cbegin%7Bcases%7D%20%5Carcsin%20%5Cleft%28%201-%5Cfrac%7B2%20%5Ccos%20%5Cchi%7D%7B%5Calpha%7D%20%5Cright%20%29%20%26%20%5Ctext%7B%20for%7D%20%5Ccos%20%5Cchi%20%5Csin%20%5Cchi%20%3E%200%5C%5C%20-%5Cfrac%7B%5Cpi%7D%7B2%7D%26%20%5Ctext%7B%20otherwise%20%7D%20%5Cend%7Bcases%7D%2C" align="center" alt="drawing">
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cbeta_%7Bmax%7D%20%3D%20%5Cbegin%7Bcases%7D%20-%5Carcsin%20%5Cleft%28%201-%5Cfrac%7B2%20%5Ccos%20%5Cchi%7D%7B%5Calpha%7D%20%5Cright%20%29%20%26%20%5Ctext%7B%20for%7D%20%5Ccos%20%5Cchi%20%5Csin%20%5Cchi%20%3C%200%5C%5C%20%5Cfrac%7B%5Cpi%7D%7B2%7D%26%20%5Ctext%7B%20otherwise%20%7D%20%5Cend%7Bcases%7D." align="center" alt="drawing">
+</p>
+
+<p>
+  
 For the specular scattering model, when a phonon’s x position lies on a palisade a pseudorandom number generator is used to decide if the phonon passed through the barrier unscattered or if it struck on of the pillars. If scattering occurs the incidence of a random incidence angle is selected from P(β) and the phonon is set on a new trajectory with a new angle 
-█(χ^'=χ+π-2β.#(31) )
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20%5Cchi%27%20%3D%20%5Cchi&plus;%5Cpi-2%5Cbeta." align="center" alt="drawing">
+</p>
+
+<p>
+  
 Note that this mean-field model of scattering does not resolve the physical size of the pores and the possibility of multiple scattering between neighboring cylinders within a palisade is not considered. 
-The model for diffuse scattering from cylindrical pores uses the same procedure to stochastically select the normal at the point on the surface of the cylinder that the phonon strikes (this has an angle χ^'=χ+π-β).  A new random direction is then selected for the phonon in the half-space defined by this normal vector. 
+</p>
+
+<p>
+  
+The model for diffuse scattering from cylindrical pores uses the same procedure to stochastically select the normal at the point on the surface of the cylinder that the phonon strikes (this has an angle χ'=χ+π-β).  A new random direction is then selected for the phonon in the half-space defined by this normal vector. 
+</p>
 
   
