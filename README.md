@@ -573,7 +573,7 @@ that differs from equation above by a factor of 1-ϕ in the numerator. Liu and H
 
 <p>
   
-in which, λ<sub>i</sub> is the geometric average of phonon’s flying distance per number of collisions with the pores -- proposed by Minnich in equation -- and the inter-pore distance, and λ<sub>ii</sub> is the hydraulic diameter of the pore. For the aligned cylindrical pores, the inter-pore distance is L<sub>p</sub>-2r, where r is the radius of the pore, λ<sub>i</sub> = √ (L<sub>p</sub><sup>2</sup>)/2r(L<sub>p</sub>-2r)    = L<sub>p</sub √(1/√(ϕ/π)-1), and λ<sub>ii</sub> = 2r = 2L<sub>p</sub> √(ϕ/π). We refer to their original paper for the complete list of equations for L<sub>c</sub> in materials containing pores with different shapes. 
+in which, λ<sub>i</sub> is the geometric average of phonon’s flying distance per number of collisions with the pores -- proposed by Minnich in equation -- and the inter-pore distance, and λ<sub>ii</sub> is the hydraulic diameter of the pore. For the aligned cylindrical pores, the inter-pore distance is L<sub>p</sub>-2r, where r is the radius of the pore, λ<sub>i</sub> = √ (L<sub>p</sub><sup>2</sup>)/2r(L<sub>p</sub>-2r) = L<sub>p</sub> √(1/√(ϕ/π)-1), and λ<sub>ii</sub> = 2r = 2L<sub>p</sub> √(ϕ/π). We refer to their original paper for the complete list of equations for L<sub>c</sub> in materials containing pores with different shapes. 
 </p>
 
 ## Descriptor for S(0)
