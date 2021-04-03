@@ -424,4 +424,8 @@ Note that this mean-field model of scattering does not resolve the physical size
 The model for diffuse scattering from cylindrical pores uses the same procedure to stochastically select the normal at the point on the surface of the cylinder that the phonon strikes (this has an angle χ'=χ+π-β).  A new random direction is then selected for the phonon in the half-space defined by this normal vector. 
 </p>
 
+<p align="center">
+<img src="figs/ray_tracing.png" align="center" alt="drawing" width="700px"> 
+</p>
+
   
