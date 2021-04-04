@@ -2,7 +2,7 @@
 
 <div align="justify">
   
-*InterfacePhononsToolkit* is a collection of tools for setting up, performing, analyzing molecular dynamic simulations of heat flow at the interfaces and computing thermodynamic properties of the boundaries. This collection includes a generic Monte Carlo ray tracing model to unveil anticorrelated heat current phenomenon in materials containing nanoscale pores (with a new rigorous mathematical implementation), A new analytical model to compute thermal conductivity of dielectrics containing nanoscale porosity, a set of libraries to generate phonon Gaussian wavepackets to compute phonon transmission matrices across solid-solid interfaces, a collection of tools to analyze lattice vibrational behavior in heterogeneous structures, and a Monte Carlo model to compute phonon lifetime in microstructures containing nanograins/ nanoscale pores.
+*InterfacePhononsToolkit* is a collection of tools for setting up, performing, analyzing molecular dynamic simulations of heat flow at the interfaces and computing thermodynamic properties of the boundaries. This collection includes a generic Monte Carlo ray tracing model to unveil anticorrelated heat current phenomenon in materials containing nanoscale pores (with a new rigorous mathematical implementation), A new analytical model to compute thermal conductivity of dielectrics containing nanoscale porosity, a set of libraries to generate phonon Gaussian wavepackets to compute phonon transmission matrices across solid-solid interfaces, a collection of tools to analyze lattice vibrational behavior in heterogeneous structures, and a Monte Carlo model to compute phonon lifetime in microstructures containing nanograins/ nanoscale pores. θ ̅ θ ̃
 
 </div>
 
