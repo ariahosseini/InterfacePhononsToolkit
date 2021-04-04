@@ -2,7 +2,7 @@
 
 <div align="justify">
   
-*InterfacePhononsToolkit* is a collection of tools for setting up, performing, analyzing molecular dynamic simulations of heat flow at the interfaces and computing thermodynamic properties of the boundaries. This collection includes a generic Monte Carlo ray tracing model to unveil anticorrelated heat current phenomenon in materials containing nanoscale pores (with a new rigorous mathematical implementation), A new analytical model to compute thermal conductivity of dielectrics containing nanoscale porosity, a set of libraries to generate phonon Gaussian wavepackets to compute phonon transmission matrices across solid-solid interfaces, a collection of tools to analyze lattice vibrational behavior in heterogeneous structures, and a Monte Carlo model to compute phonon lifetime in microstructures containing nanograins/ nanoscale pores. θ ̅ θ ̃
+*InterfacePhononsToolkit* is a collection of tools for setting up, performing, analyzing molecular dynamic simulations of heat flow at the interfaces and computing thermodynamic properties of the boundaries. This collection includes a generic Monte Carlo ray tracing model to unveil anticorrelated heat current phenomenon in materials containing nanoscale pores (with a new rigorous mathematical implementation), A new analytical model to compute thermal conductivity of dielectrics containing nanoscale porosity, a set of libraries to generate phonon Gaussian wavepackets to compute phonon transmission matrices across solid-solid interfaces, a collection of tools to analyze lattice vibrational behavior in heterogeneous structures, and a Monte Carlo model to compute phonon lifetime in microstructures containing nanograins/ nanoscale pore
 
 </div>
 
@@ -10,18 +10,18 @@
 - [GETTING STARTED](#GETTING-STARTED)
 - [INSTALLATION](#INSTALLATION)
 - [RAY TRACING MODEL](#RAY-TRACING-MODEL)
-  * [The Enhancement to Thermoelectric Performance That Could Be Obtained by Designing the Electron Scattering to Optimally Harness the Mechanism of Electron Energy Filtering](#The-Enhancement-to-Thermoelectric-Performance-That-Could-Be-Obtained-by-Designing-the-Electron-Scattering-to-Optimally-Harness-the-Mechanism-of-Electron-Energy-Filtering)
-  * [Design the Nanoscale Morphology of a Thermoelectric to Obtain Favorable Electron Scattering](#Design-the-Nanoscale-Morphology-of-a-Thermoelectric-to-Obtain-Favorable-Electron-Scattering)
-- [THEORY](#THEORY)
-  * [Model Electron Transport Coefficients In Bulk Thermoelectrics](#Model-Electron-Transport-Coefficients-In-Bulk-Thermoelectrics)
-  * [Model Fermi Level](#Model-Fermi-Level)
-  * [Model Electron Lifetime](#Model-Electron-Lifetime)
-  * [Model Electron Transport Coefficients in Nanostructured Thermoelectrics](#Model-Electron-Transport-Coefficients-in-Nanostructured-Thermoelectrics)
-- [CASE STUDY SI BASED NANOCOMPOSITE](#CASE-STUDY-SI-BASED-NANOCOMPOSITE)
-  * [Silicon Band Structure](#Silicon-Band-Structure)
-  * [Model Prediction for Bulk Si](#Model-Prediction-for-Bulk-Si)
-  * [Ideal Electron Filtering](#Ideal-Electron-Filtering)
-  * [Effect of Nanopores on Lorenz Number](#Effect-of-Nanopores-on-Lorenz-Number)
+  * [Analytic Model of Uncorrelated Scattering](#Analytic-Model-of-Uncorrelated-Scattering)
+  * [Monte Carlo Ray Tracing Model of Correlated Scattering](#Monte-Carlo-Ray-Tracing-Model-of-Correlated-Scattering)
+  * [Pore Scattering Models](#Pore-Scattering-Models)
+    - [Diffuse and specular wall scattering models](#Diffuse-and-specular-wall-scattering-models)
+    - [Diffuse and specular palisade scattering models](#Diffuse-and-specular-palisade-scattering-models)
+- [EFFECTIVE THERMAL CONDUCTIVITY IN MATERIALS CONTAINING NANOSCALE POROSITY](#EFFECTIVE-THERMAL-CONDUCTIVITY-IN-MATERIALS-CONTAINING-NANOSCALE-POROSITY)
+  * [Descriptor](#Descriptor)
+  * [Descriptor for L<sub>c</sub>](#Descriptor-for-L<sub>c</sub>)
+  * [Model Prediction](#Model-Prediction)
+- [PHONON WAVEPACKET ANALYSIS](#PHONON-WAVEPACKET-ANALYSIS)
+  * [Model Development](#Model-Development)
+  * [Atomistic Decomposition of Partitioning Ratio](#Atomistic-Decomposition-of-Partitioning-Ratio)
 - [REFERENCES](#REFERENCES)
 - [CITATION](#Citation)
 
@@ -334,7 +334,7 @@ In addition to computing the contribution from different occupancy durations, it
 as plotted in Figure below with values for ω ̅ of 0.5, 1.0, and 1.5 (which corresponds to average occupancies of 〈n〉 of 0.16, 0.58, and 1.1). It can be seen that because of the (n-〈n〉)<sup>2</sup> dependence on the ACF infrequency multiple phonon excitations of the modes account for a large fraction of the heat carried, even at temperatures where 〈n〉~ 0.5. This suggests that scattering processes involving four or more phonons, although rare, will have a significant impact on the overall thermal conductivity, even at low temperatures.
 </p>
 
-## Monte Carlo ray tracing model of correlated scattering 
+## Monte Carlo Ray Tracing Model of Correlated Scattering 
 
 <p>
   
@@ -428,7 +428,7 @@ The model for diffuse scattering from cylindrical pores uses the same procedure 
 <img src="figs/ray_tracing.png" align="center" alt="drawing" width="700px"> 
 </p>
 
-# SIMPLE FORMULA FOR EFFECTIVE THERMAL CONDUCTIVITY IN POROUS MATERIALS
+# EFFECTIVE THERMAL CONDUCTIVITY IN MATERIALS CONTAINING NANOSCALE POROSITY
 
 ## Descriptor
 
@@ -764,6 +764,8 @@ The variation of ZT<sub>eff</sub>/ZT<sub>ibulk</sub> with porosity and Knudsen n
   
 # PHONON WAVEPACKET ANALYSIS
 
+## Model Development
+
 <p>
   
 A phonon wavepacket is described as a localized wave function with well-defined position and momentum of constructive superposition of phonon in the vicinity of the localization eigenstate and destructive superposition away from the region of localization, formed by linear superposition of plane waves with different wavevectors and eigenmodes. The Gaussian phonon wavepacket in reciprocal space defines as
@@ -799,6 +801,7 @@ The sum over q is performed for all wave vectors in the first Brillouin zone tha
 <img src="figs/Transmission_si_sic.png" align="center" alt="drawing" width="700px"> 
 </p>
 
+## Atomistic Decomposition of Partitioning Ratio
 
 <p>
 The importance of the interfacial atoms can be shown by the degree of participation in different phonon modes using participation ratio (PR) [DOI]. […] introduced atomistic decomposition of partitioning ratio (APR) that shows the contribution of each atom to the lattice dynamics for a given frequency. These parameters are described as
