@@ -651,7 +651,7 @@ The cumulative thermal conductivity and suppression function for GaAs at 300 K a
 </p>
 
 <p align="center">
-<img src="figs/GaAs_300K.pdf" align="center" alt="drawing" width="700px"> 
+<img src="figs/GaAs_300K.png" align="center" alt="drawing" width="700px"> 
 </p>
 <p align="center">
 <img src="figs/S.png" align="center" alt="drawing" width="700px"> 
@@ -659,8 +659,8 @@ The cumulative thermal conductivity and suppression function for GaAs at 300 K a
   
 <p>
   
-Figures bellow show the model and BTE predictions of lattice thermal conductivity for Si, GaAs, InAs, and Sn at 300 K for different pore-pore spacing of L<sub>p</sub> but fixed porosity of 0.25 and 0.55, respectively. The model prediction is marked with open circle while BTE simulation is marked with open triangle. The model prediction is in excellent agreement with BTE prediction for pore-pore spacing as short as 10 nm up up to macro-level spacing and for porosity up to  ~0.6. For highly porous structures, the model slightly overestimates the thermal conductivity. Figure bellow shows the variation of thermal conductivity normalized with the bulk thermal conductivity with temperature for InP with 0.15 and 0.40 porosity plotted in blue and red, respectively. The pore spacing is fixed at L<sub>p</sub> = 500 nm. The model prediction is marked with open circle and BTE prediction is marked with triangle. The figure suggests the accuracy of the model for a wide range of temperature.
-</p>
+Figures bellow show the model and BTE predictions of lattice thermal conductivity for Si, GaAs, InAs, and Sn at 300 K for different pore-pore spacing of L<sub>p</sub> but fixed porosity of 0.25 and 0.55, respectively. The model prediction is marked with open circle while BTE simulation is marked with open triangle. The model prediction is in excellent agreement with BTE prediction for pore-pore spacing as short as 10 nm up up to macro-level spacing and for porosity up to  ~0.6. For highly porous structures, the model slightly overestimates the thermal conductivity. 
+
 
 
 <p align="center">
@@ -671,11 +671,12 @@ Figures bellow show the model and BTE predictions of lattice thermal conductivit
 <img src="figs/p055.png" align="center" alt="drawing" width="700px"> 
 </p>
 
+Figure bellow shows the variation of thermal conductivity normalized with the bulk thermal conductivity with temperature for InP with 0.15 and 0.40 porosity plotted in blue and red, respectively. The pore spacing is fixed at L<sub>p</sub> = 500 nm. The model prediction is marked with open circle and BTE prediction is marked with triangle. The figure suggests the accuracy of the model for a wide range of temperature.
+</p>
+
 <p align="center">
 <img src="figs/InP.png" align="center" alt="drawing" width="700px"> 
 </p>
-
-
 
 
 <p>
