@@ -25,7 +25,7 @@
 - [REFERENCES](#REFERENCES)
 - [CITATION](#Citation)
 
-## GETTING STARTED
+# GETTING STARTED
 
 <div align="justify">
 
@@ -762,3 +762,82 @@ The variation of ZT<sub>eff</sub>/ZT<sub>ibulk</sub> with porosity and Knudsen n
 <img src="figs/ZT_cy.png" align="center" alt="drawing" width="700px"> 
 </p>
   
+# PHONON WAVEPACKET ANALYSIS
+
+<p>
+  
+A phonon wavepacket is described as a localized wave function with well-defined position and momentum of constructive superposition of phonon in the vicinity of the localization eigenstate and destructive superposition away from the region of localization, formed by linear superposition of plane waves with different wavevectors and eigenmodes. The Gaussian phonon wavepacket in reciprocal space defines as
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20u_%7Bl%20j%20%5Cmu%20%5Cgamma%7D%20%3D%20%5Csum_q%20A_o%20%5Cleft%28%20%5Cfrac%7B1%7D%7B%5Csigma%20%5Csqrt%7B2%5Cpi%7D%7D%20%5Cright%29%5E2%20e%5E%7B%5Cleft%28%20%5Cfrac%7Bq-q_o%7D%7B%5Csigma%20%5Csqrt%7B2%7D%7D%5Cright%29%5E2%7D%20%5Cepsilon_%7Bj%20%5Cmu%7D%20e%5E%20%7B-i%5Cleft%28r_l%20q&plus;%5Comega_%5Cgamma%20t%20%5Cright%29%7D." align="center" alt="drawing">
+</p>
+
+<p>
+  
+Here, u<sub>ljζγ</sub> is the displacement of j<sup>th</sup> atom in l<sup>th</sup> unitcell along ζ<sup>th</sup> direction (x, y or z) of γ<sup>th</sup> mode. A<sub>o</sub> is an amplitude tuned to desired phononic temperature for each wavevector of k<sub>o</sub>, σ shows phonon uncertainty width in momentum space, ϵ<sub>jζ</sub> is j<sup>th</sup> phonon eigenmode along ζ, r<sub>l</sub> is pointing vector to l<sup>th</sup> lattice point, ω<sub>γ</sub> is the γ<sup>th</sup> mode of frequency for each wavevector and t is the time.
+</p>
+
+<p>
+  
+The sum over q is performed for all wave vectors in the first Brillouin zone that are commensurate with the compute cell. The phonon wave packet simulations are centered at wave vectors q<sub>o</sub> nm<sup>-1</sup> along the 〈 1 0 0 〉 crystal direction for both the longitudinal and transverse acoustic modes γ. Large simulation cells is needed to precisely model the wave packets with very fine uncertainty in momentum space(σ). The initial position of the atoms in the MD simulation is computed using Equation above and the initial velocity is computed from the derivative of u<sub>ljζγ</sub> with respect to time (v<sub>ljζγ</sub> = d/dt u<sub>ljζγ</sub>). The system is initially at 0 K and the wave packets are added with A<sub>o</sub> for each wave packet tuned so that it raises the temperature of the system by a few Kelvin, rather than adding one phonon, ℏω, of energy. The reason for this is that, in the system sizes modeled, ℏω for wave packets near the Brillouin zone center is too small to be resolved above the numerical noise, while a single ℏω would raise the system temperature by hundreds of Kelvin for wave packets near the Brillouin zone edge. Performing the wave packet simulations at lower energy help keep phonon thermalization at bay, such that the acoustic frequencies selected for the packets don’t easily decay into other modes/frequencies due to anharmonicity.
+</p>
+
+<p align="center">
+<img src="figs/KE-04.png" align="center" alt="drawing" width="700px"> 
+</p>
+
+<p align="center">
+<img src="figs/KE-08.png" align="center" alt="drawing" width="700px"> 
+</p>
+
+<p align="center">
+<img src="figs/Transmission_si_ge.png" align="center" alt="drawing" width="700px"> 
+</p>
+
+<p align="center">
+<img src="figs/Transmission_si_sic.png" align="center" alt="drawing" width="700px"> 
+</p>
+
+
+<p>
+The importance of the interfacial atoms can be shown by the degree of participation in different phonon modes using participation ratio (PR) [DOI]. […] introduced atomistic decomposition of partitioning ratio (APR) that shows the contribution of each atom to the lattice dynamics for a given frequency. These parameters are described as
+</p>  
+  
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20PR%28%5Comega_i%29%20%3D%20%5Cfrac%7B%5Cleft%28%20%5Csum_%7Bn%7D%5Cfrac%7Be_n%5Ei%5E2%7D%7BM_n%7D%5Cright%29%5E2%7D%7BN%5Csum_%7Bn%7D%5Cfrac%7Be_n%5Ei%5E4%7D%7BM_n%5E2%7D%7D" align="center" alt="drawing">
+</p>
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20APR%28%5Comega_i%29%20%3D%20%5Cfrac%7B%5Cfrac%7Be_n%5Ei%5E2%7D%7BM_n%7D%7D%7B%5Cleft%28N%5Csum_%7Bn%7D%5Cfrac%7Be_n%5Ei%5E4%7D%7BM_n%5E2%7D%20%5Cright%20%29%5E%5Cfrac%7B1%7D%7B2%7D%7D" align="center" alt="drawing">
+</p>
+
+<p>
+Here we proposed local partition ration (LPR) as the sum of APR for the atoms at a local neighborhood of atoms.
+</p>
+
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20LPR%28%5Comega_i%29%20%3D%20%5Csum_%7Bn%7DAPR_n%28%5Comega_i%29" align="center" alt="drawing">
+</p>
+
+<p>
+The local partition ration of (a) Si/Ge and (b) Si/SiC are plotted in figure (4). The interfacial modes and local characteristic of phonons in Si/SiC interface is distinguishable in this figure. On the contrary, atoms at the interface of Si/Ge behaves similar to atoms far from the interface.
+</p>
+
+
+<p align="center">
+<img src="figs/PR_ge.png" align="center" alt="drawing" width="700px"> 
+</p>
+
+<p align="center">
+<img src="figs/PR_sic.png" align="center" alt="drawing" width="700px"> 
+</p>
+
+
+
+
+
+
+
+
