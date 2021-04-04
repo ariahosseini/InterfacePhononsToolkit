@@ -647,6 +647,21 @@ Similar equations can be used for structures with extended cubic and discrete sp
 
 <p>
   
+The cumulative thermal conductivity and suppression function for GaAs at 300 K are plotted in figures bellow. The blue line is mean free path thermal conductivity computed from first principles in *AlmaBTE*. The red line shows the logistic function fitted to cumulative thermal conductivity computed using DFT. Therefore, when the feature size in GaAs-based porous materials is less than roughly 183 nm, the phonon-pore scattering dominates over the anharmonic scattering. The logistic curve predicts Λ<sub>0</sub> = 183 nm. At the same temperature, the model prediction for Λ<sub>0</sub> in AlAs, InP, Ge is Λ<sub>0</sub> = 236 nm, Λ<sub>0</sub> = 803 nm, and Λ<sub>0</sub> = 296 nm, respectively. The blue curve second pane shows the suppression function computed from BTE simulation using *OpenBTE*. The green plot shows the logistic curve fitted to blue curve assuming that the suppression function converges to Maxwell-Garnett’s diffusive model when Λ→0. The curve predicts L<sub>c</sub> = 1.25 μm.  The red line shows the model prediction for the suppression function. This model predicts L<sub>c</sub> = 0.89 μm, slightly underestimating the feature size. We remark that, the model predictions of Machrafi and Liu  estimate L<sub>c</sub> = 0.66 μm and L<sub>c</sub> = 0.67 μm, respectively. In overall, the model prediction for cumulative thermal conductivity and the line-of-sight is in good agreement with first principles' prediction.
+</p>
+
+<p align="center">
+<img src="figs/GaAs_300K.pdf" align="center" alt="drawing" width="700px"> 
+</p>
+<p align="center">
+<img src="figs/ray_tracing.png" align="center" alt="drawing" width="700px"> 
+</p>
+<p align="center">
+<img src="figs/ray_tracing.png" align="center" alt="drawing" width="700px"> 
+</p>
+  
+<p>
+  
 Figures bellow show the model and BTE predictions of lattice thermal conductivity for Si, GaAs, InAs, and Sn at 300 K for different pore-pore spacing of L<sub>p</sub> but fixed porosity of 0.25 and 0.55, respectively. The model prediction is marked with open circle while BTE simulation is marked with open triangle. The model prediction is in excellent agreement with BTE prediction for pore-pore spacing as short as 10 nm up up to macro-level spacing and for porosity up to  ~0.6. For highly porous structures, the model slightly overestimates the thermal conductivity. Figure bellow shows the variation of thermal conductivity normalized with the bulk thermal conductivity with temperature for InP with 0.15 and 0.40 porosity plotted in blue and red, respectively. The pore spacing is fixed at L<sub>p</sub> = 500 nm. The model prediction is marked with open circle and BTE prediction is marked with triangle. The figure suggests the accuracy of the model for a wide range of temperature.
 </p>
 
