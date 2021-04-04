@@ -654,10 +654,7 @@ The cumulative thermal conductivity and suppression function for GaAs at 300 K a
 <img src="figs/GaAs_300K.pdf" align="center" alt="drawing" width="700px"> 
 </p>
 <p align="center">
-<img src="figs/ray_tracing.png" align="center" alt="drawing" width="700px"> 
-</p>
-<p align="center">
-<img src="figs/ray_tracing.png" align="center" alt="drawing" width="700px"> 
+<img src="figs/S.png" align="center" alt="drawing" width="700px"> 
 </p>
   
 <p>
@@ -666,7 +663,17 @@ Figures bellow show the model and BTE predictions of lattice thermal conductivit
 </p>
 
 
+<p align="center">
+<img src="figs/p025.png" align="center" alt="drawing" width="700px"> 
+</p>
 
+<p align="center">
+<img src="figs/p055.png" align="center" alt="drawing" width="700px"> 
+</p>
+
+<p align="center">
+<img src="figs/InP.png" align="center" alt="drawing" width="700px"> 
+</p>
 
 
 
@@ -746,4 +753,11 @@ It is notable that, in general, the electron filtering effect in extended pores 
 The variation of ZT<sub>eff</sub>/ZT<sub>ibulk</sub> with porosity and Knudsen number for discrete spherical pore and extended cylinder are shown in figures bellow, respectively. The model predicts that spherical pores detriment ZT for Kn≈1 while for Kn<1 it predicts enhancement in ZT. We *reemphasize* that the energy filtering effect is neglected in derivation of equation for S which by no means acceptable when Kn→1; However the model predicts improvement in ZT in all range of Kn with the largest enhancement in Knudsen regime for TEs with extended cylindrical pores -- note that there is no filtering effect in materials with extended pore. 
 </p>
 
+<p align="center">
+<img src="figs/ZT_sp.png" align="center" alt="drawing" width="700px"> 
+</p>
+
+<p align="center">
+<img src="figs/ZT_cy.png" align="center" alt="drawing" width="700px"> 
+</p>
   
