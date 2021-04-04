@@ -1,0 +1,87 @@
+# A script to try  making a box of Si
+
+boundary        p p p
+units           metal   # 'metal' unit must be used.
+echo            screen
+atom_modify	sort 0 0.0
+atom_modify 	map array
+
+
+# Load coordinates of unit cell atoms
+atom_style	atomic
+read_data	data.Si
+
+
+pair_style 	tersoff
+pair_coeff	* * SiCGe.tersoff Si(D) 
+
+
+variable 	rep equal 3       # Number of unit cells in z each direction 
+minimize	1e-12 1e-16 10000 100000 
+replicate	${rep} ${rep} ${rep}
+
+thermo_style	custom step etotal pe ke temp       
+thermo		1
+
+minimize	1e-12 1e-16 10000 100000 
+
+fix         FBR all box/relax aniso 0.0 couple xy nreset 100
+minimize    1e-16 1e-16 1000000 10000000
+unfix       FBR
+
+min_style   fire
+minimize    1e-8 1e-10 1000000 100000000
+
+
+write_data	data.Si-${rep}x${rep}x${rep} 
+dump		1 all custom 1 data.Si-unwrapped id type xu yu zu
+run		0
+undump		1
+  
+variable	FileName string "Si-hessian"
+include         in.hessian
+quit
+
+variable	nat equal count(all)
+variable 	delta equal 0.01
+
+#variable 	Hx atom fx/sqrt(mass*mass)
+#variable 	Hx atom fy/sqrt(mass*mass)
+#variable 	Hx atom fz/sqrt(mass*mass)
+dump            FM all custom 1 dump.forces id fx fy fz
+#dump            FM all custom 1 dump.forces id x y z v_Hx v_Hy v_Hz
+dump_modify	FM sort id
+#fix		NVE all nve
+
+run             0
+
+label		loop
+variable 	atom loop ${nat}
+	print 	"Moving atom = ${atom}"
+	group  		move id ${atom}	
+	displace_atoms 	move move ${delta} 0  0 units box        # Displace atom by delta along +x
+	run             1
+        displace_atoms   move move -${delta} 0  0 units box       # Displace atom by delta along -x 
+	displace_atoms   move move -${delta} 0  0 units box
+        run             1
+        displace_atoms   move move ${delta} ${delta} 0 units box  # Displace atom by delta along +y
+ 	run             1
+        displace_atoms   move move 0 -${delta} 0 units box        # Displace atom by delta along -x
+        displace_atoms   move move 0 -${delta} 0 units box
+        run             1
+        displace_atoms   move move 0 ${delta} ${delta} units box  # Displace atom by delta along +z
+        run             1
+        displace_atoms   move move 0 0 -${delta} units box        # Displace atom by delta along -x
+        displace_atoms   move move 0 0 -${delta} units box
+        run             1
+        displace_atoms   move move 0 0 ${delta} units box         # Put the atom back 
+
+	group		move delete
+	if 		"${atom} == ${nat}" then "jump in.Si-hessian break"
+	next		atom
+	jump 		in.Si-hessian loop
+label	break
+variable	atom delete 
+undump	FM
+
+

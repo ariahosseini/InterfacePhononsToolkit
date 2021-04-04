@@ -1,0 +1,83 @@
+# A script to compute the hessian
+
+
+#---------Define the displacement stepsize
+variable 	HessianDelta equal 0.001
+
+#---------Unit conversion LAMMPS real -> Si 
+variable       Kcal2J  equal 6.9477e-21     # Kcal/mol -> J
+variable       Nav     equal 6.02214199e23  # Avacado's number
+variable       gmol2Kg equal 1e-3/${Nav}    # Kcal/mol -> J
+variable       Ang2m   equal 1e-10	    # Ang -> m  
+variable       fs2s    equal 1e-15	    # fs -> s
+variable       Hz2THz  equal 1e-12	    # Hz -> THz
+#print 	       "Nav = ${Nav}, Kcal2J = ${Kcal2J}"
+
+#---------Unit conversion LAMMPS metal -> Si 
+variable       eV2J  equal 1.60217646e-19   # eV -> J
+variable       Nav     equal 6.02214199e23  # Avacado's number
+variable       gmol2Kg equal 1e-3/${Nav}    # g/mol -> Kg
+variable       Ang2m   equal 1e-10	    # Ang -> m  
+variable       ps2s    equal 1e-15	    # fs -> s
+variable       Hz2THz  equal 1e-12	    # Hz -> THz
+#print 	       "Nav = ${Nav}, Kcal2J = ${Kcal2J}"
+
+
+# conversion factor such that the sqrt of the eigen values will be in tera-radians per second
+#variable       HessianConv equal ${Kcal2J}*(${Hz2THz}^2)/((${Ang2m}^2)*${gmol2Kg})  
+#variable       HessianConv equal ${Kcal2J}/((${Ang2m}^2)*${gmol2Kg})  
+variable       HessianConv equal ${eV2J}/((${Ang2m}^2)*${gmol2Kg})  
+#print 	       "HessianConv = ${HessianConv}"
+
+#---------Size of the problem
+variable	HessianNat equal count(all)
+
+#---------Define matrix elements
+variable 	HessianAtom loop ${HessianNat}
+variable	HessianKx atom ${HessianConv}*fx/(sqrt(mass*mass[v_HessianAtom])*(v_HessianDelta))
+variable	HessianKy atom ${HessianConv}*fy/(sqrt(mass*mass[v_HessianAtom])*(v_HessianDelta))
+variable	HessianKz atom ${HessianConv}*fz/(sqrt(mass*mass[v_HessianAtom])*(v_HessianDelta))
+
+#---------Define dumps
+dump            HessianFM all custom 1 ${FileName}-force-matrix.d id fx fy fz
+dump            HessianMWFM all custom 1 ${FileName}-mass-weighted-force-matrix.d id v_HessianKx v_HessianKy v_HessianKz
+dump_modify	HessianFM sort id
+dump_modify	HessianMWFM sort id
+run             0
+
+label		HessianLoop
+	print 	"Moving atom = ${HessianAtom}"
+	group  		HessianMove id ${HessianAtom}	
+	displace_atoms 	HessianMove move ${HessianDelta} 0  0 units box        # Displace atom by delta along +x
+	run             1
+        displace_atoms   HessianMove move -${HessianDelta} 0  0 units box       # Displace atom by delta along -x 
+	displace_atoms   HessianMove move -${HessianDelta} 0  0 units box
+        run             1
+        displace_atoms   HessianMove move ${HessianDelta} ${HessianDelta} 0 units box  # Displace atom by delta along +y
+ 	run             1
+        displace_atoms   HessianMove move 0 -${HessianDelta} 0 units box        # Displace atom by delta along -y
+        displace_atoms   HessianMove move 0 -${HessianDelta} 0 units box
+        run             1
+        displace_atoms   HessianMove move 0 ${HessianDelta} ${HessianDelta} units box  # Displace atom by delta along +z
+        run             1
+        displace_atoms   HessianMove move 0 0 -${HessianDelta} units box        # Displace atom by delta along -z
+        displace_atoms   HessianMove move 0 0 -${HessianDelta} units box
+        run             1
+        displace_atoms   HessianMove move 0 0 ${HessianDelta} units box         # Put the atom back 
+
+	group		HessianMove delete
+	if 		"${HessianAtom} == ${HessianNat}" then "jump SELF HessianBreak"
+	next		HessianAtom
+	jump 		SELF HessianLoop
+label	HessianBreak
+variable	HessianNat delete 
+variable	HessianAtom delete
+variable	HessianDelta delete 
+variable	HessianKx delete 
+variable	HessianKy delete 
+variable	HessianKz delete 
+variable	HessianConv delete
+undump	HessianFM
+undump	HessianMWFM
+
+shell		forcedump2hessian.py ${FileName}-mass-weighted-force-matrix.d ${FileName}-mass-weighted-hessian.d
