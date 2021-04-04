@@ -2,7 +2,7 @@
 
 <div align="justify">
   
-*InterfacePhononsToolkit* is a collection of tools for setting up, performing, analyzing molecular dynamic simulations of heat flow at the interfaces and computing thermodynamic properties of the boundaries. This collection includes a set of libraries to generate phonon Gaussian wavepackets to compute phonon transmission matrices across solid-solid interfaces, a generic Monte Carlo ray tracing model to unveil anticorrelated heat current phenomenon in materials containing nanoscale pores (with a new rigorous mathematical implementation), a set of libraries to analyze lattice vibrational behavior in heterogeneous structures, including atomic partition ratio, local phonon density of state, etc., and a Monte Carlo model to compute phonon lifetime in microstructures. The codes have interface with LAMMPS molecular dynamics simulator.
+*InterfacePhononsToolkit* is a collection of tools for setting up, performing, analyzing molecular dynamic simulations of heat flow at the interfaces and computing thermodynamic properties of the boundaries. This collection includes a generic Monte Carlo ray tracing model to unveil anticorrelated heat current phenomenon in materials containing nanoscale pores (with a new rigorous mathematical implementation), A new analytical model to compute thermal conductivity of dielectrics containing nanoscale porosity, a set of libraries to generate phonon Gaussian wavepackets to compute phonon transmission matrices across solid-solid interfaces, a collection of tools to analyze lattice vibrational behavior in heterogeneous structures, and a Monte Carlo model to compute phonon lifetime in microstructures containing nanograins/ nanoscale pores.
 
 </div>
 
@@ -317,7 +317,7 @@ These equations are plotted in figure below where it can be seen that the short-
 
 <p>
   
-as is plotted in Figure below. In fact, more than 50% of the heat transported is carried by just 7% of phonons that survive for more than 2.7 times the average phonon lifetime θ ̅. It can also be seen that 80% of the heat current comes from fewer than 20% of the phonon mode occupancy fluctuations. This matches Pareto’s 80-20 rule that is a signature of Lévy flights, although in this case, the distribution of flight lengths is not fractal (power-law), and so this behavior is not a true Lévy flight. The outsized importance of the long-lived phonons is significant as it implied that ballistic effects for heat transport in nanoscale systems should become significant at system sizes significantly larger than the phonons’ nominal mean free path. This observation also has important ramifications for deterministic simulations of the Boltzmann transport equation (BTE) for phonons, implying that to correctly predict the heat conduction due to phonon transport in nanostructured material, one must smear the intrinsic distribution of average phonon lifetimes by the Poisson distribution—a practice that is often overlooked in frequency-dependent and multi-grey BTE simulation.
+as is plotted in Figure below. In fact, more than 50% of the heat transported is carried by just 7% of phonons that survive for more than 2.7 times the average phonon lifetime θ ̅. It can also be seen that 80% of the heat current comes from fewer than 20% of the phonon mode occupancy fluctuations. This matches Pareto’s 80-20 rule that is a signature of Lévy flights, although in this case, the distribution of flight lengths is not fractal (power-law), and so this behavior is not a true Lévy flight. The outsized importance of the long-lived phonons is significant as it implied that ballistic effects for heat transport in nanoscale systems should become significant at system sizes significantly larger than the phonons’ nominal mean free path. This observation also has important ramifications for deterministic simulations of the Boltzmann transport equation (BTE) for phonons, implying that to correctly predict the heat conduction due to phonon transport in nanostructured material, one must smear the intrinsic distribution of average phonon lifetimes by the Poisson distribution — a practice that is often overlooked in frequency-dependent and multi-grey BTE simulation.
 </p>
 
 <p>
@@ -443,7 +443,7 @@ The effective thermal conductivity materials containing nanoscale pores is given
 
 <p>
   
-where S(Λ) is the phonon suppression function describing the scattering events at the interface of the pores for the phonon with mean free path of Λ and K(Λ) is the mean free path dependent thermal conductivity of the bulk material. In diffusive regime, for gray phonons, S(Λ→0,L_c )≈(1-ϕ)/(1+ϕ), which is in agreement with Maxwell-Garnett prediction, while in ballistic regime, S(Λ→ ∞,L_c )≈L_c^(-1). We remark that for a given porosity of ϕ, the specific heat and group velocity of the porous materials change as C(ϕ) = (1-ϕ) C<sub>bulk</sub> and ν(ϕ)=1/(1-ϕ) ν_bulk, and thereby the 1-ϕ term in C(ϕ) and 1/(1-ϕ) term in ν(ϕ) are canceled out in kinetic theory expression of thermal conductivity (κ≈1/3 CνΛ), leaving Λ the only parameter that S(Λ,L_c) relies on.
+where S(Λ) is the phonon suppression function describing the scattering events at the interface of the pores for the phonon with mean free path of Λ and K(Λ) is the mean free path dependent thermal conductivity of the bulk material. In diffusive regime, for gray phonons, S(Λ→0,L_c )≈(1-ϕ)/(1+ϕ), which is in agreement with Maxwell-Garnett prediction, while in ballistic regime, S(Λ→ ∞,L<sub>c</sub> )≈L<sub>c</sub><sup>-1</sup>. We remark that for a given porosity of ϕ, the specific heat and group velocity of the porous materials change as C(ϕ) = (1-ϕ) C<sub>bulk</sub> and ν(ϕ)=1/(1-ϕ) ν_bulk, and thereby the 1-ϕ term in C(ϕ) and 1/(1-ϕ) term in ν(ϕ) are canceled out in kinetic theory expression of thermal conductivity (κ≈1/3 CνΛ), leaving Λ the only parameter that S(Λ,L<sub>c</sub>) relies on.
 </p>
 
 <p>
@@ -510,7 +510,7 @@ Here Λ<sub>o</sub> is a uniparameter used to fit the logistic function to the c
 </p>
 
 <p>
-where L<sub>c</sub> is the mean distance phonons travel before being scattered by pores. In derivation of this equation, it is assumed that phonon-pore scattering happens independent from the phonon-phonon scattering and therefor Λ<sup>p</sup><sub>-1</sub> = Λ<sub>-1</sub>+L<sup>c</sup><sub>-1</sub>. Here, S(0) is normalized diffusive thermal conductivity as S(0) = κ<sub>fourier</sub>/κ<sub>bulk</sub>. Thereby, we will have
+where L<sub>c</sub> is the mean distance phonons travel before being scattered by pores. In derivation of this equation, it is assumed that phonon-pore scattering happens independent from the phonon-phonon scattering and therefor Λ<sub>p</sub><sup>-1</sup> = Λ<sub>o</sub>+L<sub>c</sub><sup>-1</sup>. Here, S(0) is normalized diffusive thermal conductivity as S(0)=κ<sub>fourier</sub>/κ<sub>bulk</sub>. Thereby, we will have
   
 </p>
 
@@ -529,15 +529,15 @@ which leads to
 
 <p>
   
-where Ξ(Kn)=(1+Kn(Ln(Kn)-1))/(Kn-1)^2. In this equation, Kn=Λ<sub>o</sub>/L<sub>c</sub> is the Knudsen number. This equation relates the effective thermal conductivity of porous materials and Knudsen number of Kn to bulk lattice thermal conductivity. Note that in diffusive regime where Kn << 1, this equation simplify to the diffusive heat conduction equation through κ<sub>bulk</sub>S(0)=κ<sub>fourier</sub>. In the remaining of this section, we describe the best descriptors for L<sub>c</sub> and S(0). 
-<\p>
+where Ξ(Kn)=(1+Kn(Ln(Kn)-1))/(Kn-1)<sup>2</sup>. In this equation, Kn=Λ<sub>o</sub>/L<sub>c</sub> is the Knudsen number. This equation relates the effective thermal conductivity of porous materials and Knudsen number of Kn to bulk lattice thermal conductivity. Note that in diffusive regime where Kn << 1, this equation simplify to the diffusive heat conduction equation through κ<sub>bulk</sub>S(0)=κ<sub>fourier</sub>. In the remaining of this section, we describe the best descriptors for L<sub>c</sub> and S(0). 
+</p>
 
 ## Descriptor for L<sub>c</sub>
 
 <p>
   
 The L<sub>c</sub> shows the average interval for a free-flying phonon to collide with a boundary. Minnich and Chen defined L<sub>c</sub> as
-<\p>
+</p>
 
 <p align="center">
 <img src="https://latex.codecogs.com/png.latex?%5Cdpi%7B300%7D%20%5Ctiny%20L_c%20%3D%20%5Cfrac%7B1%7D%7B%5Cmbox%7BNumber%20density%20of%20collisions%7D%20%5Ctimes%20%5Cmbox%7BArea%20of%20collision%7D%7D%5C%20." align="center" alt="drawing">
@@ -573,14 +573,14 @@ that differs from equation above by a factor of 1-ϕ in the numerator. Liu and H
 
 <p>
   
-in which, λ<sub>i</sub> is the geometric average of phonon’s flying distance per number of collisions with the pores -- proposed by Minnich in equation -- and the inter-pore distance, and λ<sub>ii</sub> is the hydraulic diameter of the pore. For the aligned cylindrical pores, the inter-pore distance is L<sub>p</sub>-2r, where r is the radius of the pore, λ<sub>i</sub> = √ (L<sub>p</sub><sup>2</sup>)/2r(L<sub>p</sub>-2r) = L<sub>p</sub> √(1/√(ϕ/π)-1), and λ<sub>ii</sub> = 2r = 2L<sub>p</sub> √(ϕ/π). We refer to their original paper for the complete list of equations for L<sub>c</sub> in materials containing pores with different shapes. 
+in which, λ<sub>i</sub> is the geometric average of phonon’s flying distance per number of collisions with the pores - proposed by Minnich in equation - and the inter-pore distance, and λ<sub>ii</sub> is the hydraulic diameter of the pore. For the aligned cylindrical pores, the inter-pore distance is L<sub>p</sub>-2r, where r is the radius of the pore, λ<sub>i</sub> = √ (L<sub>p</sub><sup>2</sup>)/2r(L<sub>p</sub>-2r) = L<sub>p</sub> √(1/√(ϕ/π)-1), and λ<sub>ii</sub> = 2r = 2L<sub>p</sub> √(ϕ/π). We refer to their original paper for the complete list of equations for L<sub>c</sub> in materials containing pores with different shapes. 
 </p>
 
 ## Descriptor for S(0)
 
 <p>
   
-The term S(Λ→0,L_c ) is a dimensionless figure shows the effect of pores on thermal conductivity in the diffusive regime (note that in this definition we neglect ballistic effects). In this manuscript, we briefly describe three models of S(0) and refer to literature for other available expressions.
+The term S(Λ→0,L<sub>c</sub> ) is a dimensionless figure shows the effect of pores on thermal conductivity in the diffusive regime (note that in this definition we neglect ballistic effects). In this manuscript, we briefly describe three models of S(0) and refer to literature for other available expressions.
 </p>
 
 <p>
@@ -612,7 +612,7 @@ We remark that, Nan's equation for multiphase structures reduced to the same equ
 
 <p>
   
-For cylindrical pore extended along $\hat k$ direction in Cartesian coordinates, the Rayleigh's model gives
+For cylindrical pore extended along **k** direction in Cartesian coordinates, the Rayleigh's model gives
 </p>
 
 <p align="center">
@@ -626,7 +626,7 @@ For cylindrical pore extended along $\hat k$ direction in Cartesian coordinates,
 
 <p>
   
-and, thereby, the effective suppression function for cubic crystal structures, is S(0)=1/3 ∑S<sub>i</sub>(0) ≈ 3-ϕ-4ϕ/(1+ϕ+0.3ϕ<sup>4</sup>. Note that the Maxwell-Eucken's and Rayleigh's models give quite similar value for S(0). 
+and, thereby, the effective suppression function for cubic crystal structures, is S(0)=1/3 ∑S<sub>i</sub>(0) ≈ 3-ϕ-4ϕ/(1+ϕ+0.3ϕ<sup>4</sup>). Note that the Maxwell-Eucken's and Rayleigh's models give quite similar value for S(0). 
 </p>
 
 <p>
@@ -751,7 +751,7 @@ It is notable that, in general, the electron filtering effect in extended pores 
 
 <p>
   
-The variation of ZT<sub>eff</sub>/ZT<sub>ibulk</sub> with porosity and Knudsen number for discrete spherical pore and extended cylinder are shown in figures bellow, respectively. The model predicts that spherical pores detriment ZT for Kn≈1 while for Kn<1 it predicts enhancement in ZT. We *reemphasize* that the energy filtering effect is neglected in derivation of equation for S which by no means acceptable when Kn→1; However the model predicts improvement in ZT in all range of Kn with the largest enhancement in Knudsen regime for TEs with extended cylindrical pores -- note that there is no filtering effect in materials with extended pore. 
+The variation of ZT<sub>eff</sub>/ZT<sub>ibulk</sub> with porosity and Knudsen number for discrete spherical pore and extended cylinder are shown in figures bellow, respectively. The model predicts that spherical pores detriment ZT for Kn≈1 while for Kn<1 it predicts enhancement in ZT. We *reemphasize* that the energy filtering effect is neglected in derivation of equation for S which by no means acceptable when Kn→1; However the model predicts improvement in ZT in all range of Kn with the largest enhancement in Knudsen regime for TEs with extended cylindrical pores - note that there is no filtering effect in materials with extended pore. 
 </p>
 
 <p align="center">
@@ -780,7 +780,7 @@ Here, u<sub>ljζγ</sub> is the displacement of j<sup>th</sup> atom in l<sup>th<
 
 <p>
   
-The sum over q is performed for all wave vectors in the first Brillouin zone that are commensurate with the compute cell. The phonon wave packet simulations are centered at wave vectors q<sub>o</sub> nm<sup>-1</sup> along the 〈 1 0 0 〉 crystal direction for both the longitudinal and transverse acoustic modes γ. Large simulation cells is needed to precisely model the wave packets with very fine uncertainty in momentum space(σ). The initial position of the atoms in the MD simulation is computed using Equation above and the initial velocity is computed from the derivative of u<sub>ljζγ</sub> with respect to time (v<sub>ljζγ</sub> = d/dt u<sub>ljζγ</sub>). The system is initially at 0 K and the wave packets are added with A<sub>o</sub> for each wave packet tuned so that it raises the temperature of the system by a few Kelvin, rather than adding one phonon, ℏω, of energy. The reason for this is that, in the system sizes modeled, ℏω for wave packets near the Brillouin zone center is too small to be resolved above the numerical noise, while a single ℏω would raise the system temperature by hundreds of Kelvin for wave packets near the Brillouin zone edge. Performing the wave packet simulations at lower energy help keep phonon thermalization at bay, such that the acoustic frequencies selected for the packets don’t easily decay into other modes/frequencies due to anharmonicity.
+The sum over q is performed for all wave vectors in the first Brillouin zone that are commensurate with the compute cell. The phonon wave packet simulations are centered at wave vectors q<sub>o</sub> nm<sup>-1</sup> along the 〈 1 0 0 〉 crystal direction for both the longitudinal and transverse acoustic modes γ. Large simulation cells is needed to precisely model the wave packets with very fine uncertainty in momentum space(σ). The initial position of the atoms in the MD simulation is computed using Equation above and the initial velocity is computed from the derivative of u<sub>ljζγ</sub> with respect to time (v<sub>ljζγ</sub> = d/dt u<sub>ljζγ</sub>). The system is initially at 0 K and the wave packets are added with A<sub>o</sub> for each wave packet tuned so that it raises the temperature of the system by a few Kelvin, rather than adding one phonon, ℏω, of energy. The reason for this is that, in the system sizes modeled, ℏω for wave packets near the Brillouin zone center is too small to be resolved above the numerical noise, while a single ℏω would raise the system temperature by hundreds of Kelvin for wave packets near the Brillouin zone edge. Performing the wave packet simulations at lower energy help keep phonon thermalization at bay, such that the acoustic frequencies selected for the packets don’t easily decay into other modes/ frequencies due to anharmonicity.
 </p>
 
 <p align="center">
