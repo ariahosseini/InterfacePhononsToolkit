@@ -847,7 +847,7 @@ The local partition ration of (a) Si/Ge and (b) Si/SiC are plotted in figure (4)
   number={20}, \
   pages={205405}, \
   year={2020}, \
-  publisher={APS} \
+  publisher={APS}\
   
 }
 
