@@ -22,7 +22,6 @@
 - [PHONON WAVEPACKET ANALYSIS](#PHONON-WAVEPACKET-ANALYSIS)
   * [Model Development](#Model-Development)
   * [Atomistic Decomposition of Partitioning Ratio](#Atomistic-Decomposition-of-Partitioning-Ratio)
-- [REFERENCES](#REFERENCES)
 - [CITATION](#Citation)
 
 # GETTING STARTED
@@ -55,7 +54,7 @@ Compatible with python 3.0 and upwards
 git clone https://github.com/ariahosseini/InterfacePhononsToolkit.git
 cd InterfacePhononsToolkit/
 pip install --upgrade pip
-pip install -r Requirements.txt
+pip install -r requirements.txt
 ```
 
 You may need to define the following environment variable in your .bashrc or .bash_profile
@@ -804,7 +803,7 @@ The sum over q is performed for all wave vectors in the first Brillouin zone tha
 ## Atomistic Decomposition of Partitioning Ratio
 
 <p>
-The importance of the interfacial atoms can be shown by the degree of participation in different phonon modes using participation ratio (PR) [DOI]. […] introduced atomistic decomposition of partitioning ratio (APR) that shows the contribution of each atom to the lattice dynamics for a given frequency. These parameters are described as
+The importance of the interfacial atoms can be shown by the degree of participation in different phonon modes using participation ratio (PR). AAtomistic decomposition of partitioning ratio (APR) shows the contribution of each atom to the lattice dynamics for a given frequency. These parameters are described as
 </p>  
   
 <p align="center">
@@ -837,6 +836,20 @@ The local partition ration of (a) Si/Ge and (b) Si/SiC are plotted in figure (4)
 <img src="figs/PR_sic.png" align="center" alt="drawing" width="700px"> 
 </p>
 
+# CITATION
+
+[1] de Sousa Oliveira, L., Hosseini, S. A., Greaney, A., \& Neophytou, N. (2020). Heat current anticorrelation effects leading to thermal conductivity reduction in nanoporous Si. Physical Review B, 102(20), 205405. [\href{https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.205405}{Online version}]
+
+@article{de2020heat,
+  title={Heat current anticorrelation effects leading to thermal conductivity reduction in nanoporous Si},
+  author={de Sousa Oliveira, Laura and Hosseini, S Aria and Greaney, Alex and Neophytou, Neophytos},
+  journal={Physical Review B},
+  volume={102},
+  number={20},
+  pages={205405},
+  year={2020},
+  publisher={APS}
+}
 
 
 
