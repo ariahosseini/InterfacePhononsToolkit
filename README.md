@@ -39,7 +39,7 @@ The overall structure of the repository is as below.
     ├── requirements.txt 
     └── README.md
 
-The best place to start is the *Examples* folder, where there are a couple of scripts available to get you started with the code. A quick description of the notebooks is as the following.
+The best place to start is the *examples* folder, where there are a couple of scripts available to get you started with the code. A quick description of the notebooks is as the following.
 
     ├── Examples 
     │   ├── Si_Ideal_Filtering    # Example of running simulation to model idal filtering Si
