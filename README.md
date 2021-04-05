@@ -52,8 +52,8 @@ The best place to start is the *Examples* folder, where there are a couple of sc
 
 Compatible with python 3.0 and upwards
 ```bash
-git clone https://github.com/ariahosseini/thermoelectric.py.git
-cd thermoelectric.py/
+git clone https://github.com/ariahosseini/InterfacePhononsToolkit.git
+cd InterfacePhononsToolkit/
 pip install --upgrade pip
 pip install -r Requirements.txt
 ```
