@@ -6,10 +6,10 @@ Email: shoss008@ucr.edu
 """
 
 import numpy as np
+import os
 
 
 def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
-
     """
 
     This function calculate vibrational density of state from hessian matrix
@@ -47,7 +47,6 @@ def vibrational_density_state(path_to_mass_weighted_hessian, eps=3e12, nq=2e4):
 
 
 def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, reference_unit_cell, skip_lines=16):
-
     """
 
     This function returns the position of atoms, lattice points and positional vectors respect to a reference lattice
@@ -71,13 +70,12 @@ def atoms_position(path_to_atoms_positions, num_atoms, num_atoms_unit_cell, refe
         _position = np.loadtxt(atomsPositionsFile, skiprows=skip_lines, max_rows=num_atoms)
     position_of_atoms = _position[np.argsort(_position[:, 0])]
     lattice_points = position_of_atoms[::num_atoms_unit_cell, 2:5]
-    lattice_points_vectors = lattice_points - lattice_points[reference_unit_cell-1, :][np.newaxis]
+    lattice_points_vectors = lattice_points - lattice_points[reference_unit_cell - 1, :][np.newaxis]
 
     return position_of_atoms, lattice_points, lattice_points_vectors
 
 
 def qpoints(num_qpoints, lattice_parameter, BZ_path):
-
     """
     This function samples the BZ path
 
@@ -90,13 +88,12 @@ def qpoints(num_qpoints, lattice_parameter, BZ_path):
         points                              : wave vectors along BZ_path
     """
 
-    points = np.asarray(BZ_path)[np.newaxis].T * np.linspace(0, 2*np.pi / lattice_parameter, num_qpoints)[np.newaxis]
+    points = np.asarray(BZ_path)[np.newaxis].T * np.linspace(0, 2 * np.pi / lattice_parameter, num_qpoints)[np.newaxis]
     return points
 
 
 def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
-                     central_unit_cell, lattice_parameter, BZ_path = None, skip_lines=16, num_qpoints=1000):
-
+                     central_unit_cell, lattice_parameter, BZ_path=None, skip_lines=16, num_qpoints=1000):
     """
 
     This function calculate vibrational eigenvectors and frequencies from dynamical matrix
@@ -134,9 +131,9 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
         dynamical_matrix_per_qpoint = np.zeros((num_atoms_unit_cell * 3, num_atoms_unit_cell * 3))
         for __ in range(len(crystal_points[2])):
             sum_matrix = hessian_matrix[__ * num_atoms_unit_cell * 3: (__ + 1) * num_atoms_unit_cell * 3,
-                                        (central_unit_cell-1) * num_atoms_unit_cell * 3:
+                                        (central_unit_cell - 1) * num_atoms_unit_cell * 3:
                                         (central_unit_cell) * num_atoms_unit_cell * 3] * \
-                         np.exp(-1j * np.dot(crystal_points[2][__], points[:, _]))
+                np.exp(-1j * np.dot(crystal_points[2][__], points[:, _]))
             dynamical_matrix_per_qpoint = dynamical_matrix_per_qpoint + sum_matrix
         dynamical_matrix = np.append(dynamical_matrix, dynamical_matrix_per_qpoint, axis=0)
 
@@ -164,7 +161,6 @@ def dynamical_matrix(path_to_mass_weighted_hessian, path_to_atoms_positions, num
 def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
                     central_unit_cell, lattice_parameter, BZ_path=None, skip_lines=16,
                     num_qpoints=1000):
-
     """
         This function returns transverse and longitudinal eigenmodes from dynamical matrix
         of molecular dynamics calculations
@@ -196,13 +192,13 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
     frq = dynamical_matrix(path_to_mass_weighted_hessian=path_to_mass_weighted_hessian,
                            path_to_atoms_positions=path_to_atoms_positions, num_atoms=num_atoms,
                            num_atoms_unit_cell=num_atoms_unit_cell, central_unit_cell=central_unit_cell,
-                           lattice_parameter=lattice_parameter, BZ_path = BZ_path, skip_lines=skip_lines,
+                           lattice_parameter=lattice_parameter, BZ_path=BZ_path, skip_lines=skip_lines,
                            num_qpoints=num_qpoints)
 
     longitudinal_mode_frq = frq[1][:, 2]
     transverse_mode_frq = frq[1][:, 0]
 
-    longitudinal_eigvec = np.reshape(frq[0][:, 2],(num_qpoints, num_atoms_unit_cell * 3)).T
+    longitudinal_eigvec = np.reshape(frq[0][:, 2], (num_qpoints, num_atoms_unit_cell * 3)).T
 
     _transverse_mode_eigvec = np.reshape(frq[0][:, 0], (num_qpoints, num_atoms_unit_cell * 3))
     __transverse_mode_eigvec = np.reshape(frq[0][:, 1], (num_qpoints, num_atoms_unit_cell * 3))
@@ -210,29 +206,29 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
     angle_x = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(_transverse_mode_eigvec,
                                                                     np.tile(np.array([0, 1, 0]), (int(num_qpoints),
                                                                                                   num_atoms_unit_cell))
-                                                                    ), axis = 1),
+                                                                    ), axis=1),
                                             np.sum(-1 * np.multiply(__transverse_mode_eigvec,
                                                                     np.tile(np.array([0, 1, 0]), (int(num_qpoints),
                                                                                                   num_atoms_unit_cell))
-                                                                    ), axis = 1)))])
+                                                                    ), axis=1)))])
     angle_y = np.array([np.arctan(np.divide(np.sum(-1 * np.multiply(_transverse_mode_eigvec,
                                                                     np.tile(np.array([1, 0, 0]), (int(num_qpoints),
                                                                                                   num_atoms_unit_cell))
-                                                                    ), axis = 1),
+                                                                    ), axis=1),
                                             np.sum(-1 * np.multiply(__transverse_mode_eigvec,
                                                                     np.tile(np.array([1, 0, 0]), (int(num_qpoints),
                                                                                                   num_atoms_unit_cell))
-                                                                    ), axis = 1)))])
+                                                                    ), axis=1)))])
 
     transverse_eigvec_x = np.multiply(_transverse_mode_eigvec,
                                       np.tile(np.cos(angle_x).T, (1, 3 * num_atoms_unit_cell))) +\
-                          np.multiply(__transverse_mode_eigvec,
-                                      np.tile(np.sin(angle_x).T, (1, 3 * num_atoms_unit_cell)))
+        np.multiply(__transverse_mode_eigvec,
+                    np.tile(np.sin(angle_x).T, (1, 3 * num_atoms_unit_cell)))
 
     transverse_eigvec_y = np.multiply(_transverse_mode_eigvec,
                                       np.tile(np.cos(angle_y).T, (1, 3 * num_atoms_unit_cell))) +\
-                          np.multiply(__transverse_mode_eigvec,
-                                      np.tile(np.sin(angle_y).T, (1, 3 * num_atoms_unit_cell)))
+        np.multiply(__transverse_mode_eigvec,
+                    np.tile(np.sin(angle_y).T, (1, 3 * num_atoms_unit_cell)))
 
     eigenvalue = np.array([transverse_mode_frq, transverse_mode_frq, longitudinal_mode_frq])
     eigenvector = np.array([transverse_eigvec_x.T, transverse_eigvec_y.T, longitudinal_eigvec])
@@ -240,8 +236,7 @@ def acoustic_phonon(path_to_mass_weighted_hessian, path_to_atoms_positions, num_
     return eigenvalue, eigenvector, frq[2]
 
 
-def gaussian_distribution(amplitude, sigma, wavenumber_idx, num_qpoints, lattice_parameter, BZ_path = None):
-
+def gaussian_distribution(amplitude, sigma, wavenumber_idx, num_qpoints, lattice_parameter, BZ_path=None):
     """
 
     This function find the Gaussian distribution around "wavenumber_idx" with variance of "sigma" and amplitude of
@@ -276,7 +271,6 @@ def gaussian_distribution(amplitude, sigma, wavenumber_idx, num_qpoints, lattice
 def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms, num_atoms_unit_cell,
                 central_unit_cell, lattice_parameter, frq_mode, idx_ko, amplitude, sigma, replication,
                 BZ_path=None, origin_unit_cell=0, skip_lines=[9, 9], num_qpoints=1000):
-
     """
 
     This function generates a single wave
@@ -317,7 +311,7 @@ def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atom
 
     num_cell = replication[0] * replication[1] * replication[2]
     positions = atoms_position(path_to_atoms_positions=path_to_atoms_positions[1], num_atoms=num_atoms[1],
-                               num_atoms_unit_cell=num_atoms_unit_cell, reference_unit_cell = origin_unit_cell,
+                               num_atoms_unit_cell=num_atoms_unit_cell, reference_unit_cell=origin_unit_cell,
                                skip_lines=skip_lines[1])
 
     solid_lattice_points = positions[2][:num_cell]
@@ -337,23 +331,23 @@ def single_wave(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atom
                                               frq[1][frq_mode][frq_mode, idx_ko].real)))
 
     wv_x = gaussian[0, idx_ko] * \
-           np.multiply(np.tile(frq[1][frq_mode][::3, idx_ko][np.newaxis].T, (num_cell, 1)),
-                       np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
-                                                                 num_atoms_unit_cell),
-                                                         (num_cell * num_atoms_unit_cell, 3)),
-                                              points[:, idx_ko][np.newaxis].T))) * sign_correction
+        np.multiply(np.tile(frq[1][frq_mode][::3, idx_ko][np.newaxis].T, (num_cell, 1)),
+                    np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                              num_atoms_unit_cell),
+                                                      (num_cell * num_atoms_unit_cell, 3)),
+                                           points[:, idx_ko][np.newaxis].T))) * sign_correction
     wv_y = gaussian[0, idx_ko] * \
-           np.multiply(np.tile(frq[1][frq_mode][1::3, idx_ko][np.newaxis].T, (num_cell, 1)),
-                       np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
-                                                                 num_atoms_unit_cell),
-                                                         (num_cell * num_atoms_unit_cell, 3)),
-                                              points[:, idx_ko][np.newaxis].T))) * sign_correction
+        np.multiply(np.tile(frq[1][frq_mode][1::3, idx_ko][np.newaxis].T, (num_cell, 1)),
+                    np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                              num_atoms_unit_cell),
+                                                      (num_cell * num_atoms_unit_cell, 3)),
+                                           points[:, idx_ko][np.newaxis].T))) * sign_correction
     wv_z = gaussian[0, idx_ko] * \
-           np.multiply(np.tile(frq[1][frq_mode][2::3, idx_ko][np.newaxis].T, (num_cell, 1)),
-                       np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
-                                                                 num_atoms_unit_cell),
-                                                         (num_cell * num_atoms_unit_cell, 3)),
-                                              points[:, idx_ko][np.newaxis].T))) * sign_correction
+        np.multiply(np.tile(frq[1][frq_mode][2::3, idx_ko][np.newaxis].T, (num_cell, 1)),
+                    np.exp(-1j * np.matmul(np.reshape(np.tile(solid_lattice_points,
+                                                              num_atoms_unit_cell),
+                                                      (num_cell * num_atoms_unit_cell, 3)),
+                                           points[:, idx_ko][np.newaxis].T))) * sign_correction
 
     wave = np.concatenate((wv_x.T, wv_y.T, wv_z.T), axis=0)
 
@@ -401,7 +395,7 @@ def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms
 
     num_cell = replication[0] * replication[1] * replication[2]
     positions = atoms_position(path_to_atoms_positions=path_to_atoms_positions[1], num_atoms=num_atoms[1],
-                               num_atoms_unit_cell=num_atoms_unit_cell, reference_unit_cell = origin_unit_cell,
+                               num_atoms_unit_cell=num_atoms_unit_cell, reference_unit_cell=origin_unit_cell,
                                skip_lines=skip_lines[1])
 
     solid_lattice_points = positions[2][:num_cell]
@@ -445,6 +439,4 @@ def wavepacket(path_to_mass_weighted_hessian, path_to_atoms_positions, num_atoms
 
     phonon_wavepacket = np.concatenate((wv_x, wv_y, wv_z), axis=0)
 
-
     return phonon_wavepacket, positions[0]
-
