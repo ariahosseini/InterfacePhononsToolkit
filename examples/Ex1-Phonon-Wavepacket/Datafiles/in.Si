@@ -1,0 +1,63 @@
+# A script to try  making a box of Si
+
+boundary        p p p
+units           metal   # 'metal' unit must be used.
+box 		tilt large
+echo            screen
+atom_modify	sort 0 0.0
+atom_modify 	map array
+neighbor        0.3 bin
+neigh_modify    delay 10
+
+
+# Load coordinates of unit cell atoms
+atom_style	atomic
+read_data	data.wp
+
+pair_style 	tersoff
+pair_coeff	* * SiCGe.tersoff Si(D) Ge
+
+
+variable        dt equal 0.5e-3   # Time step
+timestep        ${dt}
+
+
+
+
+dump		xmol all xyz 1 Si.xyz
+dump_modify	xmol element Si Ge
+run		0
+undump		xmol
+
+
+group 		si type 1
+group 		ge type 2
+
+thermo_style	custom time step etotal pe ke temp press vol   
+thermo		100
+
+fix		NVE all nve
+
+compute		KE all ke/atom                # Per atom kinetic energy
+compute		PE all pe/atom                # Per atom potential energy
+dump		pad all custom 50 pad.d id c_KE c_PE
+dump_modify	pad sort id
+label		loop
+variable 	itr loop 10
+compute         velacf_${itr} all vacf
+compute         velacf_si_${itr} si vacf
+compute         velacf_ge_${itr} ge vacf
+fix             FIX_${itr} all ave/time 1 1 1 c_velacf_${itr}[*] file tmp.vacf_${itr}
+fix             FIX_si_${itr} si ave/time 1 1 1 c_velacf_si_${itr}[*] file tmp.vacf_si_${itr}
+fix             FIX_ge_${itr} ge ave/time 1 1 1 c_velacf_ge_${itr}[*] file tmp.vacf_ge_${itr}
+
+run		8000
+unfix		FIX_${itr}
+unfix		FIX_si_${itr}
+unfix		FIX_ge_${itr}
+if 		"${itr} == 10" then "jump in.Si break"
+next            itr
+jump		in.Si loop
+label       	break
+variable    	itr delete
+
