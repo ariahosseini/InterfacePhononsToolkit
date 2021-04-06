@@ -837,7 +837,7 @@ The local partition ration of (a) Si/Ge and (b) Si/SiC are plotted in figure (4)
 
 # CITATION
 
-[1] de Sousa Oliveira, L., Hosseini, S. A., Greaney, A., \& Neophytou, N. (2020). Heat current anticorrelation effects leading to thermal conductivity reduction in nanoporous Si. Physical Review B, 102(20), 205405. [\href{https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.205405}{Online version}]
+[1] de Sousa Oliveira, L., Hosseini, S. A., Greaney, A., \& Neophytou, N. (2020). Heat current anticorrelation effects leading to thermal conductivity reduction in nanoporous Si. Physical Review B, 102(20), 205405. https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.205405
 
 @article{de2020heat, \
   title={Heat current anticorrelation effects leading to thermal conductivity reduction in nanoporous Si}, \
