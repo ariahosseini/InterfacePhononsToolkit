@@ -37,6 +37,6 @@ If the python code  is run for different qpoints, it can be used to compute the 
 ## Ex2-Ray-Tracing
   
   ### Roadmap
-  Simply run RAY_TRACING.py, a load of plots will be generated and output files containg thermal conductivity and anticorrelations will be dumped. For more information see 
+  Simply run RAY_TRACING.py, a load of plots will be generated and output files containing thermal conductivity and anticorrelations will be dumped. For more information see 
   
   - de Sousa Oliveira, L., Hosseini, S. A., Greaney, A., \& Neophytou, N. (2020). Heat current anticorrelation effects leading to thermal conductivity reduction in nanoporous Si. Physical Review B, 102(20), 205405. https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.205405
