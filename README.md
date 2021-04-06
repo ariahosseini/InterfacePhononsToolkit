@@ -17,7 +17,7 @@
     - [Diffuse and specular palisade scattering models](#Diffuse-and-specular-palisade-scattering-models)
 - [EFFECTIVE THERMAL CONDUCTIVITY IN MATERIALS CONTAINING NANOSCALE POROSITY](#EFFECTIVE-THERMAL-CONDUCTIVITY-IN-MATERIALS-CONTAINING-NANOSCALE-POROSITY)
   * [Descriptor](#Descriptor)
-  * [Descriptor for L<sub>c</sub>](#Descriptor-for-L<sub>c</sub>)
+  * [Descriptor for Lc](#Descriptor-for-Lc)
   * [Model Prediction](#Model-Prediction)
 - [PHONON WAVEPACKET ANALYSIS](#PHONON-WAVEPACKET-ANALYSIS)
   * [Model Development](#Model-Development)
@@ -530,7 +530,7 @@ which leads to
 where Ξ(Kn)=(1+Kn(Ln(Kn)-1))/(Kn-1)<sup>2</sup>. In this equation, Kn=Λ<sub>o</sub>/L<sub>c</sub> is the Knudsen number. This equation relates the effective thermal conductivity of porous materials and Knudsen number of Kn to bulk lattice thermal conductivity. Note that in diffusive regime where Kn << 1, this equation simplify to the diffusive heat conduction equation through κ<sub>bulk</sub>S(0)=κ<sub>fourier</sub>. In the remaining of this section, we describe the best descriptors for L<sub>c</sub> and S(0). 
 </p>
 
-## Descriptor for L<sub>c</sub>
+## Descriptor for Lc
 
 <p>
   
