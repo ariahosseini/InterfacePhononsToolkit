@@ -41,7 +41,7 @@ The best place to start is the *examples* folder, where there are a couple of sc
 
     ├── Examples 
     │   ├── Ex1-Phonon-Wavepacket    # Example of running simulation to model wavepacket, computing transmission coefficients and atomic partition ratio
-    │   ├── Ex2-Ray-Tracing          # Example of running simulation to model anticorelation effeict in materials containg nannoscale porosity
+    │   ├── Ex2-Ray-Tracing          # A Example of running simulation to model anticorrelation effect in materials containing nanoscale porosity
     │   ├── README.md            
 
 </div>
