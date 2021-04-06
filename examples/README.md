@@ -11,9 +11,12 @@ Following examples show how to use *InterfacePhononsToolkit* librarier to model 
   
   ### Roadmap
 <p>  
-  [1] Run in.Si-hessian, note that in.hessian, SiCGe.tersoff, data.Si, dump.py and forcedump2hessian.py files should be in the directory where lammps runs./
-  [2] Previous step generates Si-hessian-mass-weighted-hessian.d and data.Si-unwrapped files. These two are the input file for WAVEPACKET.py. Run WAVEPACKET.py./
-  [3] Dump the wavepacket data file and use it add the initial atom position in Lammps. The lammps input file is in.Si./
+  [1] Run in.Si-hessian, note that in.hessian, SiCGe.tersoff, data.Si, dump.py and forcedump2hessian.py files should be in the directory where lammps runs.
+  
+  [2] Previous step generates Si-hessian-mass-weighted-hessian.d and data.Si-unwrapped files. These two are the input file for WAVEPACKET.py. Run WAVEPACKET.py.
+  
+  [3] Dump the wavepacket data file and use it add the initial atom position in Lammps. The lammps input file is in.Si.
+  
   [4] Previous step generates pad.d which include atoms kinetic energy during running time.
   
   Here I plotted the mean kinetic energy of atoms in layes along z
