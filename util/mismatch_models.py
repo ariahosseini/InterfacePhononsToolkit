@@ -1,94 +1,100 @@
 """
-Developed by S. Aria Hosseini
-Department of mechanical engineering
-University of California, Riverside
+A set of methods to characterize the interfacial thermal conductivity using mismatch models
 """
 
 import numpy as np
-from scipy import interpolate
-from .wavepacket_simulator import *
+from scipy.interpolate import PchipInterpolator as interpolator
+from .dynam import vibrational_density_state as vib_dos
 
 
-def acoustic_mismatch(speed_of_sound, mass_density, n_mu=2e4):
+def acoustic_mismatch(speed_of_sound: np.ndarray, mass_density: np.ndarray, n_mu: int = 2e4) -> dict:
 
     """
-    acoustic_mismatch returns transmission coefficient of two solids in contact.
-    The transmission material (i) to material (j).
-    this function assumed single Debye phonon band approximation and an effective bulk stiffness
+    Acoustic Mismatch Model (AMM).
+
+    This function assumed single Debye phonon band approximation and an effective bulk stiffness.
 
     :arg
-        speed_of_sound    : Material speed of sound, An array of 1 by 2
-        mass_density      : Materials mass density, An array of 1 by 2
-        n_mu              : Angular sampling
-
+        speed_of_sound: np.ndarray
+            Material speed of sound, size: (1, 2)
+        mass_density: np.ndarray
+            Materials mass density, size: (1, 2)
+        n_mu: int
+            Angular space mesh size
     :returns
-        mu_critical     : Critical angle, float number
-        tij             : Angel dependent transmission coefficient from i to j, np.array
-        Tij             : Angel independent transmission coefficient from i to j, np.array
-        chi             : Suppression function to include angel dependency of transmission coefficient in
-                          interfacial thermal conductance
-        Chi             : Angel-averaged suppression function
+        output: dict
+        output['mu_critical']           : Critical angle, float number
+        output['transmission_coeff']    : Angle-dependent transmission coefficient from i to j
+        output['angle_independent_transmission_coeff']  : Angle-independent transmission coefficient from i to j
+        output['suppression']           : Angle-averaged suppression function
     """
 
-    z_i = mass_density[0] * speed_of_sound[0]       # Acoustic impedance
-    z_j = mass_density[1] * speed_of_sound[1]       # Acoustic impedance
+    z_i, z_j = mass_density * speed_of_sound  # Acoustic impedance
 
-    if speed_of_sound[1] < speed_of_sound[0]:       # Transmission from stiff material to soft material
-        mu_critical = 0                             # Critical angle
-    else:       # Transmission from soft material to stiff material
-        mu_critical = np.cos(np.arcsin(speed_of_sound[0] / speed_of_sound[1]))      # Critical angel
+    if speed_of_sound[1] < speed_of_sound[0]:  # The transmission is from the stiff material to the soft material
 
-    mu_i = np.linspace(mu_critical, 1, int(n_mu))           # Sample incoming angele
-    mu_j = np.sqrt(1 - ((speed_of_sound[1] / speed_of_sound[0]) ** 2) *
-                   (1 - np.power(mu_i, 2)))                 # Sample outgoing angel
+        mu_critical = 0  # Critical angle
 
-    tij = 4 * (z_i * z_j) * np.divide(np.multiply(mu_i, mu_j),
-                                      np.power(z_i * mu_i + z_j * mu_j, 2))  # Angel dependent transmission coefficient
+    else:  # The transmission is from the soft material to the stiff material
 
-    T = np.trapz(y=tij, x=mu_i, dx=mu_i[1] - mu_i[0], axis=-1)  # Angel independent transmission coefficient
-    chi = ((1 + z_j / z_i)**2 / (1 + z_j / z_i * mu_j / mu_i)**2) * (mu_j / mu_i)   # Suppression function
-    Chi = np.trapz(y=chi, x=mu_i, dx=mu_i[1] - mu_i[0], axis=-1)  # Angel-averaged suppression function
+        mu_critical = np.cos(np.arcsin(speed_of_sound[0] / speed_of_sound[1]))  # Critical angle
 
-    return mu_i, mu_j, mu_critical, tij, T, chi, Chi
+    mu_i = np.linspace(mu_critical, 1, int(n_mu))  # Sampling the incoming angle
+
+    mu_j = np.sqrt(1 - ((speed_of_sound[1] / speed_of_sound[0]) ** 2) * (1 - mu_i**2))  # Sampling the outgoing angle
+
+    trans_ij = 4 * (z_i * z_j) * (mu_i*mu_j)/(z_i * mu_i + z_j * mu_j) ** 2  # Angle-dependent transmission coefficient
+    trans = np.trapz(y=trans_ij, x=mu_i, dx=mu_i[1] - mu_i[0], axis=-1)  # Angle-independent transmission coefficient
+    sup_func = ((1 + z_j / z_i) ** 2 / (1 + z_j / z_i * mu_j / mu_i) ** 2) * (mu_j / mu_i)  # Suppression function
+    suppression = np.trapz(y=sup_func, x=mu_i, dx=mu_i[1] - mu_i[0], axis=-1)  # Angle-averaged suppression function
+
+    output = {'mu_critical': mu_critical, 'transmission_coeff': trans_ij,
+              'angle_independent_transmission_coeff': trans, 'suppression': suppression}
+
+    return output
 
 
-def diffuse_mismatch(path_to_mass_weighted_hessian, speed_of_sound, eps, nq, n_sampleing):
+def diffuse_mismatch(path_to_mass_weighted_hessian: list, speed_of_sound: np.nddarray,
+                     eps_o: list, num_qpoints: list, frq_sampling: int) -> list:
 
     """
-    diffuse_mismatch returns transmission coefficient of two solids in contact.
-    This function assumed effective stiffness
 
     :arg
-        path_to_mass_weighted_hessian    : Point to mass weighted hessian file, 1 by 2 list of string
-        speed_of_sound                   : Material speed of sound, An array of 1 by 2
-        eps                              : DoS Gaussian width to mimic delta function, floating number
-        nq                               : qpoint sampling, integer
-        n_sampleing                      : Frequency sampling, integer
-
-
+        path_to_mass_weighted_hessian: list['str', 'str']
+            Point to mass weighted hessian files
+        speed_of_sound: np.ndarray
+            Materials speed of sound
+        eps_o: list['str', 'str']
+            DoS Gaussian width to approximate the delta function
+        num_qpoints: list['str', 'str']
+            Wave vectors sampling, integer
+        frq_sampling: int
+            Frequency sampling size
     :returns
-        tij             : Angel dependent transmission coefficient from i to j, np.array
-        omg             : Phonon angular frequency
-
+    output: list
+        trs_ij: np.ndarray
+            Angle-dependent transmission coefficient from i to j
+        omg: np.ndarray
+            Phonon angular frequency
     """
 
-    # Call vibrational_density_state method from wavepacket_simulator.py
-    vibrationa_properties_i = vibrational_density_state(path_to_mass_weighted_hessian=path_to_mass_weighted_hessian[0],
-                                                        eps=eps[0], nq=nq[0])
-    vibrationa_properties_j = vibrational_density_state(path_to_mass_weighted_hessian=path_to_mass_weighted_hessian[1],
-                                                        eps=eps[1], nq=nq[1])
+    vib_prop_i = vib_dos(path_to_mass_weighted_hessian=path_to_mass_weighted_hessian[0],
+                                                        eps=eps_o[0], nq=num_qpoints[0])
+    vib_prop_j = vib_dos(path_to_mass_weighted_hessian=path_to_mass_weighted_hessian[1],
+                                                        eps=eps_o[1], nq=num_qpoints[1])
 
-    # Maximum overlap frequency
-    omg_cut = np.min([np.max(vibrationa_properties_i[-1]), np.max(vibrationa_properties_i[-1])])
-    omg = np.linspace(0, omg_cut, int(n_sampleing))     # Frequency
+    omg_cut = np.min([np.max(vib_prop_i[-1]), np.max(vib_prop_j[-1])])
+    omg = np.linspace(0, omg_cut, int(frq_sampling))
 
-    # Interpolations
-    f_i = interpolate.PchipInterpolator(vibrationa_properties_i[-1][0], vibrationa_properties_i[2][0], extrapolate=None)
-    f_j = interpolate.PchipInterpolator(vibrationa_properties_j[-1][0], vibrationa_properties_j[2][0], extrapolate=None)
-    
-    dos_i = f_i(omg)    # Density of state in material i
-    dos_j = f_j(omg)    # Density of state in material j
-    tij = np.divide(speed_of_sound[1] * dos_j, speed_of_sound[0] * dos_i + speed_of_sound[1] * dos_j,
+    frq_i = interpolator(vib_prop_i[-1][0], vib_prop_i[2][0], extrapolate=None)
+    frq_j = interpolator(vib_prop_j[-1][0], vib_prop_j[2][0], extrapolate=None)
+
+    dos_i = frq_i(omg)  # Density of state in material i
+    dos_j = frq_j(omg)  # Density of state in material j
+
+    trs_ij = np.divide(speed_of_sound[1] * dos_j, speed_of_sound[0] * dos_i + speed_of_sound[1] * dos_j,
                     out=np.zeros_like(speed_of_sound[1] * dos_j),
-                    where=speed_of_sound[0] * dos_i + speed_of_sound[1] * dos_j != 0)   # Transmission coefficient
-    return tij, omg
+                    where=speed_of_sound[0] * dos_i + speed_of_sound[1] * dos_j != 0)  # Transmission coefficient
+    output = list(zip(omg, trs_ij))
+
+    return output
