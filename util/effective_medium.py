@@ -1,105 +1,116 @@
 """
-effective_medium.py is a collection of methods to compute effective thermal conductivity and figure of merits in
-dielectrics containing nano- and micro-scale pores. the pores are assumed to be aligned and cylindrical in shape.
-
-Author: S. Aria Hosseini
-Email: shoss008@ucr.edu
+A collection of methods to compute effective thermal conductivity of nano-structures.
 """
-
 
 import numpy as np
 from scipy.optimize import curve_fit
 
 
-def logistic(mfp, lambda_o):
+def bulk_mean_free_path(path_kappa_cumulative: 'str', max_fev: int = 1000) -> float:
 
     """
-    cumulative lattice thermal conductivity of bulk dielectrics is often modeled as logistic regression of form:
+    This "bulk_mean_free_path" function computes the logistic fit to the cumulative thermal conductivity
+    computed in first-principle thermal conductivity simulator, almaBTE with the following form:
     cumulative_kappa = kappa_bulk/ (1+lambda_o/mean_free_path).
-
-    We use curve_fit from scipy.optimize to fit the logistic function to first-principle cumulative kappa generated
-    using almaBTE package. Here, lambda-o is the fitting parameter.
-
     :arg
-        mfp                                 : An array of sorted phonon mean free path in unit of m
-        lambda_o                            : The fitting parameter in unit of m
-
+        path_kappa_cumulative: 'str'
+            Point to the cumulative kappa file
+        max_fev: int
+            Maximum iteration for fitting
     :returns
-        A logistic curve fitted to the cumulative_kappa vs. phonon mean free path in unit of W/m/K
-
+        lambda_bulk: float
+            The uni-parameter characteristic mfp
     """
 
-    return kappa_bulk / (1 + lambda_o / mfp)
+    def logistic_curve(mfp, lambda_o):
 
-"""
+        """
+        :arg
+            mfp: np.ndarray
+                Phonon mean free path [m]
+            lambda_o: float
+                The fitting parameter [m]
+        :returns
+            fit_curve: np.ndarray
+                Logistic fit to the cumulative_kappa vs. phonon mean free path [W/m/K]
+        """
 
-Following methods are to compute the phonon lifetime in dielectrics containing nano-scale pores with cylindrical shape.
+        fit_curve = kappa_bulk / (1 + lambda_o / mfp)
 
-See following articles for the details
+        return fit_curve
 
-1) "Modified effective medium formulation for the thermal conductivity of nanocomposites" for Minnich func.
-2) "Size and porosity effects on thermal conductivity of nanoporous material with an extension to nanoporous particles
-    embedded in a host matrix" for Machrafi func.
-3) "Thermal conductivity modeling of micro- and nanoporous silicon" for Liu func.
+    cumulative_data = np.loadtxt(path_kappa_cumulative, skiprows=1, delimiter=',')  # Cumulative thermal conductivity
+    kappa_bulk = cumulative_data[-1, 1]  # Bulk thermal conductivity
+    lambda_bulk, _ = curve_fit(logistic_curve, cumulative_data[:, 0],
+                               cumulative_data[:, 1], maxfev=max_fev)  # Characteristic mean-free-path
 
-    :arg
-        phi                           : Porosity, unitless
-        Lp                            : Pore-pore spacing, im m
-
-    :returns
-        Lc                            : Phonon mean free path in porous structures, in m
-
-"""
+    return lambda_bulk
 
 
-def Minnich(phi, Lp):   # Minnich et al., Applied Physics Letter, 2007
-
-    """
-    :param phi: Porosity, unitless
-    :param Lp: Pore-pore spacing, im m
-    :return Lc: Phonon mean free path in porous structures, in m
+def minnich_model(phi: np.ndarray, len_p: np.ndarray) -> np.ndarray:
 
     """
-
-    Lc = (1 - phi.T) / np.sqrt(4 * phi.T / np.pi) * Lp
-
-    return Lc
-
-
-def Machrafi(phi, Lp):   # Machrafi et al., Physics Letters A, 2015
-
-    """
-    :param phi: Porosity, unitless
-    :param Lp: Pore-pore spacing, im m
-    :return Lc: Phonon mean free path in porous structures, in m
-
+    :param
+        phi: np.ndarray
+        Porosity [unit-less]
+        len_p: np.ndarray
+            pore-pore spacing [m]
+    :return
+        len_c: np.ndarray
+            Characteristic length in porous structures [m]
     """
 
-    Lc = 1 / np.sqrt(4 * phi.T / np.pi) * Lp
+    len_c = (1 - phi.T) / np.sqrt(4 * phi.T / np.pi) * len_p
 
-    return Lc
+    return len_c
 
 
-def Liu(phi, Lp):   # Liu et al., International Journal of Thermal Sciences, 2010
-
-    """
-    :param phi: Porosity, unitless
-    :param Lp: Pore-pore spacing, im m
-    :return Lc: Phonon mean free path in porous structures, in m
+def machrafi_model(phi: np.ndarray, len_p: np.ndarray) -> np.ndarray:
 
     """
+    :param
+        phi: np.ndarray
+        Porosity [unit-less]
+        len_p: np.ndarray
+            pore-pore spacing [m]
+    :return
+        len_c: np.ndarray
+            Characteristic length in porous structures [m]
+    """
 
-    Lc = (1 - phi.T) * np.sqrt(1 / np.sqrt(phi.T / np.pi) - 1) * Lp + phi.T * 2 * np.sqrt(phi.T / np.pi) * Lp
+    len_c = 1 / np.sqrt(4 * phi.T / np.pi) * len_p
 
-    return Lc
+    return len_c
 
 
-def Maxwell_Garnett(phi):
+def liu_model(phi: np.ndarray, len_p: np.ndarray) -> np.ndarray:
 
     """
-    :param phi: Porosity, unitless
-    :return So: Maxwell Garnett porosity function
+    :param
+        phi: np.ndarray
+        Porosity [unit-less]
+        len_p: np.ndarray
+            pore-pore spacing [m]
+    :return
+        len_c: np.ndarray
+            Characteristic length in porous structures [m]
+    """
 
+    len_c = (1 - phi.T) * np.sqrt(1 / np.sqrt(phi.T / np.pi) - 1) * len_p \
+            + phi.T * 2 * np.sqrt(phi.T / np.pi) * len_p
+
+    return len_c
+
+
+def maxwell_garnett_model(phi: np.ndarray) -> np.ndarray:
+
+    """
+    :param
+        phi: np.ndarray
+            Porosity [unit-less]
+    :return
+        So: np.ndarray
+            Maxwell Garnett model of macroscopic suppression function
     """
 
     So = (1 - phi) / (1 + phi)
@@ -107,12 +118,15 @@ def Maxwell_Garnett(phi):
     return So
 
 
-def Maxwell_Eucken(phi):
+def maxwell_eucken(phi):
 
     """
-    :param phi: Porosity, unitless
-    :return So: Maxwell Eucken porosity function
-
+    :param
+        phi: np.ndarray
+            Porosity [unit-less]
+    :return
+        So: np.ndarray
+            Maxwell Eucken model of macroscopic suppression function
     """
 
     So = (1 - phi) / (1 + phi / 2)
@@ -120,107 +134,136 @@ def Maxwell_Eucken(phi):
     return So
 
 
-def Rayleigh(phi):
+def Rayleigh_model(phi: np.ndarray) -> np.ndarray:
 
     """
-    :param phi: Porosity, unitless
-    :return  So: Rayleigh porosity function
-
+    :param
+        phi: np.ndarray
+            Porosity [unit-less]
+    :return
+        So: np.ndarray
+            Rayleigh model of macroscopic suppression function
     """
 
-    So = 1. / 3 * (2 * (1 - 2 * phi / (1 + phi + 0.30584 * np.power(phi, 4) + 0.013363 * np.power(phi, 8))) + (1 - phi))
+    So = 1. / 3 * (2 * (1 - 2 * phi / (1 + phi + 0.30584 * phi**4 + 0.013363 * phi**8)) + (1 - phi))
 
     return So
 
 
-def view_factor(phi):
+def view_factor(phi: np.ndarray) -> dict:
 
     """
-    :param phi: Porosity, unitless
-    
+    :param
+        phi: np.ndarray
+            Porosity [unit-less]
     :return
-        F_c:  phonon view factor in materials with cylindrical pores
-        F_s:  phonon view factor in materials with cubic pores
-        F_t:  phonon view factor in materials with triangle prism pores
-
+    view_factors: dict
+            view_factors['cylindrical']:  Phonon view factor in materials with cylindrical pores
+            view_factors['cubic']:  Phonon view factor in materials with cubic pores
+            view_factors['triangle_prism']:  Phonon view factor in materials with triangle prism pores
     """
 
-    F_c = 1 - np.sqrt(4*phi/np.pi)*(np.pi/2-(np.arcsin(np.sqrt(4*phi/np.pi))+np.sqrt(np.pi/4/phi-1)-
-                                             np.sqrt(np.pi/4/phi)))
+    F_cy = 1 - np.sqrt(4 * phi / np.pi) * (
+                np.pi / 2 - (np.arcsin(np.sqrt(4 * phi / np.pi)) + np.sqrt(np.pi / 4 / phi - 1) -
+                             np.sqrt(np.pi / 4 / phi)))
 
-    F_s = 1-2*np.sqrt(phi)*(1-1/2*(np.sqrt(1+(1/np.sqrt(phi)-1)**2)-(1/np.sqrt(phi)-1)**2))
+    F_cu = 1 - 2 * np.sqrt(phi) * (1 - 1 / 2 * (np.sqrt(1 + (1 / np.sqrt(phi) - 1) ** 2) - (1 / np.sqrt(phi) - 1) ** 2))
 
-    F_t = np.sqrt(4*phi/np.sqrt(3)-2*np.sqrt(phi/np.sqrt(3))+1)-2*np.sqrt(phi/np.sqrt(3))
+    F_tri = np.sqrt(4 * phi / np.sqrt(3) - 2 * np.sqrt(phi / np.sqrt(3)) + 1) - 2 * np.sqrt(phi / np.sqrt(3))
 
-    return F_c, F_s, F_t
+    view_factors = {'cylindrical': F_cy, 'cubic': F_cu, 'triangle_prism': F_tri}
+
+    return view_factors
 
 
-def bulk_mean_free_path(path_kappa_cumulative, maxfev=1000):
+def kappa_eff_single_dof(kappa_bulk: np.ndarray, So: np.ndarray, len_c: np.ndarray, lambda_bulk: np.ndarray) -> dict:
 
     """
-    This function compute the logistic regressionn fit to the cumulative thermal conductivity computed in
-    first-principle thermal conductivity simulator, almaBTE
-
-    cumulative lattice thermal conductivity of bulk dielectrics is often modeled as logistic regression of form:
-    cumulative_kappa = kappa_bulk/ (1+lambda_o/mean_free_path).
-
-
+    This function compute the effective thermal conductivity of nano-engineered dielectrics
     :arg
-        path_kappa_cumulative             : point to the cumulative kappa file
-        maxfev                            : maxfev, maximum iteration for fitting
-
+        kappa_bulk: np.ndarray
+            Bulk thermal conductivity [W/mK]
+        So: np.ndarray
+            Macroscopic suppression function
+        len_c: np.ndarray
+            Characteristic length in porous structures [m]
+        lambda_bulk: np.ndarray
+            The Characteristic mfp [m]
     :returns
-        lambda_bulk                       : The uniparameter from logistic regression
-
+        output: dict
+         output['Kn']: np.ndarray
+            Knudsen number [unit-less]
+         output['correction_term']: np.ndarray
+            Ballistic correction term equal to (1+Kn*(Ln(Kn)-1))/(Kn-1)^2
+         output['kappa_effective']: np.ndarray
+            Thermal conductivity
     """
 
-    cumulative_data = np.loadtxt(path_kappa_cumulative, skiprows=1, delimiter=',')  # Cumulative thermal conductivity
-    lambda_bulk, _ = curve_fit(Logistic, cumulative_data[:, 0], cumulative_data[:, 1], maxfev=maxfev)   # Logistic fit
-
-    return lambda_bulk
-
-
-def kappa_effective(So, Lc, lambda_bulk):
-
-    """
-    This function compute the effective thermal conductivity of dielectrics containing nanoscale porosity
-
-
-    :arg
-        So                              : Porosity function, unitless
-        Lc                              : Phonon mean free path in porous structures, in m
-        lambda_bulk                    : The uniparameter from logistic regression
-
-    :returns
-         Kn                              : Knudsen number, unitless
-         zeta                            : A descriptor equal to (1+Kn*(Ln(Kn)-1))/(kn-1)^2
-         kappa_effective                 : Effective thermal conductivity of dielectrics containing nanoscale porosity
-
-    """
-
-    Kn = lambda_bulk / Lc
-    zeta = (1 + Kn * (np.log(Kn) - 1)) / (Kn - 1)**2
+    Kn = lambda_bulk / len_c
+    zeta = (1 + Kn * (np.log(Kn) - 1)) / (Kn - 1) ** 2
     kappa_effective = kappa_bulk * So.T * zeta
 
-    return Kn, zeta, kappa_effective
+    output = {'Kn': Kn, 'Ballistic Correction Term': zeta, 'Thermal conductivity': kappa_effective}
+
+    return output
 
 
-def fractional_effective_ZT(Kn, phi):
+def kappa_eff_multi_dof(kappa_bulk: np.ndarray, So: np.ndarray, len_c: np.ndarray, lambda_bulk: np.ndarray) -> dict:
 
     """
-    This function compute the ZT_porous/ ZT_bulk in dielectrics containing nanoscale porosity
-
-
+    This function compute the effective thermal conductivity of nano-engineered
+    dielectrics with multiple degrees of confinements
     :arg
-        Kn                              : Knudsen number, unitless
-        phi                             : Pprosity
-
+        kappa_bulk: np.ndarray
+            Bulk thermal conductivity [W/mK]
+        So: np.ndarray
+            Macroscopic suppression function
+        len_c: np.ndarray
+            Characteristic length in porous structures [m]
+        lambda_bulk: np.ndarray
+            The Characteristic mfp [m]
     :returns
-         fractional_ZT_effective        : ZT_porous/ ZT_bulk as a function of Knudsen number for the given porosity
-
+        output: dict
+         output['Kn']: np.ndarray
+            Knudsen numbers [unit-less]
+         output['correction_term']: np.ndarray
+            Ballistic correction term equal to Kn1^2*Ln(Kn1)/(Kn1-1)^2/(Kn1-Kn2) +
+                                               Kn2^2*Ln(Kn2)/(Kn2-1)^2/(Kn2-Kn1) +
+                                               1/(Kn1-1)/(Kn2-1)
+         output['kappa_effective']: np.ndarray
+            Thermal conductivity
     """
 
-    zeta = (1 + Kn * (np.log(Kn) - 1)) / (Kn - 1)**2
-    fractional_ZT_effective = (1+phi.T)/zeta
+    Kn_1 = lambda_bulk / len_c[0]
+    Kn_2 = lambda_bulk / len_c[1]
 
-    return fractional_ZT_effective
+    zeta = Kn_1**2*np.log(Kn_1)/(Kn_1-1)**2/(Kn_1-Kn_2) + \
+           Kn_2**2*np.log(Kn_2)/(Kn_2-1)**2/(Kn_2-Kn_1) + \
+           1/(Kn_1-1)/(Kn_2-1)
+
+    kappa_effective = kappa_bulk * So.T * zeta
+
+    output = {'Kn': np.array([Kn_1, Kn_2]), 'Ballistic Correction Term': zeta, 'Thermal conductivity': kappa_effective}
+
+    return output
+
+
+def kappa_bulk(path_phononinfo: str) -> float:
+
+    """
+    This function compute the bulk lattice thermal conductivity from AlmaBTE phononinfo output
+    :arg
+        path_phononinfo: str
+    :returns
+        kappa: float
+            Thermal conductivity
+    """
+
+    data = np.loadtxt(path_phononinfo, skiprows=1, delimiter=',')
+    tau_p = data[:, 7]  # Phonon lifetime [s]
+    vel = data[:, 8:]  # Phonon group velocity [m/s]
+    Cv = data[:, 6]  # Phonon specific heat [J/m^3-K]
+
+    kappa = np.einsum('ki,kj,k,k->ij', vel, vel, tau_p, Cv)  # Lattice thermal conductivity [W/mK]
+
+    return kappa[0, 0]
