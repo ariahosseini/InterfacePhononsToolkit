@@ -837,18 +837,15 @@ The local partition ration of (a) Si/Ge and (b) Si/SiC are plotted in figure (4)
 
 # CITATION
 
-[1] de Sousa Oliveira, L., Hosseini, S. A., Greaney, A., \& Neophytou, N. (2020). Heat current anticorrelation effects leading to thermal conductivity reduction in nanoporous Si. Physical Review B, 102(20), 205405. https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.205405
 
-@article{de2020heat, \
-  title={Heat current anticorrelation effects leading to thermal conductivity reduction in nanoporous Si}, \
-  author={de Sousa Oliveira, Laura and Hosseini, S Aria and Greaney, Alex and Neophytou, Neophytos}, \
-  journal={Physical Review B}, \
-  volume={102}, \
-  number={20}, \
-  pages={205405}, \
-  year={2020}, \
-  publisher={APS}  
-  }
+
+
+[1] S. A. Hosseini; A. Davies; I. Dickey; N. Neophytou; P. A. Greaney; L. de Sousa Oliveira. Super-suppression of Long Phonon Mean-Free-Paths in Nano-engineered Si due to Heat Current Anticorrelations, Materials Today Physics, 2022, Volume 27, 2022, 100719, ISSN 2542-5293, https://doi.org/10.1016/j.mtphys.2022.100719.
+
+[2] L. de Sousa Oliveira; S. A. Hosseini; P. A. Greaney; N. Neophytou. Heat Current Anticorrelation Effects Leading to Thermal Conductivity Reduction in Nanoporous Si. Physical Review B, 2020, 102(20), 205405. https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.205405.
+
+[3] P. A. Greaney; S. A. Hosseini; L. de Sousa Oliveira; A. Davies; N. Neophytou. Super-Suppression of Long-Wavelength Phonons in Constricted Nanoporous Geometries. Nanomaterials 2024, 14, 795. https://doi.org/10.3390/nano14090795.
+
 
 
 
