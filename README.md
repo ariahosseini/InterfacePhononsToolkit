@@ -840,7 +840,7 @@ The local partition ration of (a) Si/Ge and (b) Si/SiC are plotted in figure (4)
 
 
 
-[1] S. A. Hosseini; A. Davies; I. Dickey; N. Neophytou; P. A. Greaney; L. de Sousa Oliveira. Super-suppression of Long Phonon Mean-Free-Paths in Nano-engineered Si due to Heat Current Anticorrelations, Materials Today Physics, 2022, Volume 27, 2022, 100719, ISSN 2542-5293, https://doi.org/10.1016/j.mtphys.2022.100719.
+[1] S. A. Hosseini; A. Davies; I. Dickey; N. Neophytou; P. A. Greaney; L. de Sousa Oliveira. Super-suppression of Long Phonon Mean-Free-Paths in Nano-engineered Si due to Heat Current Anticorrelations, Materials Today Physics, 2022, Volume 27, 2022, 100719, ISSN 2542-5293. https://doi.org/10.1016/j.mtphys.2022.100719.
 
 [2] L. de Sousa Oliveira; S. A. Hosseini; P. A. Greaney; N. Neophytou. Heat Current Anticorrelation Effects Leading to Thermal Conductivity Reduction in Nanoporous Si. Physical Review B, 2020, 102(20), 205405. https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.205405.
 
